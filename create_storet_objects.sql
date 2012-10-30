@@ -1,11 +1,11 @@
-create or replace package STORETMODERN.create_storet_objects
+create or replace package create_storet_objects
    authid definer
    as
    procedure main(mesg in out varchar2, success_notify in varchar2, failure_notify in varchar2);
 end create_storet_objects;
 /
 
-create or replace package body STORETMODERN.create_storet_objects
+create or replace package body create_storet_objects
       /*-----------------------------------------------------------------------------------
         package create_storet_objects                                created by barry, 11/2011
 

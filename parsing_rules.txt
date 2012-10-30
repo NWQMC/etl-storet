@@ -1,4 +1,3 @@
-error /.*ORA-(?!01418|00955)/
+error /.*ORA-/
 error /.*SP2-/
-info  /.*ORA-01418/
-info  /.*ORA-00955/
+error /.Warning: Package Body created with compilation errors./
