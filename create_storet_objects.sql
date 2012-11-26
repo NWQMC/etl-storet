@@ -89,7 +89,8 @@ create or replace package body create_storet_objects
                            'STORET_RESULT_SUMT'   || current_suffix,
                            'STORET_RESULT_SUM'    || current_suffix,
                            'STORET_RESULT_CT_SUM' || current_suffix,
-                           'STORET_RESULT_NR_SUM' || current_suffix
+                           'STORET_RESULT_NR_SUM' || current_suffix,
+                           'STORET_LCTN_LOC'      || current_suffix
                            )
          order by
             table_name;
@@ -759,26 +760,30 @@ create or replace package body create_storet_objects
 
       execute immediate    /* seem to be problems with parallel 4 so make it parallel 1 */
      'create table STORET_STATION_SUM' || suffix || ' pctfree 0 cache compress nologging parallel 1 as
-         select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) full(c) parallel(c, 4) use_hash(a) use_hash(b) use_hash(c) */
+         select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) full(c) parallel(c, 4) full(d) parallel(d, 4) use_hash(a) use_hash(b) use_hash(c) use_hash(d) */
             a.pk_isn,
-            organization_id || ''-'' || station_id station_id,
+            a.organization_id || ''-'' || station_id station_id,
             geom,
             country_code,
             fips_state_code,
             fips_county_code,
             station_group_type,
-            organization_id,
+            a.organization_id,
+            organization_name,
             generated_huc,
+            station_name,
+            fk_primary_type,
             cast(nvl(result_count, 0) as number(9)) result_count
          from
-            fa_station'    || suffix || ' a,
-            di_geo_state'  || suffix || ' b,
-            di_geo_county' || suffix || ' c,
-            (select fk_station, count(*) result_count from fa_regular_result' || suffix || ' group by fk_station) d
-         where
-            a.fk_geo_state  = b.pk_isn    (+) and
-            a.fk_geo_county = c.pk_isn    (+) and
-            a.pk_isn        = d.fk_station(+)
+            fa_station'    || suffix || ' a
+            left join di_geo_state'  || suffix || ' b
+              on a.fk_geo_state  = b.pk_isn
+            left join di_geo_county' || suffix || ' c
+              on a.fk_geo_county = c.pk_isn
+            left join di_org' || suffix || ' d
+              on a.organization_id = d.organization_id
+            left join (select fk_station, count(*) result_count from fa_regular_result' || suffix || ' group by fk_station) e
+              on a.pk_isn = e.fk_station
          order by
             country_code,
             fips_state_code,
@@ -997,6 +1002,23 @@ create or replace package body create_storet_objects
 
       cleanup(7) := 'drop table STORET_RESULT_NR_SUM' || suffix;
 
+      append_email_text('creating storet_lctn_loc...');
+
+      execute immediate
+     'create table storet_lctn_loc' || suffix || ' compress pctfree 0 nologging parallel 1 as
+      select /*+ parallel(4) */ distinct
+             b.country_code country_cd,
+             b.fips_state_code state_fips,
+             c.organization_id,
+             c.organization_name
+       from fa_station' || suffix || ' a
+            left join di_geo_state' || suffix || ' b
+              on a.fk_geo_state  = b.pk_isn
+            left join di_org' || suffix || ' c
+              on a.organization_id = c.organization_id';
+
+      cleanup(21) := 'drop table storet_lctn_loc' || suffix;
+      
    exception
       when others then
          message := 'FAIL to create summaries: ' || SQLERRM;
@@ -1557,6 +1579,7 @@ create or replace package body create_storet_objects
       execute immediate 'grant select on storet_result_sum'    || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser, nwq_stg';
 
       append_email_text('analyze fa_station...');  /* takes about 1.5 minutes*/
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
@@ -1596,6 +1619,8 @@ create or replace package body create_storet_objects
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_RESULT_CT_SUM'|| suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze storet_result_nr_sum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_RESULT_NR_SUM'|| suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze storet_lctn_loc...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'STORET_LCTN_LOC'     || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
 
 
    exception
@@ -1968,6 +1993,10 @@ create or replace package body create_storet_objects
       execute immediate 'create or replace synonym storet_result_sum    for storet_result_sum'    || suffix;
       execute immediate 'create or replace synonym storet_result_ct_sum for storet_result_ct_sum' || suffix;
       execute immediate 'create or replace synonym storet_result_nr_sum for storet_result_nr_sum' || suffix;
+      
+      execute immediate 'create or replace synonym storet_lctn_loc_new  for storet_lctn_loc'      || suffix;
+      execute immediate 'create or replace synonym storet_lctn_loc_old  for storet_lctn_loc_'
+                          || to_char(to_number(substr(suffix, 2) - 1), 'fm00000');
 
    exception
       when others then
@@ -1990,7 +2019,7 @@ create or replace package body create_storet_objects
                'DI_GEO_STATE_00000', 'DI_ORG_00000', 'DI_STATN_TYPES_00000', 'LU_MAD_HMETHOD_00000',
                'LU_MAD_HDATUM_00000', 'LU_MAD_VMETHOD_00000', 'LU_MAD_VDATUM_00000', 'MT_WH_CONFIG_00000',
                'STORET_SUM_00000', 'STORET_STATION_SUM_00000', 'STORET_RESULT_SUMT_00000', 'STORET_RESULT_SUM_00000',
-               'STORET_RESULT_CT_SUM_00000', 'STORET_RESULT_NR_SUM_00000'
+               'STORET_RESULT_CT_SUM_00000', 'STORET_RESULT_NR_SUM_00000', 'STORET_LCTN_LOC_00000'
               ) and
             substr(table_name, -5) <= to_char(to_number(substr(current_suffix, 2) - 2), 'fm00000')
          order by
@@ -2008,7 +2037,7 @@ create or replace package body create_storet_objects
                'DI_GEO_STATE_00000', 'DI_ORG_00000', 'DI_STATN_TYPES_00000', 'LU_MAD_HMETHOD_00000',
                'LU_MAD_HDATUM_00000', 'LU_MAD_VMETHOD_00000', 'LU_MAD_VDATUM_00000', 'MT_WH_CONFIG_00000',
                'STORET_SUM_00000', 'STORET_STATION_SUM_00000', 'STORET_RESULT_SUMT_00000', 'STORET_RESULT_SUM_00000',
-               'STORET_RESULT_CT_SUM_00000', 'STORET_RESULT_NR_SUM_00000'
+               'STORET_RESULT_CT_SUM_00000', 'STORET_RESULT_NR_SUM_00000', 'STORET_LCTN_LOC_00000'
               ) and
             substr(table_name, -5) <= to_char(to_number(substr(current_suffix, 2) - 1), 'fm00000')
          order by
@@ -2055,7 +2084,7 @@ create or replace package body create_storet_objects
       message := null;
       dbms_output.enable(100000);
 
-      for k in 1 .. 20 loop
+      for k in 1 .. 21 loop
          cleanup(k) := NULL;
       end loop;
       append_email_text('started storet table transformation.');
@@ -2081,7 +2110,7 @@ create or replace package body create_storet_objects
          email_subject := 'storet load FAILED';
          email_text := email_subject || lf || lf || email_text;
          email_notify := failure_notify;
-         for k in 1 .. 20 loop
+         for k in 1 .. 21 loop
             if cleanup(k) is not null then
                append_email_text('CLEANUP: ' || cleanup(k));
                execute immediate cleanup(k);

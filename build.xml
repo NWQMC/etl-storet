@@ -3,8 +3,6 @@
 
 	<target name="dev" depends="buildPackage, runPackage"/>
 
-	<target name="test" depends="scpScript, dos2unix, qwStoretEtl"/>
-
 	<target name="buildPackage">
 		<echo>Rebuiling the etl database pacakge and body</echo>
 		<exec executable="sqlplus" failonerror="true">
