@@ -3,6 +3,8 @@
 
 	<target name="dev" depends="buildPackage, runPackage"/>
 
+	<target name="test" depends="scpScript, dos2unix, qwStoretEtl"/>
+
 	<target name="buildPackage">
 		<echo>Rebuiling the etl database pacakge and body</echo>
 		<exec executable="sqlplus" failonerror="true">
@@ -22,26 +24,26 @@
 	</target>
 	
 	<target name="scpScript">
-		<echo>Copy the script to xxx</echo>
-		<scp file="storet_auto_load.bash" todir="${wqp_storet_username}:${wqp_storet_password}@192.168.56.11:/home/wqp_storet" trust="true"/>
+		<echo>Copy the script to ${storet_host}</echo>
+		<scp file="storet_auto_load.bash" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
 	</target>
 
 	<target name="dos2unix">
 		<echo>Fix cr/lf</echo>
-		<sshexec host="192.168.56.11"
+		<sshexec host="${storet_host}"
 			trust="true"
-			username="${wqp_storet_username}"
-			password="${wqp_storet_password}"
+			username="storet_user"
+			password="${storet_password}"
 			command="dos2unix storet_auto_load.bash"/>
 	</target>
 	
 	<target name="qwStoretEtl">
 		<echo>Run the script</echo>
-		<sshexec host="192.168.56.11"
+		<sshexec host="${storet_host}"
 			trust="true"
 			failonerror="true"
-			username="${wqp_storet_username}"
-			password="${wqp_storet_password}"
+			username="storet_user"
+			password="${storet_password}"
 			command="bash -e storet_auto_load.bash"
 		/>
 	</target>
