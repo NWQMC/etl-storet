@@ -773,6 +773,7 @@ create or replace package body create_storet_objects
             generated_huc,
             station_name,
             fk_primary_type,
+            description_text,
             cast(nvl(result_count, 0) as number(9)) result_count
          from
             fa_station'    || suffix || ' a
