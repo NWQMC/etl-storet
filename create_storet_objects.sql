@@ -1214,8 +1214,8 @@ create or replace package body create_storet_objects
          length(trim(county.fips_county_code)) = 3  and
          trim(state.fips_state_code) between ''01'' and ''56'' and
          result.fk_station     = station.pk_isn     and
-         station.fk_geo_state  = state.pk_isn       and
-         station.fk_geo_county = county.pk_isn
+         station.fk_geo_state  = state.pk_isn  (+)  and
+         station.fk_geo_county = county.pk_isn (+)
       group by
          cast(trim(state.fips_state_code) as varchar2(2)) ,
          cast(trim(county.fips_county_code) as varchar2(3)) ,
