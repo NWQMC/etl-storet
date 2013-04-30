@@ -1,0 +1,1 @@
+alter package create_storet_objects compile plsql_ccflags = 'empty_db:true, ci_db:true' reuse settings;

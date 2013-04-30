@@ -111,7 +111,7 @@ create or replace package body create_storet_objects
       loop
          fetch drop_remnants into drop_name;
          exit when drop_remnants%NOTFOUND;
-         stmt := 'drop table ' || drop_name;
+         stmt := 'drop table ' || drop_name || ' cascade constraints purge';
          append_email_text('CLEANUP remnants: ' || stmt);
          execute immediate stmt;
       end loop;
@@ -316,7 +316,7 @@ create or replace package body create_storet_objects
       FROM
          FA_REGULAR_RESULT_NO_SOURCE';
 
-      cleanup(1) := 'drop table FA_REGULAR_RESULT' || suffix;
+      cleanup(1) := 'drop table FA_REGULAR_RESULT' || suffix || ' cascade constraints purge';
 
       execute immediate '
       insert /*+ append nologging */ into fa_regular_result' || suffix ||
@@ -744,7 +744,7 @@ create or replace package body create_storet_objects
       FROM
          FA_STATION@storetw';
 
-      cleanup(2) := 'drop table FA_STATION' || suffix;
+      cleanup(2) := 'drop table FA_STATION' || suffix || ' cascade constraints purge';
    exception
       when others then
          message := 'FAIL to create FA_STATION: ' || SQLERRM;
@@ -791,7 +791,7 @@ create or replace package body create_storet_objects
             fips_county_code,
             station_group_type';
 
-      cleanup(3) := 'drop table STORET_STATION_SUM' || suffix;
+      cleanup(3) := 'drop table STORET_STATION_SUM' || suffix || ' cascade constraints purge';
 
       append_email_text('creating storet_result_sumt...');
 
@@ -838,7 +838,7 @@ create or replace package body create_storet_objects
          where
              b.fk_station = a.pk_isn(+)';
 
-      cleanup(4) := 'drop table STORET_RESULT_SUMT' || suffix;
+      cleanup(4) := 'drop table STORET_RESULT_SUMT' || suffix || ' cascade constraints purge';
 
       append_email_text('creating storet_result_sum...');
 
@@ -895,7 +895,7 @@ create or replace package body create_storet_objects
              characteristic_group_type,
              display_name';
 
-      cleanup(5) := 'drop table STORET_RESULT_SUM' || suffix;
+      cleanup(5) := 'drop table STORET_RESULT_SUM' || suffix || ' cascade constraints purge';
 
       append_email_text('creating storet_result_ct_sum...');
 
@@ -949,7 +949,7 @@ create or replace package body create_storet_objects
             characteristic_group_type,
             display_name';
 
-      cleanup(6) := 'drop table STORET_RESULT_CT_SUM' || suffix;
+      cleanup(6) := 'drop table STORET_RESULT_CT_SUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table storetmodern.storet_result_nr_sum' || suffix || ' pctfree 0 cache compress nologging parallel 4
@@ -1001,7 +1001,7 @@ create or replace package body create_storet_objects
             characteristic_group_type,
             display_name';
 
-      cleanup(7) := 'drop table STORET_RESULT_NR_SUM' || suffix;
+      cleanup(7) := 'drop table STORET_RESULT_NR_SUM' || suffix || ' cascade constraints purge';
 
       append_email_text('creating storet_lctn_loc...');
 
@@ -1018,7 +1018,7 @@ create or replace package body create_storet_objects
             left join di_org' || suffix || ' c
               on a.organization_id = c.organization_id';
 
-      cleanup(21) := 'drop table storet_lctn_loc' || suffix;
+      cleanup(21) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
       
    exception
       when others then
@@ -1042,7 +1042,7 @@ create or replace package body create_storet_objects
       FROM
          DI_ACTIVITY_MATRIX@storetw';
 
-      cleanup(8) := 'drop table DI_ACTIVITY_MATRIX' || suffix;
+      cleanup(8) := 'drop table DI_ACTIVITY_MATRIX' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_ACTIVITY_MEDIUM' || suffix || ' compress pctfree 0 nologging as
@@ -1052,7 +1052,7 @@ create or replace package body create_storet_objects
       FROM
          DI_ACTIVITY_MEDIUM@storetw';
 
-      cleanup(9) := 'drop table DI_ACTIVITY_MEDIUM' || suffix;
+      cleanup(9) := 'drop table DI_ACTIVITY_MEDIUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_CHARACTERISTIC' || suffix || ' compress pctfree 0 nologging as
@@ -1072,7 +1072,7 @@ create or replace package body create_storet_objects
       FROM
          DI_CHARACTERISTIC@storetw';
 
-      cleanup(10) := 'drop table DI_CHARACTERISTIC' || suffix;
+      cleanup(10) := 'drop table DI_CHARACTERISTIC' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_GEO_COUNTY' || suffix || ' compress pctfree 0 nologging as
@@ -1084,7 +1084,7 @@ create or replace package body create_storet_objects
       FROM
          DI_GEO_COUNTY@storetw';
 
-      cleanup(11) := 'drop table DI_GEO_COUNTY' || suffix;
+      cleanup(11) := 'drop table DI_GEO_COUNTY' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_GEO_STATE' || suffix || ' compress pctfree 0 nologging as
@@ -1098,7 +1098,7 @@ create or replace package body create_storet_objects
       FROM
          DI_GEO_STATE@storetw';
 
-      cleanup(12) := 'drop table DI_GEO_STATE' || suffix;
+      cleanup(12) := 'drop table DI_GEO_STATE' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_ORG' || suffix || ' compress pctfree 0 nologging as
@@ -1114,7 +1114,7 @@ create or replace package body create_storet_objects
       FROM
          DI_ORG@storetw';
 
-      cleanup(13) := 'drop table DI_ORG' || suffix;
+      cleanup(13) := 'drop table DI_ORG' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_STATN_TYPES' || suffix || ' compress pctfree 0 nologging as
@@ -1128,7 +1128,7 @@ create or replace package body create_storet_objects
       FROM
          DI_STATN_TYPES@storetw';
 
-      cleanup(14) := 'drop table DI_STATN_TYPES' || suffix;
+      cleanup(14) := 'drop table DI_STATN_TYPES' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_HMETHOD' || suffix || ' compress pctfree 0 nologging as
@@ -1139,7 +1139,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_HMETHOD@storetw';
 
-      cleanup(15) := 'drop table LU_MAD_HMETHOD' || suffix;
+      cleanup(15) := 'drop table LU_MAD_HMETHOD' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_HDATUM' || suffix || ' compress pctfree 0 nologging as
@@ -1150,7 +1150,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_HDATUM@storetw';
 
-      cleanup(16) := 'drop table LU_MAD_HDATUM' || suffix;
+      cleanup(16) := 'drop table LU_MAD_HDATUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_VMETHOD' || suffix || ' compress pctfree 0 nologging as
@@ -1161,7 +1161,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_VMETHOD@storetw';
 
-      cleanup(17) := 'drop table LU_MAD_VMETHOD' || suffix;
+      cleanup(17) := 'drop table LU_MAD_VMETHOD' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_VDATUM' || suffix || ' compress pctfree 0 nologging as
@@ -1172,7 +1172,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_VDATUM@storetw';
 
-      cleanup(18) := 'drop table LU_MAD_VDATUM' || suffix;
+      cleanup(18) := 'drop table LU_MAD_VDATUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table MT_WH_CONFIG' || suffix || ' compress pctfree 0 nologging as
@@ -1184,7 +1184,7 @@ create or replace package body create_storet_objects
       FROM
          MT_WH_CONFIG@storetw';
 
-      cleanup(19) := 'drop table MT_WH_CONFIG' || suffix;
+      cleanup(19) := 'drop table MT_WH_CONFIG' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
@@ -1224,7 +1224,7 @@ create or replace package body create_storet_objects
          cast(trim(station.generated_huc) as varchar2(8)) ,
          cast(trim(station.huctwelvedigitcode) as varchar2(12)) ';
 
-      cleanup(20) := 'drop table STORET_SUM' || suffix;
+      cleanup(20) := 'drop table STORET_SUM' || suffix || ' cascade constraints purge';
 
    exception
       when others then
@@ -1639,7 +1639,7 @@ create or replace package body create_storet_objects
       type cursor_type is ref cursor;
       c            cursor_type;
       query        varchar2(4000);
-      pass_fail    varchar2(10);
+      pass_fail    varchar2(15);
       situation    varchar2(200);
    begin
 
@@ -1655,6 +1655,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for fa_regular_result: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1672,6 +1675,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for fa_station: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1689,6 +1695,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_activity_matrix: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1706,6 +1715,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_activity_medium: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1723,6 +1735,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_characteristic: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1740,6 +1755,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_geo_county: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1757,6 +1775,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_geo_state: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1774,6 +1795,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_org: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1791,6 +1815,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for di_statn_types: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1808,6 +1835,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_hmethod: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1825,6 +1855,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_hdatum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1842,6 +1875,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_vmethod: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1859,6 +1895,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_vdatum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1876,6 +1915,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for mt_wh_config: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -1893,6 +1935,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
+      	 $IF $$empty_db $THEN
+      	    pass_fail := 'PASS empty_db';
+      	 $END
       end if;
       situation := pass_fail || ': table comparison for storet_sum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       append_email_text(situation);
@@ -2055,7 +2100,7 @@ create or replace package body create_storet_objects
       loop
          fetch to_drop into drop_name;
          exit when to_drop%NOTFOUND;
-         stmt := 'drop table ' || drop_name;
+         stmt := 'drop table ' || drop_name || ' cascade constraints purge';
          append_email_text('CLEANUP old stuff: ' || stmt);
          execute immediate stmt;
       end loop;
@@ -2119,7 +2164,13 @@ create or replace package body create_storet_objects
          end loop;
       end if;
 
-      utl_mail.send@witrans(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
+      
+      $IF $$ci_db $THEN
+         dbms_output.put_line('Not emailing from ci database.');
+         dbms_output.put_line(email_text);
+	  $ELSE
+         utl_mail.send@witrans(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
+      $END
       mesg := message;
 
    end main;

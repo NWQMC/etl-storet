@@ -3,11 +3,21 @@
 
 	<target name="dev" depends="buildPackage, runPackage"/>
 
+	<target name="ci" depends="buildPackage, compilePackageEmptyCiDB, runPackage"/>
+
 	<target name="buildPackage">
 		<echo>Rebuiling the etl database pacakge and body</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/create_storet_objects.sql"/>
+		</exec>
+	</target>
+	
+	<target name="compilePackageEmptyCiDB">
+		<echo>Rebuiling the etl database pacakge and body</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
+			<arg value="@${basedir}/emptyCiDB.sql"/>
 		</exec>
 	</target>
 	
