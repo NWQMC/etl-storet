@@ -36,12 +36,23 @@ create or replace package body create_storet_objects
    as
    lf constant varchar(1) := chr(10);
 
-   message varchar2(600);
+   message varchar2(4000);
    suffix varchar2(10);
 
    type cleanuptable is table of varchar2(80) index by binary_integer;
    cleanup cleanuptable;
    email_text varchar2(32000);
+
+   
+   table_list varchar2(4000 char) := 'translate(table_name, ''0123456789'', ''0000000000'') in ' ||
+                                     '(''FA_REGULAR_RESULT_00000'',''FA_STATION_00000'',''DI_ACTIVITY_MATRIX_00000'',''DI_ACTIVITY_MEDIUM_00000'',' ||
+                                      '''DI_CHARACTERISTIC_00000'',''DI_GEO_COUNTY_00000'',''DI_GEO_STATE_00000'',''DI_ORG_00000'',' ||
+                                      '''DI_STATN_TYPES_00000'',''LU_MAD_HMETHOD_00000'',''LU_MAD_HDATUM_00000'',''LU_MAD_VMETHOD_00000'',' ||
+                                      '''LU_MAD_VDATUM_00000'',''MT_WH_CONFIG_00000'',''STORET_SUM_00000'',''STORET_STATION_SUM_00000'',''STORET_RESULT_SUMT_00000'',' ||
+                                      '''STORET_RESULT_SUM_00000'',''STORET_RESULT_CT_SUM_00000'',''STORET_RESULT_NR_SUM_00000'',''STORET_LCTN_LOC_00000'',' ||
+                                      '''CHARACTERISTICNAME_00000'',''ORGANIZATION_00000'',''SAMPLEMEDIA_00000'',''SITETYPE_00000'')';
+                                      
+   type cursor_type is ref cursor;
 
    procedure append_email_text(addition in varchar2)
    is
@@ -63,37 +74,9 @@ create or replace package body create_storet_objects
 
    procedure determine_suffix
    is
-
-      cursor drop_remnants(current_suffix in varchar2) is
-         select
-            table_name
-         from
-            user_tables
-         where
-            table_name in ('FA_REGULAR_RESULT'    || current_suffix,
-                           'FA_STATION'           || current_suffix,
-                           'DI_ACTIVITY_MATRIX'   || current_suffix,
-                           'DI_ACTIVITY_MEDIUM'   || current_suffix,
-                           'DI_CHARACTERISTIC'    || current_suffix,
-                           'DI_GEO_COUNTY'        || current_suffix,
-                           'DI_GEO_STATE'         || current_suffix,
-                           'DI_ORG'               || current_suffix,
-                           'DI_STATN_TYPES'       || current_suffix,
-                           'LU_MAD_HMETHOD'       || current_suffix,
-                           'LU_MAD_HDATUM'        || current_suffix,
-                           'LU_MAD_VMETHOD'       || current_suffix,
-                           'LU_MAD_VDATUM'        || current_suffix,
-                           'MT_WH_CONFIG'         || current_suffix,
-                           'STORET_SUM'           || current_suffix,
-                           'STORET_STATION_SUM'   || current_suffix,
-                           'STORET_RESULT_SUMT'   || current_suffix,
-                           'STORET_RESULT_SUM'    || current_suffix,
-                           'STORET_RESULT_CT_SUM' || current_suffix,
-                           'STORET_RESULT_NR_SUM' || current_suffix,
-                           'STORET_LCTN_LOC'      || current_suffix
-                           )
-         order by
-            table_name;
+      drop_remnants cursor_type;
+      query         varchar2(4000) := 'select table_name from user_tables where ' || table_list ||
+                                         ' and substr(table_name, -5) = substr(:current_suffix, 2) order by table_name';
 
       drop_name varchar2(30);
       stmt      varchar2(80);
@@ -107,7 +90,7 @@ create or replace package body create_storet_objects
 
       append_email_text('using ''' || suffix || ''' for suffix.');
 
-      open drop_remnants(suffix);
+      open drop_remnants for query using suffix;
       loop
          fetch drop_remnants into drop_name;
          exit when drop_remnants%NOTFOUND;
@@ -1018,7 +1001,7 @@ create or replace package body create_storet_objects
             left join di_org' || suffix || ' c
               on a.organization_id = c.organization_id';
 
-      cleanup(21) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
+      cleanup(8) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
       
    exception
       when others then
@@ -1042,7 +1025,7 @@ create or replace package body create_storet_objects
       FROM
          DI_ACTIVITY_MATRIX@storetw';
 
-      cleanup(8) := 'drop table DI_ACTIVITY_MATRIX' || suffix || ' cascade constraints purge';
+      cleanup(9) := 'drop table DI_ACTIVITY_MATRIX' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_ACTIVITY_MEDIUM' || suffix || ' compress pctfree 0 nologging as
@@ -1052,7 +1035,7 @@ create or replace package body create_storet_objects
       FROM
          DI_ACTIVITY_MEDIUM@storetw';
 
-      cleanup(9) := 'drop table DI_ACTIVITY_MEDIUM' || suffix || ' cascade constraints purge';
+      cleanup(10) := 'drop table DI_ACTIVITY_MEDIUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_CHARACTERISTIC' || suffix || ' compress pctfree 0 nologging as
@@ -1072,7 +1055,7 @@ create or replace package body create_storet_objects
       FROM
          DI_CHARACTERISTIC@storetw';
 
-      cleanup(10) := 'drop table DI_CHARACTERISTIC' || suffix || ' cascade constraints purge';
+      cleanup(11) := 'drop table DI_CHARACTERISTIC' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_GEO_COUNTY' || suffix || ' compress pctfree 0 nologging as
@@ -1084,7 +1067,7 @@ create or replace package body create_storet_objects
       FROM
          DI_GEO_COUNTY@storetw';
 
-      cleanup(11) := 'drop table DI_GEO_COUNTY' || suffix || ' cascade constraints purge';
+      cleanup(12) := 'drop table DI_GEO_COUNTY' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_GEO_STATE' || suffix || ' compress pctfree 0 nologging as
@@ -1098,7 +1081,7 @@ create or replace package body create_storet_objects
       FROM
          DI_GEO_STATE@storetw';
 
-      cleanup(12) := 'drop table DI_GEO_STATE' || suffix || ' cascade constraints purge';
+      cleanup(13) := 'drop table DI_GEO_STATE' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_ORG' || suffix || ' compress pctfree 0 nologging as
@@ -1114,7 +1097,7 @@ create or replace package body create_storet_objects
       FROM
          DI_ORG@storetw';
 
-      cleanup(13) := 'drop table DI_ORG' || suffix || ' cascade constraints purge';
+      cleanup(14) := 'drop table DI_ORG' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table DI_STATN_TYPES' || suffix || ' compress pctfree 0 nologging as
@@ -1128,7 +1111,7 @@ create or replace package body create_storet_objects
       FROM
          DI_STATN_TYPES@storetw';
 
-      cleanup(14) := 'drop table DI_STATN_TYPES' || suffix || ' cascade constraints purge';
+      cleanup(15) := 'drop table DI_STATN_TYPES' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_HMETHOD' || suffix || ' compress pctfree 0 nologging as
@@ -1139,7 +1122,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_HMETHOD@storetw';
 
-      cleanup(15) := 'drop table LU_MAD_HMETHOD' || suffix || ' cascade constraints purge';
+      cleanup(16) := 'drop table LU_MAD_HMETHOD' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_HDATUM' || suffix || ' compress pctfree 0 nologging as
@@ -1150,7 +1133,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_HDATUM@storetw';
 
-      cleanup(16) := 'drop table LU_MAD_HDATUM' || suffix || ' cascade constraints purge';
+      cleanup(17) := 'drop table LU_MAD_HDATUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_VMETHOD' || suffix || ' compress pctfree 0 nologging as
@@ -1161,7 +1144,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_VMETHOD@storetw';
 
-      cleanup(17) := 'drop table LU_MAD_VMETHOD' || suffix || ' cascade constraints purge';
+      cleanup(18) := 'drop table LU_MAD_VMETHOD' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table LU_MAD_VDATUM' || suffix || ' compress pctfree 0 nologging as
@@ -1172,7 +1155,7 @@ create or replace package body create_storet_objects
       FROM
          LU_MAD_VDATUM@storetw';
 
-      cleanup(18) := 'drop table LU_MAD_VDATUM' || suffix || ' cascade constraints purge';
+      cleanup(19) := 'drop table LU_MAD_VDATUM' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table MT_WH_CONFIG' || suffix || ' compress pctfree 0 nologging as
@@ -1184,7 +1167,7 @@ create or replace package body create_storet_objects
       FROM
          MT_WH_CONFIG@storetw';
 
-      cleanup(19) := 'drop table MT_WH_CONFIG' || suffix || ' cascade constraints purge';
+      cleanup(20) := 'drop table MT_WH_CONFIG' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
@@ -1224,7 +1207,54 @@ create or replace package body create_storet_objects
          cast(trim(station.generated_huc) as varchar2(8)) ,
          cast(trim(station.huctwelvedigitcode) as varchar2(12)) ';
 
-      cleanup(20) := 'drop table STORET_SUM' || suffix || ' cascade constraints purge';
+      cleanup(21) := 'drop table STORET_SUM' || suffix || ' cascade constraints purge';
+      
+      execute immediate
+      'create table characteristicname' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              cast(null as varchar2(4000 char)) descr,
+              rownum sort_order
+         from (select distinct characteristic_name code_value
+                 from fa_regular_result' || suffix || '
+                where characteristic_name is not null
+                   order by 1)';
+      cleanup(22) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
+
+      execute immediate
+      'create table organization' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              cast(null as varchar2(4000 char)) descr,
+              rownum sort_order
+         from (select distinct organization_id code_value
+                 from fa_station' || suffix || '
+                    order by 1)';
+      cleanup(23) := 'drop table organization' || suffix || ' cascade constraints purge';
+
+            
+      execute immediate
+      'create table samplemedia' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              cast(null as varchar2(4000 char)) descr,
+              rownum sort_order
+         from (select distinct activity_medium as code_value
+                 from di_activity_medium' || suffix || '
+                where activity_medium is not null and
+                      pk_isn in (select fk_act_medium
+                                   from fa_regular_result' || suffix || '
+                                  where fk_act_medium is not null)
+                   order by activity_medium)';
+      cleanup(24) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
+
+            
+      execute immediate
+      'create table sitetype' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              cast(null as varchar2(4000 char)) descr,
+              rownum sort_order
+         from (select distinct station_group_type code_value
+                 from fa_station' || suffix || '
+                   order by 1)';
+      cleanup(25) := 'drop table sitetype' || suffix || ' cascade constraints purge';
 
    exception
       when others then
@@ -1581,6 +1611,10 @@ create or replace package body create_storet_objects
       execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on characteristicname'   || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on organization'         || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on samplemedia'          || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on sitetype'             || suffix || ' to storetuser, nwq_stg';
 
       append_email_text('analyze fa_station...');  /* takes about 1.5 minutes*/
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
@@ -1622,6 +1656,14 @@ create or replace package body create_storet_objects
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_RESULT_NR_SUM'|| suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze storet_lctn_loc...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_LCTN_LOC'     || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze characteristicname...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICNAME'  || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze organization...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'ORGANIZATION'        || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze samplemedia...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'SAMPLEMEDIA'         || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze sitetype...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'SITETYPE'            || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
 
 
    exception
@@ -1945,27 +1987,13 @@ create or replace package body create_storet_objects
          message := situation;
       end if;
 
-      query := 'select count(*) from user_indexes where table_name in (
-                  ''FA_REGULAR_RESULT'   || suffix || ''',
-                  ''FA_STATION'          || suffix || ''',
-                  ''DI_ACTIVITY_MATRIX'  || suffix || ''',
-                  ''DI_ACTIVITY_MEDIUM'  || suffix || ''',
-                  ''DI_CHARACTERISTIC'   || suffix || ''',
-                  ''DI_GEO_COUNTY'       || suffix || ''',
-                  ''DI_GEO_STATE'        || suffix || ''',
-                  ''DI_ORG'              || suffix || ''',
-                  ''DI_STATN_TYPES'      || suffix || ''',
-                  ''LU_MAD_HMETHOD'      || suffix || ''',
-                  ''LU_MAD_HDATUM'       || suffix || ''',
-                  ''LU_MAD_VMETHOD'      || suffix || ''',
-                  ''LU_MAD_VDATUM'       || suffix || ''',
-                  ''MT_WH_CONFIG'        || suffix || ''',
-                  ''STORET_SUM'          || suffix || ''')';
-      open  c for query;
+      query := 'select count(*) from user_indexes where ' || table_list || 
+               ' and substr(table_name, -5) = substr(:current_suffix, 2)';
+      open  c for query using suffix;
       fetch c into index_count;
       close c;
 
-      if index_count < 28 then  /* there are exactly 28 as of 11/15/2011 */
+      if index_count < 54 then  /* there are exactly 54 as of 01MAY2013 */
          pass_fail := 'FAIL';
       else
          pass_fail := 'PASS';
@@ -1976,23 +2004,9 @@ create or replace package body create_storet_objects
          message := situation;
       end if;
 
-      query := 'select count(*) from user_tab_privs where grantee in (''STORETUSER'', ''NWQ_STG'') and table_name in (
-                  ''FA_REGULAR_RESULT'   || suffix || ''',
-                  ''FA_STATION'          || suffix || ''',
-                  ''DI_ACTIVITY_MATRIX'  || suffix || ''',
-                  ''DI_ACTIVITY_MEDIUM'  || suffix || ''',
-                  ''DI_CHARACTERISTIC'   || suffix || ''',
-                  ''DI_GEO_COUNTY'       || suffix || ''',
-                  ''DI_GEO_STATE'        || suffix || ''',
-                  ''DI_ORG'              || suffix || ''',
-                  ''DI_STATN_TYPES'      || suffix || ''',
-                  ''LU_MAD_HMETHOD'      || suffix || ''',
-                  ''LU_MAD_HDATUM'       || suffix || ''',
-                  ''LU_MAD_VMETHOD'      || suffix || ''',
-                  ''LU_MAD_VDATUM'       || suffix || ''',
-                  ''MT_WH_CONFIG'        || suffix || ''',
-                  ''STORET_SUM'          || suffix || ''')';
-      open  c for query;
+      query := 'select count(*) from user_tab_privs where ' || table_list || 
+               ' and substr(table_name, -5) = substr(:current_suffix, 2)';
+      open  c for query using suffix;
       fetch c into grant_count;
       close c;
 
@@ -2039,6 +2053,10 @@ create or replace package body create_storet_objects
       execute immediate 'create or replace synonym storet_result_sum    for storet_result_sum'    || suffix;
       execute immediate 'create or replace synonym storet_result_ct_sum for storet_result_ct_sum' || suffix;
       execute immediate 'create or replace synonym storet_result_nr_sum for storet_result_nr_sum' || suffix;
+      execute immediate 'create or replace synonym characteristicname   for characteristicname'   || suffix;
+      execute immediate 'create or replace synonym organization         for organization'         || suffix;
+      execute immediate 'create or replace synonym samplemedia          for samplemedia'          || suffix;
+      execute immediate 'create or replace synonym sitetype             for sitetype'             || suffix;
       
       execute immediate 'create or replace synonym storet_lctn_loc_new  for storet_lctn_loc'      || suffix;
       execute immediate 'create or replace synonym storet_lctn_loc_old  for storet_lctn_loc_'
@@ -2053,41 +2071,15 @@ create or replace package body create_storet_objects
 
    procedure drop_old_stuff
    is
-      cursor to_drop(current_suffix in varchar2) is
-         select
-            table_name
-         from
-            user_tables
-         where
-            translate(table_name, '0123456789', '0000000000') in
-              ('FA_REGULAR_RESULT_00000', 'FA_STATION_00000', 'DI_ACTIVITY_MATRIX_00000',
-               'DI_ACTIVITY_MEDIUM_00000', 'DI_CHARACTERISTIC_00000', 'DI_GEO_COUNTY_00000',
-               'DI_GEO_STATE_00000', 'DI_ORG_00000', 'DI_STATN_TYPES_00000', 'LU_MAD_HMETHOD_00000',
-               'LU_MAD_HDATUM_00000', 'LU_MAD_VMETHOD_00000', 'LU_MAD_VDATUM_00000', 'MT_WH_CONFIG_00000',
-               'STORET_SUM_00000', 'STORET_STATION_SUM_00000', 'STORET_RESULT_SUMT_00000', 'STORET_RESULT_SUM_00000',
-               'STORET_RESULT_CT_SUM_00000', 'STORET_RESULT_NR_SUM_00000', 'STORET_LCTN_LOC_00000'
-              ) and
-            substr(table_name, -5) <= to_char(to_number(substr(current_suffix, 2) - 2), 'fm00000')
-         order by
-            table_name;
+      to_drop cursor_type;
+      drop_query varchar2(4000) := 'select table_name from user_tables where ' || table_list ||
+            ' and substr(table_name, -5) <= to_char(to_number(substr(:current_suffix, 2) - 2), ''fm00000'')' ||
+               ' order by case when table_name like ''FA_STATION%'' then 2 else 1 end, table_name';
 
-      cursor to_nocache(current_suffix in varchar2) is
-         select
-            table_name
-         from
-            user_tables
-         where
-            translate(table_name, '0123456789', '0000000000') in
-              ('FA_REGULAR_RESULT_00000', 'FA_STATION_00000', 'DI_ACTIVITY_MATRIX_00000',
-               'DI_ACTIVITY_MEDIUM_00000', 'DI_CHARACTERISTIC_00000', 'DI_GEO_COUNTY_00000',
-               'DI_GEO_STATE_00000', 'DI_ORG_00000', 'DI_STATN_TYPES_00000', 'LU_MAD_HMETHOD_00000',
-               'LU_MAD_HDATUM_00000', 'LU_MAD_VMETHOD_00000', 'LU_MAD_VDATUM_00000', 'MT_WH_CONFIG_00000',
-               'STORET_SUM_00000', 'STORET_STATION_SUM_00000', 'STORET_RESULT_SUMT_00000', 'STORET_RESULT_SUM_00000',
-               'STORET_RESULT_CT_SUM_00000', 'STORET_RESULT_NR_SUM_00000', 'STORET_LCTN_LOC_00000'
-              ) and
-            substr(table_name, -5) <= to_char(to_number(substr(current_suffix, 2) - 1), 'fm00000')
-         order by
-            table_name;
+      to_nocache cursor_type;
+      nocache_query varchar2(4000) := 'select table_name from user_tables where ' || table_list ||
+            ' and substr(table_name, -5) <= to_char(to_number(substr(:current_suffix, 2) - 1), ''fm00000'')' ||
+               ' order by case when table_name like ''FA_STATION%'' then 2 else 1 end, table_name';
 
       drop_name    varchar2(30);
       nocache_name varchar2(30);
@@ -2096,7 +2088,7 @@ create or replace package body create_storet_objects
 
       append_email_text('drop_old_stuff...');
 
-      open to_drop(suffix);
+      open to_drop for drop_query using suffix;
       loop
          fetch to_drop into drop_name;
          exit when to_drop%NOTFOUND;
@@ -2106,7 +2098,7 @@ create or replace package body create_storet_objects
       end loop;
       close to_drop;
 
-      open to_nocache(suffix);
+      open to_nocache for nocache_query using suffix;
       loop
          fetch to_nocache into nocache_name;
          exit when to_nocache%NOTFOUND;
@@ -2118,7 +2110,8 @@ create or replace package body create_storet_objects
 
    exception
       when others then
-         append_email_text('tried to drop ' || drop_name || ' : ' || SQLERRM);
+         message := 'tried to drop ' || drop_name || ' : ' || SQLERRM;
+         append_email_text(message);
 
    end drop_old_stuff;
 
@@ -2130,7 +2123,7 @@ create or replace package body create_storet_objects
       message := null;
       dbms_output.enable(100000);
 
-      for k in 1 .. 21 loop
+      for k in 1 .. 25 loop
          cleanup(k) := NULL;
       end loop;
       append_email_text('started storet table transformation.');
@@ -2141,22 +2134,15 @@ create or replace package body create_storet_objects
       if message is null then create_summaries;      end if;
       if message is null then create_index;          end if;
       if message is null then validate;              end if;
-      if message is null then install;               end if;
-      if message is null then drop_old_stuff;        end if;
-
       if message is null then
-         append_email_text('completed. (success)');
-         message := 'OK';
-         email_subject := 'storet load successful';
-         email_text := email_subject || lf || lf || email_text || lf || 'have a nice day!' || lf || '-barry''s program';
-         email_notify := success_notify;
+         install;
       else
          append_email_text('completed. (failed)');
          dbms_output.put_line('errors occurred.');
          email_subject := 'storet load FAILED';
          email_text := email_subject || lf || lf || email_text;
          email_notify := failure_notify;
-         for k in 1 .. 21 loop
+         for k in 1 .. 20 loop
             if cleanup(k) is not null then
                append_email_text('CLEANUP: ' || cleanup(k));
                execute immediate cleanup(k);
@@ -2164,6 +2150,22 @@ create or replace package body create_storet_objects
          end loop;
       end if;
 
+      if message is null then
+         drop_old_stuff;
+         if message is null then
+            append_email_text('completed. (success)');
+            message := 'OK';
+            email_subject := 'storet successful';
+            email_text := email_subject || lf || lf || email_text || lf || 'have a nice day!' || lf || '-barry''s program';
+            email_notify := success_notify;
+         else
+            append_email_text('completed. (failed)');
+            dbms_output.put_line('errors occurred.');
+            email_subject := 'storet FAILED in drop_old_stuff';
+            email_text := email_subject || lf || lf || email_text;
+            email_notify := failure_notify;
+         end if;
+      end if;
       
       $IF $$ci_db $THEN
          dbms_output.put_line('Not emailing from ci database.');
