@@ -1212,7 +1212,7 @@ create or replace package body create_storet_objects
       execute immediate
       'create table characteristicname' || suffix || ' compress pctfree 0 nologging as
        select code_value,
-              cast(null as varchar2(4000 char)) descr,
+              cast(null as varchar2(4000 char)) description,
               rownum sort_order
          from (select distinct characteristic_name code_value
                  from fa_regular_result' || suffix || '
@@ -1223,7 +1223,7 @@ create or replace package body create_storet_objects
       execute immediate
       'create table organization' || suffix || ' compress pctfree 0 nologging as
        select code_value,
-              cast(null as varchar2(4000 char)) descr,
+              cast(null as varchar2(4000 char)) description,
               rownum sort_order
          from (select distinct organization_id code_value
                  from fa_station' || suffix || '
@@ -1234,7 +1234,7 @@ create or replace package body create_storet_objects
       execute immediate
       'create table samplemedia' || suffix || ' compress pctfree 0 nologging as
        select code_value,
-              cast(null as varchar2(4000 char)) descr,
+              cast(null as varchar2(4000 char)) description,
               rownum sort_order
          from (select distinct activity_medium as code_value
                  from di_activity_medium' || suffix || '
@@ -1249,7 +1249,7 @@ create or replace package body create_storet_objects
       execute immediate
       'create table sitetype' || suffix || ' compress pctfree 0 nologging as
        select code_value,
-              cast(null as varchar2(4000 char)) descr,
+              cast(null as varchar2(4000 char)) description,
               rownum sort_order
          from (select distinct station_group_type code_value
                  from fa_station' || suffix || '
