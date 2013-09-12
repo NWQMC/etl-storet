@@ -13,6 +13,14 @@
 		</exec>
 	</target>
 	
+	<target name="buildPackageEros">
+		<echo>Rebuiling the etl database pacakge and body</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
+			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
+		</exec>
+	</target>
+	
 	<target name="compilePackageEmptyCiDB">
 		<echo>Rebuiling the etl database pacakge and body</echo>
 		<exec executable="sqlplus" failonerror="true">
