@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export work=/opt/tomcat/wqp/storet
+export work= /home/storet_user/storet
 # export work=/b_test_dir/oradata/storet_20110822
 export file_stub=stormodb_shire_storetw
 export explog=${file_stub}_expdp.log
