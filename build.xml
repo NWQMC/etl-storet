@@ -44,6 +44,11 @@
 		<scp file="storet_auto_load.bash" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
 	</target>
 
+	<target name="scpScriptStage">
+		<echo>Copy the script to ${storet_host}</echo>
+		<scp file="storet_dump.sh" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
+	</target>
+
 	<target name="dos2unix">
 		<echo>Fix cr/lf</echo>
 		<sshexec host="${storet_host}"
@@ -51,6 +56,15 @@
 			username="storet_user"
 			password="${storet_password}"
 			command="dos2unix storet_auto_load.bash"/>
+	</target>
+	
+	<target name="dos2unixStage">
+		<echo>Fix cr/lf</echo>
+		<sshexec host="${storet_host}"
+			trust="true"
+			username="storet_user"
+			password="${storet_password}"
+			command="dos2unix storet_dump.sh"/>
 	</target>
 	
 	<target name="qwStoretEtl">
