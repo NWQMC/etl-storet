@@ -14,7 +14,7 @@
 	</target>
 	
 	<target name="buildPackageEros">
-		<echo>Rebuiling the etl database pacakge and body</echo>
+		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
@@ -61,6 +61,17 @@
 			username="storet_user"
 			password="${storet_password}"
 			command="bash -e storet_auto_load.bash"
+		/>
+	</target>
+	
+	<target name="qwStoretEtlStage">
+		<echo>Run the script</echo>
+		<sshexec host="${storet_host}"
+			trust="true"
+			failonerror="true"
+			username="storet_user"
+			password="${storet_password}"
+			command="bash -e storet_dump.sh"
 		/>
 	</target>
 	
