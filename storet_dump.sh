@@ -1,7 +1,6 @@
 #!/bin/bash
 
-export work= /home/storet_user/storet
-# export work=/b_test_dir/oradata/storet_20110822
+export work=/u01/oradata/dbstage/pdc_temp
 export file_stub=stormodb_shire_storetw
 export explog=${file_stub}_expdp.log
 export expref=${file_stub}_expdp.ref
