@@ -13,14 +13,6 @@
 		</exec>
 	</target>
 	
-	<target name="buildPackageEros">
-		<echo>Rebuiling the etl database package and body at EROS</echo>
-		<exec executable="sqlplus" failonerror="true">
-			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
-		</exec>
-	</target>
-	
 	<target name="compilePackageEmptyCiDB">
 		<echo>Rebuiling the etl database pacakge and body</echo>
 		<exec executable="sqlplus" failonerror="true">
@@ -44,11 +36,6 @@
 		<scp file="storet_auto_load.bash" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
 	</target>
 
-	<target name="scpScriptStage">
-		<echo>Copy the script to ${storet_host}</echo>
-		<scp file="storet_dump.sh" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
-	</target>
-
 	<target name="dos2unix">
 		<echo>Fix cr/lf</echo>
 		<sshexec host="${storet_host}"
@@ -56,15 +43,6 @@
 			username="storet_user"
 			password="${storet_password}"
 			command="dos2unix storet_auto_load.bash"/>
-	</target>
-	
-	<target name="dos2unixStage">
-		<echo>Fix cr/lf</echo>
-		<sshexec host="${storet_host}"
-			trust="true"
-			username="storet_user"
-			password="${storet_password}"
-			command="dos2unix storet_dump.sh"/>
 	</target>
 	
 	<target name="qwStoretEtl">
@@ -78,7 +56,31 @@
 		/>
 	</target>
 	
-	<target name="qwStoretEtlStage">
+	<target name="defaultEros" depends="buildPackageEros, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, runPackage"/>
+
+	<target name="buildPackageEros">
+		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
+			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
+		</exec>
+	</target>
+	
+	<target name="scpScriptStage">
+		<echo>Copy the script to ${storet_host}</echo>
+		<scp file="storet_dump.sh" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
+	</target>
+
+	<target name="dos2unixStage">
+		<echo>Fix cr/lf</echo>
+		<sshexec host="${storet_host}"
+			trust="true"
+			username="storet_user"
+			password="${storet_password}"
+			command="dos2unix storet_dump.sh"/>
+	</target>
+	
+	<target name="pullStoretWData">
 		<echo>Run the script</echo>
 		<sshexec host="${storet_host}"
 			trust="true"
@@ -89,10 +91,18 @@
 		/>
 	</target>
 	
+	<target name="dropStoretWTables">
+		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
+			<arg value="@${basedir}/storetw_drops.sql"/>
+		</exec>
+	</target>
+	
 	<target name="importViaDataPump">
 		<echo>Using impdp to load the storetw schema</echo>
 		<exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
-			<arg value="userid=storetw/${storetw_password}@dbstage.er.usgs.gov"/>
+			<arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
 			<arg value="parfile=impdp.par"/>
 		</exec>
 	</target>
