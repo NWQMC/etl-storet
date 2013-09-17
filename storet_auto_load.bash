@@ -103,7 +103,7 @@ fi
 export work=/b_test_dir/oradata/storet_20110822
 export storetpass=`cat $work/.storet`
 export success_notify=bheck@usgs.gov
-export failure_notify=bheck@usgs.gov
+export failure_notify='bheck@usgs.gov,jkreft@usgs.gov'
 sqlplus /nolog << EOT
 connect STORETMODERN/$storetpass@widw.er.usgs.gov
 whenever sqlerror exit sql.sqlcode
