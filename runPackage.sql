@@ -1,4 +1,5 @@
 show user;
+select * from global_name;
 whenever sqlerror exit failure rollback;
 whenever oserror exit failure rollback;
 set timing on;
