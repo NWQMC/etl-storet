@@ -56,9 +56,17 @@
 		/>
 	</target>
 	
-	<target name="defaultEros" depends="buildPackageEros, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, runPackage"/>
+	<target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, runPackageStage, buildPackageDw, runPackage"/>
 
-	<target name="buildPackageEros">
+	<target name="buildPackageStage">
+		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
+			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
+		</exec>
+	</target>
+	
+	<target name="buildPackageDw">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
@@ -107,4 +115,14 @@
 		</exec>
 	</target>
 	
+	<target name="runPackageStage">
+		<echo>Running the main ETL Package</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
+			<arg value="@${basedir}/runPackage.sql"/>
+			<arg value="${success_notify}"/>
+			<arg value="${failure_notify}"/>
+		</exec>
+	</target>
+
 </project>
