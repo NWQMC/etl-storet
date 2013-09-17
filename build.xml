@@ -91,8 +91,7 @@
 	
 	<target name="importViaDataPump">
 		<echo>Using impdp to load the storetw schema</echo>
-		<exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
-			<arg value='userid=storetw/***REMOVED***@dbstage.er.usgs.gov directory=pdc_temp dumpfile=stormodb_shire_storetw_%u.cdmp logfile=stormod_shire_storetw_impdp.log "tables=(FA_STATION,FA_REGULAR_RESULT,DI_ACTIVITY_MATRIX,DI_ACTIVITY_MEDIUM,DI_CHARACTERISTIC,DI_GEO_COUNTY,DI_GEO_STATE,DI_ORG,DI_STATN_TYPES, LU_MAD_HMETHOD,LU_MAD_HDATUM,LU_MAD_VMETHOD,LU_MAD_VDATUM,MT_WH_CONFIG)" EXCLUDE=constraint,index,grant'/>
+		<exec executable='/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp userid=storetw/***REMOVED***@dbstage.er.usgs.gov directory=pdc_temp dumpfile=stormodb_shire_storetw_%u.cdmp logfile=stormod_shire_storetw_impdp.log "tables=(FA_STATION,FA_REGULAR_RESULT,DI_ACTIVITY_MATRIX,DI_ACTIVITY_MEDIUM,DI_CHARACTERISTIC,DI_GEO_COUNTY,DI_GEO_STATE,DI_ORG,DI_STATN_TYPES, LU_MAD_HMETHOD,LU_MAD_HDATUM,LU_MAD_VMETHOD,LU_MAD_VDATUM,MT_WH_CONFIG)" EXCLUDE=constraint,index,grant' failonerror="true">/>
 		</exec>
 	</target>
 	
