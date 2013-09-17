@@ -1338,12 +1338,12 @@ create or replace package body create_storet_objects
          end if;
       end if;
       
-      $IF $$ci_db $THEN
-         dbms_output.put_line('Not emailing from ci database.');
-         dbms_output.put_line(email_text);
-	  $ELSE
-         utl_mail.send@witrans(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
-      $END
+--      $IF $$ci_db $THEN
+--         dbms_output.put_line('Not emailing from ci database.');
+--         dbms_output.put_line(email_text);
+--	  $ELSE
+--         utl_mail.send@witrans(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
+--      $END
       mesg := message;
 
    end main;
