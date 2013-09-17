@@ -3,6 +3,7 @@
 export ORACLE_SID=barry
 export ORACLE_HOME=`cat /etc/oratab | grep ^${ORACLE_SID}: | awk -F: '{print $2}'`
 export PATH=$PATH:$ORACLE_HOME/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 
 export work=/b_test_dir/oradata/storet_20110822
 export file_stub=stormodb_shire_storetw
