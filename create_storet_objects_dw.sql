@@ -146,6 +146,75 @@ create or replace package body create_storet_objects
 
       cleanup(1) := 'drop table fa_regular_result' || suffix || ' cascade constraints purge';
 
+      execute immediate 'insert /*+ append nologging */ into fa_regular_result' || suffix || '
+      select /*+  full(FA_REGULAR_RESULT_NO_SOURCE) parallel(FA_REGULAR_RESULT_NO_SOURCE, 4)*/
+         PK_ISN,
+         ORGANIZATION_ID,
+         STATION_ID,
+         ACTIVITY_START_DATE_TIME,
+         ACT_START_TIME_ZONE,
+         TRIP_ID,
+         CHARACTERISTIC_GROUP_TYPE,
+         CHARACTERISTIC_NAME,
+         RESULT_VALUE,
+         RESULT_UNIT,
+         RESULT_VALUE_TEXT,
+         SAMPLE_FRACTION_TYPE,
+         RESULT_VALUE_TYPE,
+         STATISTIC_TYPE,
+         RESULT_VALUE_STATUS,
+         WEIGHT_BASIS_TYPE,
+         TEMPERATURE_BASIS_LEVEL,
+         DURATION_BASIS,
+         ANALYTICAL_PROCEDURE_SOURCE,
+         ANALYTICAL_PROCEDURE_ID,
+         LAB_NAME,
+         ANALYSIS_DATE_TIME,
+         DETECTION_LIMIT,
+         DETECTION_LIMIT_UNIT,
+         DETECTION_LIMIT_DESCRIPTION,
+         LAB_REMARK,
+         PARTICLE_SIZE,
+         PRECISION,
+         ACTIVITY_MEDIUM,
+         FK_STATION,
+         FK_ORG,
+         FK_GEO_COUNTY,
+         FK_GEO_STATE,
+         FK_ACT_MEDIUM,
+         FK_ACT_MATRIX,
+         FK_CHAR,
+         FK_UNIT_CONVERSION,
+         ACTIVITY_ID,
+         REPLICATE_NUMBER,
+         ACTIVITY_TYPE,
+         ACTIVITY_STOP_DATE_TIME,
+         ACT_STOP_TIME_ZONE,
+         ACTIVITY_DEPTH,
+         ACTIVITY_DEPTH_UNIT,
+         ACTIVITY_UPPER_DEPTH,
+         ACTIVITY_LOWER_DEPTH,
+         UPR_LWR_DEPTH_UNIT,
+         FIELD_PROCEDURE_ID,
+         FIELD_GEAR_ID,
+         RESULT_COMMENT,
+         ITIS_NUMBER,
+         ACTIVITY_COMMENT,
+         ACTIVITY_DEPTH_REF_POINT,
+         PROJECT_ID,
+         RESULT_MEAS_QUAL_CODE,
+         ACTIVITY_COND_ORG_TEXT,
+         RESULT_DEPTH_MEAS_VALUE,
+         RESULT_DEPTH_MEAS_UNIT_CODE,
+         RESULT_DEPTH_ALT_REF_PT_TXT,
+         SOURCE_SYSTEM,
+         LAB_SAMP_PRP_METHOD_ID,
+         LAB_SAMP_PRP_START_DATE_TIME
+      FROM
+         FA_REGULAR_RESULT_NO_SOURCE';
+         
+      commit;
+
      exception
       when others then
          message := 'FAIL to create fa_regular_result: ' || SQLERRM;
