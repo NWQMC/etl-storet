@@ -253,17 +253,6 @@ create or replace package body create_storet_objects
 
       cleanup(3) := 'drop table STORET_STATION_SUM' || suffix || ' cascade constraints purge';
 
-      append_email_text('creating storet_result_sumt...');
-
-      /* temp table -- bug prevents us from doing this all in one... */
-      execute immediate
-     'create table storet_result_sumt' || suffix || ' pctfree 0 nologging parallel 4
-         as
-         select *
-           from storet_result_sumt@storetmodern_dbstage.er.usgs.gov';
-
-      cleanup(4) := 'drop table storet_result_sumt' || suffix || ' cascade constraints purge';
-
       append_email_text('creating storet_result_sum...');
 
       execute immediate
@@ -299,7 +288,7 @@ create or replace package body create_storet_objects
          select *
            from storet_result_sum@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(5) := 'drop table storet_result_sum' || suffix || ' cascade constraints purge';
+      cleanup(4) := 'drop table storet_result_sum' || suffix || ' cascade constraints purge';
 
       append_email_text('creating storet_result_ct_sum...');
 
@@ -322,7 +311,7 @@ create or replace package body create_storet_objects
         as select *
          from storet_result_ct_sum@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(6) := 'drop table storet_result_ct_sum' || suffix || ' cascade constraints purge';
+      cleanup(5) := 'drop table storet_result_ct_sum' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table storetmodern.storet_result_nr_sum' || suffix || ' pctfree 0 cache compress nologging parallel 4
@@ -356,7 +345,7 @@ create or replace package body create_storet_objects
         as select *
             from storet_result_nr_sum@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(7) := 'drop table storet_result_nr_sum' || suffix || ' cascade constraints purge';
+      cleanup(6) := 'drop table storet_result_nr_sum' || suffix || ' cascade constraints purge';
 
       append_email_text('creating storet_lctn_loc...');
 
@@ -365,7 +354,7 @@ create or replace package body create_storet_objects
       select *
         from storet_lctn_loc@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(8) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
+      cleanup(7) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
       
    exception
       when others then
@@ -384,117 +373,117 @@ create or replace package body create_storet_objects
       select *
         from di_activity_matrix@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(9) := 'drop table di_activity_matrix' || suffix || ' cascade constraints purge';
+      cleanup(8) := 'drop table di_activity_matrix' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table di_activity_medium' || suffix || ' compress pctfree 0 nologging as
       select *
         from di_activity_medium@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(10) := 'drop table di_activity_medium' || suffix || ' cascade constraints purge';
+      cleanup(9) := 'drop table di_activity_medium' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table di_characteristic' || suffix || ' compress pctfree 0 nologging as
       select *
         from di_characteristic@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(11) := 'drop table di_characteristic' || suffix || ' cascade constraints purge';
+      cleanup(10) := 'drop table di_characteristic' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table di_geo_county' || suffix || ' compress pctfree 0 nologging as
       select *
         from di_geo_county@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(12) := 'drop table di_geo_county' || suffix || ' cascade constraints purge';
+      cleanup(11) := 'drop table di_geo_county' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table di_geo_state' || suffix || ' compress pctfree 0 nologging as
       select *
         from di_geo_state@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(13) := 'drop table di_geo_state' || suffix || ' cascade constraints purge';
+      cleanup(12) := 'drop table di_geo_state' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table di_org' || suffix || ' compress pctfree 0 nologging as
       select *
         from di_org@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(14) := 'drop table di_org' || suffix || ' cascade constraints purge';
+      cleanup(13) := 'drop table di_org' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table di_statn_types' || suffix || ' compress pctfree 0 nologging as
       select *
         from di_statn_types@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(15) := 'drop table di_statn_types' || suffix || ' cascade constraints purge';
+      cleanup(14) := 'drop table di_statn_types' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table lu_mad_hmethod' || suffix || ' compress pctfree 0 nologging as
       select *
         from lu_mad_hmethod@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(16) := 'drop table lu_mad_hmethod' || suffix || ' cascade constraints purge';
+      cleanup(15) := 'drop table lu_mad_hmethod' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table lu_mad_hdatum' || suffix || ' compress pctfree 0 nologging as
       select *
         from lu_mad_hdatum@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(17) := 'drop table lu_mad_hdatum' || suffix || ' cascade constraints purge';
+      cleanup(16) := 'drop table lu_mad_hdatum' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table lu_mad_vmethod' || suffix || ' compress pctfree 0 nologging as
       select *
         from lu_mad_vmethod@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(18) := 'drop table lu_mad_vmethod' || suffix || ' cascade constraints purge';
+      cleanup(17) := 'drop table lu_mad_vmethod' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table lu_mad_vdatum' || suffix || ' compress pctfree 0 nologging as
       select *
         from lu_mad_vdatum@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(19) := 'drop table lu_mad_vdatum' || suffix || ' cascade constraints purge';
+      cleanup(18) := 'drop table lu_mad_vdatum' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table mt_wh_config' || suffix || ' compress pctfree 0 nologging as
       select *
         from mt_wh_config@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(20) := 'drop table mt_wh_config' || suffix || ' cascade constraints purge';
+      cleanup(19) := 'drop table mt_wh_config' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
       select *
         from storet_sum@storetmodern_dbstage.er.usgs.gov';
 
-      cleanup(21) := 'drop table storet_sum' || suffix || ' cascade constraints purge';
+      cleanup(20) := 'drop table storet_sum' || suffix || ' cascade constraints purge';
       
       execute immediate
       'create table characteristicname' || suffix || ' compress pctfree 0 nologging as
        select *
          from characteristicname@storetmodern_dbstage.er.usgs.gov';
-      cleanup(22) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
+      cleanup(21) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
 
       execute immediate
       'create table organization' || suffix || ' compress pctfree 0 nologging as
        select *
          from organization@storetmodern_dbstage.er.usgs.gov';
-      cleanup(23) := 'drop table organization' || suffix || ' cascade constraints purge';
+      cleanup(22) := 'drop table organization' || suffix || ' cascade constraints purge';
 
             
       execute immediate
       'create table samplemedia' || suffix || ' compress pctfree 0 nologging as
        select *
          from samplemedia@storetmodern_dbstage.er.usgs.gov';
-      cleanup(24) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
+      cleanup(23) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
 
             
       execute immediate
       'create table sitetype' || suffix || ' compress pctfree 0 nologging as
        select *
          from sitetype@storetmodern_dbstage.er.usgs.gov';
-      cleanup(25) := 'drop table sitetype' || suffix || ' cascade constraints purge';
+      cleanup(24) := 'drop table sitetype' || suffix || ' cascade constraints purge';
 
    exception
       when others then
