@@ -56,21 +56,13 @@
 		/>
 	</target>
 	
-	<target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, runPackageStage, buildPackageDw, runPackage"/>
+	<target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackage"/>
 
 	<target name="buildPackageStage">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
 			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
-		</exec>
-	</target>
-	
-	<target name="buildPackageDw">
-		<echo>Rebuiling the etl database package and body at EROS</echo>
-		<exec executable="sqlplus" failonerror="true">
-			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-			<arg value="@${basedir}/create_storet_objects_dw.sql"/>
 		</exec>
 	</target>
 	
@@ -115,6 +107,14 @@
 		</exec>
 	</target>
 	
+	<target name="grantsOnStoretWTables">
+		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
+			<arg value="@${basedir}/storetw_grants.sql"/>
+		</exec>
+	</target>
+	
 	<target name="runPackageStage">
 		<echo>Running the main ETL Package</echo>
 		<exec executable="sqlplus" failonerror="true">
@@ -125,4 +125,12 @@
 		</exec>
 	</target>
 
+	<target name="buildPackageDw">
+		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<exec executable="sqlplus" failonerror="true">
+			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
+			<arg value="@${basedir}/create_storet_objects_dw.sql"/>
+		</exec>
+	</target>
+	
 </project>
