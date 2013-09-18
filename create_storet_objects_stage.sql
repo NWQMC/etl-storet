@@ -296,7 +296,7 @@ create or replace package body create_storet_objects
       append_email_text('creating storet_result_sum...');
 
       execute immediate 'truncate table storet_result_sum';
-      execute immediate 'insert /*+ append nologging */ into storet_result_sumt
+      execute immediate 'insert /*+ append nologging */ into storet_result_sum
          select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) use_hash(a) use_hash(b) */
             b.fk_station,
             a.station_id,
