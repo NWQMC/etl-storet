@@ -820,30 +820,30 @@ create or replace package body create_storet_objects
 
 
       append_email_text('grants...');
-      execute immediate 'grant select on fa_station'           || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_activity_medium'   || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_characteristic'    || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_geo_county'        || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_geo_state'         || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_org'               || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on di_statn_types'       || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on lu_mad_hmethod'       || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on lu_mad_hdatum'        || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on lu_mad_vmethod'       || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on lu_mad_vdatum'        || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on mt_wh_config'         || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on storet_sum'           || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on storet_station_sum'   || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on storet_result_sum'    || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on characteristicname'   || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on organization'         || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on samplemedia'          || suffix || ' to storetuser, nwq_stg';
-      execute immediate 'grant select on sitetype'             || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on fa_station'           || suffix || ' to storetuser';
+      execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser';
+      execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser';
+      execute immediate 'grant select on di_activity_medium'   || suffix || ' to storetuser';
+      execute immediate 'grant select on di_characteristic'    || suffix || ' to storetuser';
+      execute immediate 'grant select on di_geo_county'        || suffix || ' to storetuser';
+      execute immediate 'grant select on di_geo_state'         || suffix || ' to storetuser';
+      execute immediate 'grant select on di_org'               || suffix || ' to storetuser';
+      execute immediate 'grant select on di_statn_types'       || suffix || ' to storetuser';
+      execute immediate 'grant select on lu_mad_hmethod'       || suffix || ' to storetuser';
+      execute immediate 'grant select on lu_mad_hdatum'        || suffix || ' to storetuser';
+      execute immediate 'grant select on lu_mad_vmethod'       || suffix || ' to storetuser';
+      execute immediate 'grant select on lu_mad_vdatum'        || suffix || ' to storetuser';
+      execute immediate 'grant select on mt_wh_config'         || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_sum'           || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_station_sum'   || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_result_sum'    || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser';
+      execute immediate 'grant select on characteristicname'   || suffix || ' to storetuser';
+      execute immediate 'grant select on organization'         || suffix || ' to storetuser';
+      execute immediate 'grant select on samplemedia'          || suffix || ' to storetuser';
+      execute immediate 'grant select on sitetype'             || suffix || ' to storetuser';
 
       append_email_text('analyze fa_station...');  /* takes about 1.5 minutes*/
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
