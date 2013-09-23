@@ -90,6 +90,7 @@
 			command="bash -e storet_dump.sh"
 			outputproperty="${basedir}/ssh.output"
 		/>
+		<echoproperties/>
 	</target>
 	
 	<target name="dropStoretWTables">
