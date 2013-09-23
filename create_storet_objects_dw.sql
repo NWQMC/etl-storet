@@ -1239,7 +1239,7 @@ create or replace package body create_storet_objects
       fetch c into grant_count;
       close c;
 
-      if grant_count < 28 then
+      if grant_count < 23 then /* without nwq_stg there are 24... */
          pass_fail := 'FAIL';
       else
          pass_fail := 'PASS';
