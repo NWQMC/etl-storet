@@ -21,7 +21,7 @@
 		</exec>
 	</target>
 	
-	<target name="runPackage" unless="stopRun">
+	<target name="runPackage" depends="setStopRun" unless="stopRun">
 		<echo>Running the main ETL Package</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
@@ -100,7 +100,7 @@
 		<echoproperties/>
 	</target>
 		
-	<target name="dropStoretWTables" unless="stopRun">
+	<target name="dropStoretWTables" depends="setStopRun" unless="stopRun">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
@@ -108,7 +108,7 @@
 		</exec>
 	</target>
 	
-	<target name="importViaDataPump" unless="stopRun">
+	<target name="importViaDataPump" depends="setStopRun" unless="stopRun">
 		<echo>Using impdp to load the storetw schema</echo>
 		<exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
 			<arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
@@ -116,7 +116,7 @@
 		</exec>
 	</target>
 	
-	<target name="grantsOnStoretWTables" unless="stopRun">
+	<target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
@@ -124,7 +124,7 @@
 		</exec>
 	</target>
 	
-	<target name="runPackageStage" unless="stopRun">
+	<target name="runPackageStage" depends="setStopRun" unless="stopRun">
 		<echo>Running the main ETL Package</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
@@ -134,7 +134,7 @@
 		</exec>
 	</target>
 
-	<target name="buildPackageDw" unless="stopRun">
+	<target name="buildPackageDw" depends="setStopRun" unless="stopRun">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
