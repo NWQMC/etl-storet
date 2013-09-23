@@ -88,14 +88,18 @@
 			username="storet_user"
 			password="${storet_password}"
 			command="bash -e storet_dump.sh"
-			outputproperty="jimbob"
+			outputproperty="pullResult"
 		/>
+	</target>
+
+	<target name="setContinueRun">
+		<echo>Check if we had changes and should continue</echo>
+		<condition property="continueRun">
+			<contains string="${pullResult}" substring="Since no differences, quitting." />
+		</condition>
 		<echoproperties/>
 	</target>
-	<target name="janebecky">
-		<echoproperties/>
-	</target>
-	
+		
 	<target name="dropStoretWTables">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
