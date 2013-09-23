@@ -88,8 +88,11 @@
 			username="storet_user"
 			password="${storet_password}"
 			command="bash -e storet_dump.sh"
-			outputproperty="${basedir}/ssh.output"
+			outputproperty="jimbob"
 		/>
+		<echoproperties/>
+	</target>
+	<target name="janebecky">
 		<echoproperties/>
 	</target>
 	
