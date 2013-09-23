@@ -21,7 +21,7 @@
 		</exec>
 	</target>
 	
-	<target name="runPackage">
+	<target name="runPackage" unless="stopRun">
 		<echo>Running the main ETL Package</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
@@ -92,15 +92,15 @@
 		/>
 	</target>
 
-	<target name="setContinueRun">
+	<target name="setStopRun">
 		<echo>Check if we had changes and should continue</echo>
-		<condition property="continueRun">
+		<condition property="stopRun">
 			<contains string="${pullResult}" substring="Since no differences, quitting." />
 		</condition>
 		<echoproperties/>
 	</target>
 		
-	<target name="dropStoretWTables">
+	<target name="dropStoretWTables" unless="stopRun">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
@@ -108,7 +108,7 @@
 		</exec>
 	</target>
 	
-	<target name="importViaDataPump">
+	<target name="importViaDataPump" unless="stopRun">
 		<echo>Using impdp to load the storetw schema</echo>
 		<exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
 			<arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
@@ -116,7 +116,7 @@
 		</exec>
 	</target>
 	
-	<target name="grantsOnStoretWTables">
+	<target name="grantsOnStoretWTables" unless="stopRun">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
@@ -124,7 +124,7 @@
 		</exec>
 	</target>
 	
-	<target name="runPackageStage">
+	<target name="runPackageStage" unless="stopRun">
 		<echo>Running the main ETL Package</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
@@ -134,7 +134,7 @@
 		</exec>
 	</target>
 
-	<target name="buildPackageDw">
+	<target name="buildPackageDw" unless="stopRun">
 		<echo>Rebuiling the etl database package and body at EROS</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
