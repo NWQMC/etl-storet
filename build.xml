@@ -88,7 +88,7 @@
 			username="storet_user"
 			password="${storet_password}"
 			command="bash -e storet_dump.sh"
-			outproperty="ssh.output"
+			outputproperty="ssh.output"
 		/>
 	</target>
 	
