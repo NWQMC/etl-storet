@@ -283,7 +283,7 @@ create or replace package body create_storet_objects
             left join di_geo_county c
               on a.fk_geo_county = c.pk_isn
             left join di_org d
-              on a.organization_id = d.organization_id
+              on a.fk_org = d.pk_isn
             left join (select fk_station, count(*) result_count from fa_regular_result group by fk_station) e
               on a.pk_isn = e.fk_station
          order by
