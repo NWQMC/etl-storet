@@ -1400,7 +1400,7 @@ create or replace package body create_storet_objects
          dbms_output.put_line('Not emailing from ci database.');
          dbms_output.put_line(email_text);
 	  $ELSE
-         utl_mail.send@dbtrans(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
+         utl_mail.send@dbtrans.er.usgs.gov(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
       $END
       mesg := message;
 
