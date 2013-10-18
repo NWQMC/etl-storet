@@ -1199,7 +1199,7 @@ create or replace package body create_storet_objects
          cast(sum(case when months_between(sysdate, activity_start_date_time) between 0 and 12 then 1 else 0 end) as number(7)) as results_past_12_months,
          cast(sum(case when months_between(sysdate, activity_start_date_time) between 0 and 60 then 1 else 0 end) as number(7)) as results_past_60_months,
          cast(count(*) as number(7)) as results_all_time
-      from
+      from /* TODO remove join*/
          fa_regular_result' || suffix || '  result,
          fa_station'        || suffix || '  station,
          di_geo_state'      || suffix || '  state,
