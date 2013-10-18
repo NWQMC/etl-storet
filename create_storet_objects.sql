@@ -708,7 +708,7 @@ create or replace package body create_storet_objects
       /* FK_STATE_POSTAL_CODE,    */
          fa_station.SOURCE_SYSTEM,
       /* SOURCE_UID,              */
-         fa_station.GEOM,                       /* OK */
+/*         fa_station.GEOM,  */                     /* OK */
       /* WELL_TYPE_NAME,          */
       /* WELL_FORMATION_TYPE,     */
       /* WELL_HOLE_DEPTH,         */
@@ -732,7 +732,7 @@ create or replace package body create_storet_objects
          di_geo_state.country_code country_cd,
          di_geo_state.country_name country_name,
          rtrim(di_geo_state.fips_state_code) state_cd,
-         di_geo_state.state_name
+         di_geo_state.state_name,
          di_geo_county.fips_county_code county_cd,
          di_geo_county.county_name,
          nvl(lu_mad_hmethod.geopositioning_method, ''Unknown'') geopositioning_method,
@@ -750,12 +750,17 @@ create or replace package body create_storet_objects
            left join lu_mad_vdatum@storetw on fk_mad_vdatum = lu_mad_vdatum.pk_isn';
 
       cleanup(2) := 'drop table FA_STATION' || suffix || ' cascade constraints purge';
+      
+      execute immediate 'alter table fa_station' || suffix || ' add geom (geom mdsys.sdo_geometry)';
+      execute immediate 'update fa_station' || suffix || ' set geom = mdsys.sdo_geometry(2001, 8307, mdsys.sdo_point_type(wgs84_longitude, wgs84_latitude, null), null, null)
+                          where wgs84_latitude is not null and
+                                wgs84_longitude is not null';
+      
    exception
       when others then
          message := 'FAIL to create FA_STATION: ' || SQLERRM;
          append_email_text(message);
    end create_station;
-
 
   procedure create_summaries
    is
