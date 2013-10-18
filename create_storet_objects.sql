@@ -50,7 +50,8 @@ create or replace package body create_storet_objects
                                       '''DI_STATN_TYPES_00000'',''LU_MAD_HMETHOD_00000'',''LU_MAD_HDATUM_00000'',''LU_MAD_VMETHOD_00000'',' ||
                                       '''LU_MAD_VDATUM_00000'',''MT_WH_CONFIG_00000'',''STORET_SUM_00000'',''STORET_STATION_SUM_00000'',''STORET_RESULT_SUMT_00000'',' ||
                                       '''STORET_RESULT_SUM_00000'',''STORET_RESULT_CT_SUM_00000'',''STORET_RESULT_NR_SUM_00000'',''STORET_LCTN_LOC_00000'',' ||
-                                      '''CHARACTERISTICNAME_00000'',''ORGANIZATION_00000'',''SAMPLEMEDIA_00000'',''SITETYPE_00000'')';
+                                      '''CHARACTERISTICNAME_00000'',''CHARACTERISTICTYPE_00000'',''COUNTRY_00000'',''COUNTY_00000'',''ORGANIZATION_00000'',' ||
+                                      '''SAMPLEMEDIA_00000'',''SITETYPE_00000'',''STATE_00000'')';
                                       
    type cursor_type is ref cursor;
 
@@ -288,7 +289,7 @@ create or replace package body create_storet_objects
          LAB_SAMP_PRP_METHOD_ID,  /* OK */
       /* LAB_SAMP_PRP_METHOD_CONTEXT, */
       /* LAB_SAMP_PRP_METHOD_QUAL_TYPE, */
-         LAB_SAMP_PRP_START_DATE_TIME  /*, */  /* OK */
+         LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
       /* LAB_SAMP_PRP_START_TMZONE, */
       /* LAB_SAMP_PRP_END_DATE_TIME, */
       /* LAB_SAMP_PRP_END_TMZONE, */
@@ -296,8 +297,9 @@ create or replace package body create_storet_objects
       /* SAMPLING_POINT_NAME, */
       /* LAST_TRANSACTION_ID, */
       /* FK_DATE_LC */
-      FROM
-         FA_REGULAR_RESULT_NO_SOURCE';
+         di_activity_matrix.matrix_name
+      from fa_regular_result_no_source
+           left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn';
 
       cleanup(1) := 'drop table FA_REGULAR_RESULT' || suffix || ' cascade constraints purge';
 
@@ -450,7 +452,7 @@ create or replace package body create_storet_objects
          LAB_SAMP_PRP_METHOD_ID,  /* OK */
       /* LAB_SAMP_PRP_METHOD_CONTEXT, */
       /* LAB_SAMP_PRP_METHOD_QUAL_TYPE, */
-         LAB_SAMP_PRP_START_DATE_TIME  /*, */  /* OK */
+         LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
       /* LAB_SAMP_PRP_START_TMZONE, */
       /* LAB_SAMP_PRP_END_DATE_TIME, */
       /* LAB_SAMP_PRP_END_TMZONE, */
@@ -458,12 +460,13 @@ create or replace package body create_storet_objects
       /* SAMPLING_POINT_NAME, */
       /* LAST_TRANSACTION_ID, */
       /* FK_DATE_LC */
+         matrix_name
        )
        SELECT
          PK_ISN,                      /* might be handy*/
          ORGANIZATION_ID,             /* OK */
       /* ORGANIZATION_IS_NUMBER,   */
-         STATION_ID,                        /* OK */
+         a.organization_id || ''-'' || station_id STATION_ID,                        /* OK */
       /* STATION_NAME,                      */
          ACTIVITY_START_DATE_TIME,          /* OK */
          ACT_START_TIME_ZONE,          /* OK */
@@ -606,7 +609,7 @@ create or replace package body create_storet_objects
          LAB_SAMP_PRP_METHOD_ID,  /* OK */
       /* LAB_SAMP_PRP_METHOD_CONTEXT, */
       /* LAB_SAMP_PRP_METHOD_QUAL_TYPE, */
-         LAB_SAMP_PRP_START_DATE_TIME  /*, */  /* OK */
+         LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
       /* LAB_SAMP_PRP_START_TMZONE, */
       /* LAB_SAMP_PRP_END_DATE_TIME, */
       /* LAB_SAMP_PRP_END_TMZONE, */
@@ -614,8 +617,9 @@ create or replace package body create_storet_objects
       /* SAMPLING_POINT_NAME, */
       /* LAST_TRANSACTION_ID, */
       /* FK_DATE_LC */
-      FROM
-         FA_REGULAR_RESULT@storetw';
+         di_activity_matrix.matrix_name
+      from fa_regular_result@storetw
+           left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn';
 
      exception
       when others then
@@ -632,8 +636,8 @@ create or replace package body create_storet_objects
       execute immediate
      'create table fa_station' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
       select
-         STATION_ID,                /* OK */
-         STATION_NAME,              /* OK */
+         organization_id || ''-'' || station_id STATION_ID,                /* OK */
+         trim(fa_station.station_name) as station_name,              /* OK */
          ORGANIZATION_ID,           /* OK */
          /* LOCATION_POINT_TYPE,     */
          /* POINT_SEQUENCE_NUMBER,   */
@@ -641,7 +645,7 @@ create or replace package body create_storet_objects
          /* PIPE_NUMBER,             */
          LATITUDE,                  /* OK */
          LONGITUDE,                 /* OK */
-         MAP_SCALE,                 /* OK */
+         regexp_substr(fa_station.map_scale, ''[[:digit:]]+$'') map_scale,                 /* OK */
          ELEVATION,                 /* OK */
       /* HYDROLOGIC_UNIT_CODE,    */
          GENERATED_HUC,             /* OK */
@@ -670,7 +674,7 @@ create or replace package body create_storet_objects
       /* POINT_NAME,              */
       /* BLOB_TITLE,              */
       /* TSMALP_IS_NUMBER,        */
-         DESCRIPTION_TEXT,           /* OK */
+         trim(fa_station.description_text) as description_text,           /* OK */
       /* LAST_USERID,             */
       /* LAST_CHANGE_DATE,        */
          PROJECT_ID,                 /* OK */
@@ -713,10 +717,10 @@ create or replace package body create_storet_objects
       /* OBJECTID,                */
       /* FK_GEN_GEO_STATE,        */
       /* FK_GEN_GEO_COUNTY,       */
-         ELEVATION_UNIT,             /* OK */
+         nvl2(fa_station.elevation, nvl(elevation_unit, ''ft''), null) elevation_unit,             /* OK */
          HUCTWELVEDIGITCODE,         /* OK */
          WGS84_LATITUDE,             /* OK */
-         WGS84_LONGITUDE   /*, */    /* OK */
+         WGS84_LONGITUDE,            /* OK */
       /* FK_WGS84_HDATUM,         */
       /* LAST_TRANSACTION_ID,     */
       /* FK_DATE_LC,              */
@@ -724,8 +728,26 @@ create or replace package body create_storet_objects
       /* ELEVATION_BK,            */
       /* GEN_HUC_BK,              */
       /* FK_GEN_DB_CAT_BK         */
-      FROM
-         FA_STATION@storetw';
+         di_org.organization_name,
+         di_geo_state.country_code country_cd,
+         di_geo_state.country_name country_name,
+         rtrim(di_geo_state.fips_state_code) state_cd,
+         di_geo_state.state_name
+         di_geo_county.fips_county_code county_cd,
+         di_geo_county.county_name,
+         nvl(lu_mad_hmethod.geopositioning_method, ''Unknown'') geopositioning_method,
+         nvl(rtrim(lu_mad_hdatum.id_code), ''Unknown'') hdatum_id_code,
+         regexp_substr(fa_station.elevation, ''^[[:digit:]]+'') elevation_value,
+         nvl2(fa_station.elevation, lu_mad_vmethod.elevation_method, null) elevation_method,
+         nvl2(fa_station.elevation, nvl(lu_mad_vdatum.id_code, ''Unknown''), null) vdatum_id_code
+      from fa_station@storetw
+           left join di_org@storetw on fk_org = di_org.pk_isn
+           left join di_geo_state@storetw on fk_geo_state = di_geo_state.pk_isn
+           left join di_geo_county@storetw on fk_geo_county = di_geo_county.pk_isn
+           left join lu_mad_hmethod@storetw on fk_mad_hmethod = lu_mad_hmethod.pk_isn
+           left join lu_mad_hdatum@storetw on fk_mad_hdatum = lu_mad_hdatum.pk_isn
+           left join lu_mad_vmethod@storetw on fk_mad_vmethod = lu_mad_vmethod.pk_isn
+           left join lu_mad_vdatum@storetw on fk_mad_vdatum = lu_mad_vdatum.pk_isn';
 
       cleanup(2) := 'drop table FA_STATION' || suffix || ' cascade constraints purge';
    exception
@@ -743,13 +765,13 @@ create or replace package body create_storet_objects
 
       execute immediate    /* seem to be problems with parallel 4 so make it parallel 1 */
      'create table STORET_STATION_SUM' || suffix || ' pctfree 0 cache compress nologging parallel 1 as
-         select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) full(c) parallel(c, 4) full(d) parallel(d, 4) use_hash(a) use_hash(b) use_hash(c) use_hash(d) */
+         select 
             a.pk_isn,
-            a.organization_id || ''-'' || station_id station_id,
+            station_id,
             geom,
-            country_code,
-            fips_state_code,
-            fips_county_code,
+            country_cd,
+            state_cd,
+            county_cd,
             station_group_type,
             a.organization_id,
             organization_name,
@@ -760,18 +782,12 @@ create or replace package body create_storet_objects
             cast(nvl(result_count, 0) as number(9)) result_count
          from
             fa_station'    || suffix || ' a
-            left join di_geo_state'  || suffix || ' b
-              on a.fk_geo_state  = b.pk_isn
-            left join di_geo_county' || suffix || ' c
-              on a.fk_geo_county = c.pk_isn
-            left join di_org' || suffix || ' d
-              on a.organization_id = d.organization_id
             left join (select fk_station, count(*) result_count from fa_regular_result' || suffix || ' group by fk_station) e
               on a.pk_isn = e.fk_station
          order by
-            country_code,
-            fips_state_code,
-            fips_county_code,
+            country_cd,
+            state_cd,
+            county_cd,
             station_group_type';
 
       cleanup(3) := 'drop table STORET_STATION_SUM' || suffix || ' cascade constraints purge';
@@ -785,39 +801,34 @@ create or replace package body create_storet_objects
          select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) use_hash(a) use_hash(b) */
             b.fk_station,
             a.station_id,
-            a.country_code,
-            a.fips_state_code,
-            a.fips_county_code,
+            a.country_cd,
+            a.state_cd,
+            a.county_cd,
             a.station_group_type,
             a.organization_id,
             a.generated_huc,
             b.activity_medium,
             b.characteristic_group_type,
-            b.display_name,
+            b.characteristic_name,
             b.activity_start_date_time,
             b.result_count
          from
             storet_station_sum' || suffix || ' a,
-            (select /*+ full(r) parallel(r, 4) full(m) parallel(m, 4) full(z) parallel(z, 4) use_hash(r) use_hash(m) use_hash(z) */
-                r.fk_station,
-                m.activity_medium,
-                z.characteristic_group_type,
-                z.display_name,
-                trunc(r.activity_start_date_time) activity_start_date_time,
+            (select /*+ parallel(4) */
+                fk_station,
+                activity_medium,
+                characteristic_group_type,
+                characteristic_name,
+                trunc(activity_start_date_time) activity_start_date_time,
                 cast(count(*) as number(9)) result_count
              from
-                fa_regular_result'  || suffix || ' r,
-                di_activity_medium' || suffix || ' m,
-                di_characteristic'  || suffix || ' z
-             where
-                r.fk_act_medium = m.pk_isn(+) and
-                r.fk_char       = z.pk_isn(+)
+                fa_regular_result'  || suffix || ' 
              group by
-                r.fk_station,
-                m.activity_medium,
-                z.characteristic_group_type,
-                z.display_name,
-                trunc(r.activity_start_date_time)) b
+                fk_station,
+                activity_medium,
+                characteristic_group_type,
+                characteristic_name,
+                trunc(activity_start_date_time)) b
          where
              b.fk_station = a.pk_isn(+)';
 
@@ -858,15 +869,15 @@ create or replace package body create_storet_objects
          select
             fk_station,
             station_id,
-            country_code,
-            fips_state_code,
-            fips_county_code,
+            country_cd,
+            state_cd,
+            county_cd,
             station_group_type,
             organization_id,
             generated_huc,
             activity_medium,
             characteristic_group_type,
-            display_name,
+            characteristic_name,
             activity_start_date_time,
             result_count
          from
@@ -876,7 +887,7 @@ create or replace package body create_storet_objects
              station_id,
              activity_medium,
              characteristic_group_type,
-             display_name';
+             characteristic_name';
 
       cleanup(5) := 'drop table STORET_RESULT_SUM' || suffix || ' cascade constraints purge';
 
@@ -901,36 +912,36 @@ create or replace package body create_storet_objects
         as select /*+ full(a) parallel(a, 4) */
             fk_station,
             station_id,
-            country_code,
-            fips_state_code,
-            fips_county_code,
+            country_cd,
+            state_cd,
+            county_cd,
             station_group_type,
             organization_id,
             generated_huc,
             activity_medium,
             characteristic_group_type,
-            display_name,
+            characteristic_name,
             cast(sum(result_count) as number(9)) result_count
          from
             storet_result_sum' || suffix || ' a
          group by
             fk_station,
             station_id,
-            country_code,
-            fips_state_code,
-            fips_county_code,
+            country_cd,
+            state_cd,
+            county_cd,
             station_group_type,
             organization_id,
             generated_huc,
             activity_medium,
             characteristic_group_type,
-            display_name
+            characteristic_name
          order by
             fk_station,
             station_id,
             activity_medium,
             characteristic_group_type,
-            display_name';
+            characteristic_name';
 
       cleanup(6) := 'drop table STORET_RESULT_CT_SUM' || suffix || ' cascade constraints purge';
 
@@ -967,7 +978,7 @@ create or replace package body create_storet_objects
             fk_station,
             activity_medium,
             characteristic_group_type,
-            display_name,
+            characteristic_name,
             activity_start_date_time,
             cast(sum(result_count) as number(9)) result_count
          from
@@ -976,13 +987,13 @@ create or replace package body create_storet_objects
             fk_station,
             activity_medium,
             characteristic_group_type,
-            display_name,
+            characteristic_name,
             activity_start_date_time
          order by
             fk_station,
             activity_medium,
             characteristic_group_type,
-            display_name';
+            characteristic_name';
 
       cleanup(7) := 'drop table STORET_RESULT_NR_SUM' || suffix || ' cascade constraints purge';
 
@@ -991,15 +1002,11 @@ create or replace package body create_storet_objects
       execute immediate
      'create table storet_lctn_loc' || suffix || ' compress pctfree 0 nologging parallel 1 as
       select /*+ parallel(4) */ distinct
-             b.country_code country_cd,
-             b.fips_state_code state_fips,
-             c.organization_id,
-             c.organization_name
-       from fa_station' || suffix || ' a
-            left join di_geo_state' || suffix || ' b
-              on a.fk_geo_state  = b.pk_isn
-            left join di_org' || suffix || ' c
-              on a.organization_id = c.organization_id';
+             country_cd,
+             state_cd state_fips,
+             organization_id,
+             organization_name
+       from fa_station' || suffix ;
 
       cleanup(8) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
       
@@ -1220,15 +1227,58 @@ create or replace package body create_storet_objects
                    order by 1)';
       cleanup(22) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
 
+      append_email_text('creating characteristictype...');
       execute immediate
-      'create table organization' || suffix || ' compress pctfree 0 nologging as
+      'create table characteristictype' || suffix || ' compress pctfree 0 nologging as
        select code_value,
               cast(null as varchar2(4000 char)) description,
               rownum sort_order
-         from (select distinct organization_id code_value
+         from (select distinct characteristic_group_type code_value
+                 from fa_regular_result' || suffix || '
+                   order by 1)';
+      cleanup(23) := 'drop table characteristictype' || suffix || ' cascade constraints purge';
+
+      append_email_text('creating country...');
+      execute immediate
+      'create table country' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              description,
+              rownum sort_order
+         from (select distinct country_cd code_value,
+                      country_name description
+                 from fa_station' || suffix || '
+                   order by country_name desc)';
+      cleanup(24) := 'drop table country' || suffix || ' cascade constraints purge';
+
+      append_email_text('creating county...');
+      execute immediate
+      'create table county' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              description,
+              country_cd,
+              state_cd,
+              rownum sort_order
+         from (select distinct country_cd||'':''||state_cd|| '':''||county_cd code_value,
+                      country_cd||'', ''||state_name||'', ''||county_name description,
+                      country_cd,
+                      state_cd,
+                      county_cd
+                 from fa_station' || suffix || '
+                   order by country_cd desc,
+                            state_cd,
+                            county_cd)';
+     cleanup(25) := 'drop table county' || suffix || ' cascade constraints purge';
+
+      execute immediate
+      'create table organization' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              description,
+              rownum sort_order
+         from (select distinct organization_id code_value,
+                               organization_name description
                  from fa_station' || suffix || '
                     order by 1)';
-      cleanup(23) := 'drop table organization' || suffix || ' cascade constraints purge';
+      cleanup(26) := 'drop table organization' || suffix || ' cascade constraints purge';
 
             
       execute immediate
@@ -1237,13 +1287,10 @@ create or replace package body create_storet_objects
               cast(null as varchar2(4000 char)) description,
               rownum sort_order
          from (select distinct activity_medium as code_value
-                 from di_activity_medium' || suffix || '
-                where activity_medium is not null and
-                      pk_isn in (select fk_act_medium
-                                   from fa_regular_result' || suffix || '
-                                  where fk_act_medium is not null)
+                 from fa_regular_result' || suffix || '
+                where fk_act_medium is not null
                    order by activity_medium)';
-      cleanup(24) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
+      cleanup(27) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
 
             
       execute immediate
@@ -1254,7 +1301,25 @@ create or replace package body create_storet_objects
          from (select distinct station_group_type code_value
                  from fa_station' || suffix || '
                    order by 1)';
-      cleanup(25) := 'drop table sitetype' || suffix || ' cascade constraints purge';
+      cleanup(28) := 'drop table sitetype' || suffix || ' cascade constraints purge';
+
+      append_email_text('creating state...');
+      execute immediate
+      'create table state' || suffix || ' compress pctfree 0 nologging as
+       select code_value,
+              description_with_country,
+              description_with_out_country,
+              country_cd,
+              rownum sort_order
+         from (select distinct country_cd||'':''||state_cd code_value,
+                      country_cd||'', ''||state_name description_with_country,
+                      state_name description_with_out_country,
+                      country_cd,
+                      state_cd
+                 from fa_station' || suffix || '
+                   order by country_cd desc,
+                            state_cd)';
+      cleanup(29) := 'drop table state' || suffix || ' cascade constraints purge';
 
    exception
       when others then
@@ -2123,7 +2188,7 @@ create or replace package body create_storet_objects
       message := null;
       dbms_output.enable(100000);
 
-      for k in 1 .. 25 loop
+      for k in 1 .. 29 loop
          cleanup(k) := NULL;
       end loop;
       append_email_text('started storet table transformation.');
@@ -2142,7 +2207,7 @@ create or replace package body create_storet_objects
          email_subject := 'storet load FAILED';
          email_text := email_subject || lf || lf || email_text;
          email_notify := failure_notify;
-         for k in 1 .. 20 loop
+         for k in 1 .. 29 loop
             if cleanup(k) is not null then
                append_email_text('CLEANUP: ' || cleanup(k));
                execute immediate cleanup(k);
