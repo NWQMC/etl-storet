@@ -143,47 +143,47 @@ create or replace package body create_storet_objects
       )
       as
       select /*+  full(FA_REGULAR_RESULT_NO_SOURCE) parallel(FA_REGULAR_RESULT_NO_SOURCE, 4)*/
-         PK_ISN,                      /* might be handy*/
-         ORGANIZATION_ID,             /* OK */
+         fa_regular_result_no_source.PK_ISN,                      /* might be handy*/
+         fa_regular_result_no_source.ORGANIZATION_ID,             /* OK */
       /* ORGANIZATION_IS_NUMBER,   */
-         STATION_ID,                        /* OK */
+         fa_regular_result_no_source.organization_id || ''-'' || fa_regular_result_no_source.station_id STATION_ID,                        /* OK */
       /* STATION_NAME,                      */
-         ACTIVITY_START_DATE_TIME,          /* OK */
-         ACT_START_TIME_ZONE,          /* OK */
-         TRIP_ID,          /* OK */
+         fa_regular_result_no_source.ACTIVITY_START_DATE_TIME,          /* OK */
+         fa_regular_result_no_source.ACT_START_TIME_ZONE,          /* OK */
+         fa_regular_result_no_source.TRIP_ID,          /* OK */
       /* TRIP_NAME,                         */
       /* STATION_VISIT_ID,  */
-         CHARACTERISTIC_GROUP_TYPE,    /* OK */
-         CHARACTERISTIC_NAME,          /* leave it just in case */
-         RESULT_VALUE,                 /* OK */
-         RESULT_UNIT,                  /* OK */
-         RESULT_VALUE_TEXT,            /* OK */
-         SAMPLE_FRACTION_TYPE,         /* OK */
-         RESULT_VALUE_TYPE,            /* OK */
-         STATISTIC_TYPE,               /* OK */
-         RESULT_VALUE_STATUS,          /* OK */
-         WEIGHT_BASIS_TYPE,          /* OK */
-         TEMPERATURE_BASIS_LEVEL,          /* OK */
-         DURATION_BASIS,          /* OK */
-         ANALYTICAL_PROCEDURE_SOURCE,      /* OK */
-         ANALYTICAL_PROCEDURE_ID,         /* OK */
+         fa_regular_result_no_source.CHARACTERISTIC_GROUP_TYPE,    /* OK */
+         fa_regular_result_no_source.CHARACTERISTIC_NAME,          /* leave it just in case */
+         fa_regular_result_no_source.RESULT_VALUE,                 /* OK */
+         fa_regular_result_no_source.RESULT_UNIT,                  /* OK */
+         fa_regular_result_no_source.RESULT_VALUE_TEXT,            /* OK */
+         fa_regular_result_no_source.SAMPLE_FRACTION_TYPE,         /* OK */
+         fa_regular_result_no_source.RESULT_VALUE_TYPE,            /* OK */
+         fa_regular_result_no_source.STATISTIC_TYPE,               /* OK */
+         fa_regular_result_no_source.RESULT_VALUE_STATUS,          /* OK */
+         fa_regular_result_no_source.WEIGHT_BASIS_TYPE,          /* OK */
+         fa_regular_result_no_source.TEMPERATURE_BASIS_LEVEL,          /* OK */
+         fa_regular_result_no_source.DURATION_BASIS,          /* OK */
+         fa_regular_result_no_source.ANALYTICAL_PROCEDURE_SOURCE,      /* OK */
+         fa_regular_result_no_source.ANALYTICAL_PROCEDURE_ID,         /* OK */
       /* LAB_ID,                       */
-         LAB_NAME,                        /* OK */
+         fa_regular_result_no_source.LAB_NAME,                        /* OK */
       /* LAB_CERTIFIED, */
       /* LAB_BATCH_ID, */
-         ANALYSIS_DATE_TIME,
+         fa_regular_result_no_source.ANALYSIS_DATE_TIME,
       /* ANALYSIS_TIME_ZONE, */
       /* LOWER_QUANTITATION_LIMIT, */
       /* UPPER_QUANTITATION_LIMIT, */
-         DETECTION_LIMIT,                 /* OK */
-         DETECTION_LIMIT_UNIT,                 /* OK */
-         DETECTION_LIMIT_DESCRIPTION,                 /* OK */
-         LAB_REMARK,                     /* OK */
+         fa_regular_result_no_source.DETECTION_LIMIT,                 /* OK */
+         fa_regular_result_no_source.DETECTION_LIMIT_UNIT,                 /* OK */
+         fa_regular_result_no_source.DETECTION_LIMIT_DESCRIPTION,                 /* OK */
+         fa_regular_result_no_source.LAB_REMARK,                     /* OK */
       /* DISTANCE_MEASURE_FROM,              */
       /* DISTANCE_MEASURE_TO,                */
-         PARTICLE_SIZE,                  /* OK */
+         fa_regular_result_no_source.PARTICLE_SIZE,                  /* OK */
       /* REPLICATE_ANALYSIS_COUNT,     */
-         PRECISION,                      /* OK */
+         fa_regular_result_no_source.PRECISION,                      /* OK */
       /* CONFIDENCE_LEVEL,             */
       /* DILUTION_INDICATOR,           */
       /* RECOVERY_INDICATOR,           */
@@ -197,37 +197,37 @@ create or replace package body create_storet_objects
       /* HYDROLOGIC_UNIT_CODE, */
       /* GENERATED_HUC, */
       /* RESULT_IS_NUMBER, */
-         ACTIVITY_MEDIUM,     /* Ok */
-         FK_STATION,          /* OK */
-         FK_ORG,
+         fa_regular_result_no_source.ACTIVITY_MEDIUM,     /* Ok */
+         fa_regular_result_no_source.FK_STATION,          /* OK */
+         fa_regular_result_no_source.FK_ORG,
       /* FK_DB_CAT, */
       /* FK_GEN_DB_CAT, */
-         FK_GEO_COUNTY,      /* OK */
-         FK_GEO_STATE,       /* OK */
+         fa_regular_result_no_source.FK_GEO_COUNTY,      /* OK */
+         fa_regular_result_no_source.FK_GEO_STATE,       /* OK */
       /* FK_DATE_ACT_START, */
-         FK_ACT_MEDIUM,      /* OK */
-         FK_ACT_MATRIX,      /* OK */
+         fa_regular_result_no_source.FK_ACT_MEDIUM,      /* OK */
+         fa_regular_result_no_source.FK_ACT_MATRIX,      /* OK */
       /* ACTIVITY_IS_NUMBER, */
-         FK_CHAR,
-         FK_UNIT_CONVERSION,
-         ACTIVITY_ID,          /* OK */
-         REPLICATE_NUMBER,          /* OK */
-         ACTIVITY_TYPE,          /* OK */
+         fa_regular_result_no_source.FK_CHAR,
+         fa_regular_result_no_source.FK_UNIT_CONVERSION,
+         fa_regular_result_no_source.ACTIVITY_ID,          /* OK */
+         fa_regular_result_no_source.REPLICATE_NUMBER,          /* OK */
+         fa_regular_result_no_source.ACTIVITY_TYPE,          /* OK */
       /* ACTIVITY_CATEGORY, */
       /* ACTIVITY_INTENT,   */
       /* LOCATION_POINT_TYPE, */
       /* POINT_SEQUENCE_NUMBER, */
       /* WELL_NUMBER,  */
       /* PIPE_NUMBER,  */
-         ACTIVITY_STOP_DATE_TIME,          /* OK */
-         ACT_STOP_TIME_ZONE,          /* OK */
+         fa_regular_result_no_source.ACTIVITY_STOP_DATE_TIME,          /* OK */
+         fa_regular_result_no_source.ACT_STOP_TIME_ZONE,          /* OK */
       /* ACTIVITY_REL_DEPTH,   */
-         ACTIVITY_DEPTH,          /* OK */
-         ACTIVITY_DEPTH_UNIT,          /* OK */
-         ACTIVITY_UPPER_DEPTH,          /* OK */
-         ACTIVITY_LOWER_DEPTH,          /* OK */
-         UPR_LWR_DEPTH_UNIT,            /* OK */
-         FIELD_PROCEDURE_ID,            /* OK */
+         fa_regular_result_no_source.ACTIVITY_DEPTH,          /* OK */
+         fa_regular_result_no_source.ACTIVITY_DEPTH_UNIT,          /* OK */
+         fa_regular_result_no_source.ACTIVITY_UPPER_DEPTH,          /* OK */
+         fa_regular_result_no_source.ACTIVITY_LOWER_DEPTH,          /* OK */
+         fa_regular_result_no_source.UPR_LWR_DEPTH_UNIT,            /* OK */
+         fa_regular_result_no_source.FIELD_PROCEDURE_ID,            /* OK */
       /* GEAR_CONFIG_ID, */
       /* ACTIVITY_LATITUDE, */
       /* ACTIVITY_LONGITUDE, */
@@ -248,14 +248,14 @@ create or replace package body create_storet_objects
       /* POINT_NAME, */
       /* SGO_INDICATOR, */
       /* MAP_SCALE, */
-         FIELD_GEAR_ID,       /* OK */
+         fa_regular_result_no_source.FIELD_GEAR_ID,       /* OK */
       /* BIAS, */
       /* CONF_LVL_CORR_BIAS, */
-         RESULT_COMMENT,      /* OK */
+         fa_regular_result_no_source.RESULT_COMMENT,      /* OK */
       /* TEXT_RESULT,  */
       /* CAS_NUMBER, */
       /* EPA_REG_NUMBER, */
-         ITIS_NUMBER,   /* OK */
+         fa_regular_result_no_source.ITIS_NUMBER,   /* OK */
       /* CONTAINER_DESC, */
       /* TEMP_PRESERVN_TYPE, */
       /* PRESRV_STRGE_PRCDR, */
@@ -268,28 +268,28 @@ create or replace package body create_storet_objects
       /* BLOB_TITLE,    */
       /* ACT_BLOB_ID,    */
       /* ACT_BLOB_TITLE,    */
-         ACTIVITY_COMMENT,    /* OK */
-         ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         PROJECT_ID,   /* OK */
+         fa_regular_result_no_source.ACTIVITY_COMMENT,    /* OK */
+         fa_regular_result_no_source.ACTIVITY_DEPTH_REF_POINT,   /* OK */
+         fa_regular_result_no_source.PROJECT_ID,   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
-         RESULT_MEAS_QUAL_CODE,  /* OK */
-         ACTIVITY_COND_ORG_TEXT,    /* OK */
-         RESULT_DEPTH_MEAS_VALUE,     /* OK */
-         RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
-         RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
+         fa_regular_result_no_source.RESULT_MEAS_QUAL_CODE,  /* OK */
+         fa_regular_result_no_source.ACTIVITY_COND_ORG_TEXT,    /* OK */
+         fa_regular_result_no_source.RESULT_DEPTH_MEAS_VALUE,     /* OK */
+         fa_regular_result_no_source.RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
+         fa_regular_result_no_source.RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
       /* ANALYTICAL_METHOD_LIST_AGENCY,  */
       /* ANALYTICAL_METHOD_LIST_VER,  */
       /* SMPRP_TRANSPORT_STORAGE_DESC,  */
-         SOURCE_SYSTEM,                  /* might be handy */
+         fa_regular_result_no_source.SOURCE_SYSTEM,                  /* might be handy */
       /* SOURCE_UID, */
       /* ETL_ID, */
       /* HORIZONTAL_ACCURACY_MEASURE, */
       /* LAB_ACCRED_AUTHORITY, */
       /* METHOD_SPECIATION, */
-         LAB_SAMP_PRP_METHOD_ID,  /* OK */
+         fa_regular_result_no_source.LAB_SAMP_PRP_METHOD_ID,  /* OK */
       /* LAB_SAMP_PRP_METHOD_CONTEXT, */
       /* LAB_SAMP_PRP_METHOD_QUAL_TYPE, */
-         LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
+         fa_regular_result_no_source.LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
       /* LAB_SAMP_PRP_START_TMZONE, */
       /* LAB_SAMP_PRP_END_DATE_TIME, */
       /* LAB_SAMP_PRP_END_TMZONE, */
@@ -463,47 +463,47 @@ create or replace package body create_storet_objects
          matrix_name
        )
        SELECT
-         PK_ISN,                      /* might be handy*/
-         ORGANIZATION_ID,             /* OK */
+         fa_regular_result.PK_ISN,                      /* might be handy*/
+         fa_regular_result.ORGANIZATION_ID,             /* OK */
       /* ORGANIZATION_IS_NUMBER,   */
-         a.organization_id || ''-'' || station_id STATION_ID,                        /* OK */
+         fa_regular_result.organization_id || ''-'' || fa_regular_result.station_id STATION_ID,                        /* OK */
       /* STATION_NAME,                      */
-         ACTIVITY_START_DATE_TIME,          /* OK */
-         ACT_START_TIME_ZONE,          /* OK */
-         TRIP_ID,          /* OK */
+         fa_regular_result.ACTIVITY_START_DATE_TIME,          /* OK */
+         fa_regular_result.ACT_START_TIME_ZONE,          /* OK */
+         fa_regular_result.TRIP_ID,          /* OK */
       /* TRIP_NAME,                         */
       /* STATION_VISIT_ID,  */
-         CHARACTERISTIC_GROUP_TYPE,    /* OK */
-         CHARACTERISTIC_NAME,          /* leave it just in case */
-         RESULT_VALUE,                 /* OK */
-         RESULT_UNIT,                  /* OK */
-         RESULT_VALUE_TEXT,            /* OK */
-         SAMPLE_FRACTION_TYPE,         /* OK */
-         RESULT_VALUE_TYPE,            /* OK */
-         STATISTIC_TYPE,               /* OK */
-         RESULT_VALUE_STATUS,          /* OK */
-         WEIGHT_BASIS_TYPE,          /* OK */
-         TEMPERATURE_BASIS_LEVEL,          /* OK */
-         DURATION_BASIS,          /* OK */
-         ANALYTICAL_PROCEDURE_SOURCE,      /* OK */
-         ANALYTICAL_PROCEDURE_ID,         /* OK */
+         fa_regular_result.CHARACTERISTIC_GROUP_TYPE,    /* OK */
+         fa_regular_result.CHARACTERISTIC_NAME,          /* leave it just in case */
+         fa_regular_result.RESULT_VALUE,                 /* OK */
+         fa_regular_result.RESULT_UNIT,                  /* OK */
+         fa_regular_result.RESULT_VALUE_TEXT,            /* OK */
+         fa_regular_result.SAMPLE_FRACTION_TYPE,         /* OK */
+         fa_regular_result.RESULT_VALUE_TYPE,            /* OK */
+         fa_regular_result.STATISTIC_TYPE,               /* OK */
+         fa_regular_result.RESULT_VALUE_STATUS,          /* OK */
+         fa_regular_result.WEIGHT_BASIS_TYPE,          /* OK */
+         fa_regular_result.TEMPERATURE_BASIS_LEVEL,          /* OK */
+         fa_regular_result.DURATION_BASIS,          /* OK */
+         fa_regular_result.ANALYTICAL_PROCEDURE_SOURCE,      /* OK */
+         fa_regular_result.ANALYTICAL_PROCEDURE_ID,         /* OK */
       /* LAB_ID,                       */
-         LAB_NAME,                        /* OK */
+         fa_regular_result.LAB_NAME,                        /* OK */
       /* LAB_CERTIFIED, */
       /* LAB_BATCH_ID, */
-         ANALYSIS_DATE_TIME,
+         fa_regular_result.ANALYSIS_DATE_TIME,
       /* ANALYSIS_TIME_ZONE, */
       /* LOWER_QUANTITATION_LIMIT, */
       /* UPPER_QUANTITATION_LIMIT, */
-         DETECTION_LIMIT,                 /* OK */
-         DETECTION_LIMIT_UNIT,                 /* OK */
-         DETECTION_LIMIT_DESCRIPTION,                 /* OK */
-         LAB_REMARK,                     /* OK */
+         fa_regular_result.DETECTION_LIMIT,                 /* OK */
+         fa_regular_result.DETECTION_LIMIT_UNIT,                 /* OK */
+         fa_regular_result.DETECTION_LIMIT_DESCRIPTION,                 /* OK */
+         fa_regular_result.LAB_REMARK,                     /* OK */
       /* DISTANCE_MEASURE_FROM,              */
       /* DISTANCE_MEASURE_TO,                */
-         PARTICLE_SIZE,                  /* OK */
+         fa_regular_result.PARTICLE_SIZE,                  /* OK */
       /* REPLICATE_ANALYSIS_COUNT,     */
-         PRECISION,                      /* OK */
+         fa_regular_result.PRECISION,                      /* OK */
       /* CONFIDENCE_LEVEL,             */
       /* DILUTION_INDICATOR,           */
       /* RECOVERY_INDICATOR,           */
@@ -517,37 +517,37 @@ create or replace package body create_storet_objects
       /* HYDROLOGIC_UNIT_CODE, */
       /* GENERATED_HUC, */
       /* RESULT_IS_NUMBER, */
-         ACTIVITY_MEDIUM,     /* Ok */
-         FK_STATION,          /* OK */
-         FK_ORG,
+         fa_regular_result.ACTIVITY_MEDIUM,     /* Ok */
+         fa_regular_result.FK_STATION,          /* OK */
+         fa_regular_result.FK_ORG,
       /* FK_DB_CAT, */
       /* FK_GEN_DB_CAT, */
-         FK_GEO_COUNTY,      /* OK */
-         FK_GEO_STATE,       /* OK */
+         fa_regular_result.FK_GEO_COUNTY,      /* OK */
+         fa_regular_result.FK_GEO_STATE,       /* OK */
       /* FK_DATE_ACT_START, */
-         FK_ACT_MEDIUM,      /* OK */
-         FK_ACT_MATRIX,      /* OK */
+         fa_regular_result.FK_ACT_MEDIUM,      /* OK */
+         fa_regular_result.FK_ACT_MATRIX,      /* OK */
       /* ACTIVITY_IS_NUMBER, */
-         FK_CHAR,
-         FK_UNIT_CONVERSION,
-         ACTIVITY_ID,          /* OK */
-         REPLICATE_NUMBER,          /* OK */
-         ACTIVITY_TYPE,          /* OK */
+         fa_regular_result.FK_CHAR,
+         fa_regular_result.FK_UNIT_CONVERSION,
+         fa_regular_result.ACTIVITY_ID,          /* OK */
+         fa_regular_result.REPLICATE_NUMBER,          /* OK */
+         fa_regular_result.ACTIVITY_TYPE,          /* OK */
       /* ACTIVITY_CATEGORY, */
       /* ACTIVITY_INTENT,   */
       /* LOCATION_POINT_TYPE, */
       /* POINT_SEQUENCE_NUMBER, */
       /* WELL_NUMBER,  */
       /* PIPE_NUMBER,  */
-         ACTIVITY_STOP_DATE_TIME,          /* OK */
-         ACT_STOP_TIME_ZONE,          /* OK */
+         fa_regular_result.ACTIVITY_STOP_DATE_TIME,          /* OK */
+         fa_regular_result.ACT_STOP_TIME_ZONE,          /* OK */
       /* ACTIVITY_REL_DEPTH,   */
-         ACTIVITY_DEPTH,          /* OK */
-         ACTIVITY_DEPTH_UNIT,          /* OK */
-         ACTIVITY_UPPER_DEPTH,          /* OK */
-         ACTIVITY_LOWER_DEPTH,          /* OK */
-         UPR_LWR_DEPTH_UNIT,            /* OK */
-         FIELD_PROCEDURE_ID,            /* OK */
+         fa_regular_result.ACTIVITY_DEPTH,          /* OK */
+         fa_regular_result.ACTIVITY_DEPTH_UNIT,          /* OK */
+         fa_regular_result.ACTIVITY_UPPER_DEPTH,          /* OK */
+         fa_regular_result.ACTIVITY_LOWER_DEPTH,          /* OK */
+         fa_regular_result.UPR_LWR_DEPTH_UNIT,            /* OK */
+         fa_regular_result.FIELD_PROCEDURE_ID,            /* OK */
       /* GEAR_CONFIG_ID, */
       /* ACTIVITY_LATITUDE, */
       /* ACTIVITY_LONGITUDE, */
@@ -568,14 +568,14 @@ create or replace package body create_storet_objects
       /* POINT_NAME, */
       /* SGO_INDICATOR, */
       /* MAP_SCALE, */
-         FIELD_GEAR_ID,       /* OK */
+         fa_regular_result.FIELD_GEAR_ID,       /* OK */
       /* BIAS, */
       /* CONF_LVL_CORR_BIAS, */
-         RESULT_COMMENT,      /* OK */
+         fa_regular_result.RESULT_COMMENT,      /* OK */
       /* TEXT_RESULT,  */
       /* CAS_NUMBER, */
       /* EPA_REG_NUMBER, */
-         ITIS_NUMBER,   /* OK */
+         fa_regular_result.ITIS_NUMBER,   /* OK */
       /* CONTAINER_DESC, */
       /* TEMP_PRESERVN_TYPE, */
       /* PRESRV_STRGE_PRCDR, */
@@ -588,28 +588,28 @@ create or replace package body create_storet_objects
       /* BLOB_TITLE,    */
       /* ACT_BLOB_ID,    */
       /* ACT_BLOB_TITLE,    */
-         ACTIVITY_COMMENT,    /* OK */
-         ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         PROJECT_ID,   /* OK */
+         fa_regular_result.ACTIVITY_COMMENT,    /* OK */
+         fa_regular_result.ACTIVITY_DEPTH_REF_POINT,   /* OK */
+         fa_regular_result.PROJECT_ID,   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
-         RESULT_MEAS_QUAL_CODE,  /* OK */
-         ACTIVITY_COND_ORG_TEXT,    /* OK */
-         RESULT_DEPTH_MEAS_VALUE,     /* OK */
-         RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
-         RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
+         fa_regular_result.RESULT_MEAS_QUAL_CODE,  /* OK */
+         fa_regular_result.ACTIVITY_COND_ORG_TEXT,    /* OK */
+         fa_regular_result.RESULT_DEPTH_MEAS_VALUE,     /* OK */
+         fa_regular_result.RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
+         fa_regular_result.RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
       /* ANALYTICAL_METHOD_LIST_AGENCY,  */
       /* ANALYTICAL_METHOD_LIST_VER,  */
       /* SMPRP_TRANSPORT_STORAGE_DESC,  */
-         SOURCE_SYSTEM,                  /* might be handy */
+         fa_regular_result.SOURCE_SYSTEM,                  /* might be handy */
       /* SOURCE_UID, */
       /* ETL_ID, */
       /* HORIZONTAL_ACCURACY_MEASURE, */
       /* LAB_ACCRED_AUTHORITY, */
       /* METHOD_SPECIATION, */
-         LAB_SAMP_PRP_METHOD_ID,  /* OK */
+         fa_regular_result.LAB_SAMP_PRP_METHOD_ID,  /* OK */
       /* LAB_SAMP_PRP_METHOD_CONTEXT, */
       /* LAB_SAMP_PRP_METHOD_QUAL_TYPE, */
-         LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
+         fa_regular_result.LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
       /* LAB_SAMP_PRP_START_TMZONE, */
       /* LAB_SAMP_PRP_END_DATE_TIME, */
       /* LAB_SAMP_PRP_END_TMZONE, */
@@ -636,19 +636,19 @@ create or replace package body create_storet_objects
       execute immediate
      'create table fa_station' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
       select
-         organization_id || ''-'' || station_id STATION_ID,                /* OK */
+         fa_station.organization_id || ''-'' || fa_station.station_id STATION_ID,                /* OK */
          trim(fa_station.station_name) as station_name,              /* OK */
-         ORGANIZATION_ID,           /* OK */
+         fa_station.ORGANIZATION_ID,           /* OK */
          /* LOCATION_POINT_TYPE,     */
          /* POINT_SEQUENCE_NUMBER,   */
          /* WELL_NUMBER,             */
          /* PIPE_NUMBER,             */
-         LATITUDE,                  /* OK */
-         LONGITUDE,                 /* OK */
+         fa_station.LATITUDE,                  /* OK */
+         fa_station.LONGITUDE,                 /* OK */
          regexp_substr(fa_station.map_scale, ''[[:digit:]]+$'') map_scale,                 /* OK */
-         ELEVATION,                 /* OK */
+         fa_station.ELEVATION,                 /* OK */
       /* HYDROLOGIC_UNIT_CODE,    */
-         GENERATED_HUC,             /* OK */
+         fa_station.GENERATED_HUC,             /* OK */
       /* RF1_SEGMENT_CODE,        */
       /* RF1_SEGMENT_NAME,        */
       /* RF1_MILEAGE,             */
@@ -662,7 +662,7 @@ create or replace package body create_storet_objects
       /* STATION_VISITED,         */
       /* STATION_IS_NUMBER,       */
       /* ORGANIZATION_IS_NUMBER,  */
-         STATION_GROUP_TYPE,        /* OK */
+         fa_station.STATION_GROUP_TYPE,        /* OK */
       /* SGO_INDICATOR,           */
       /* WELL_NAME,               */
       /* NAICS_CODE,              */
@@ -677,26 +677,26 @@ create or replace package body create_storet_objects
          trim(fa_station.description_text) as description_text,           /* OK */
       /* LAST_USERID,             */
       /* LAST_CHANGE_DATE,        */
-         PROJECT_ID,                 /* OK */
+         fa_station.PROJECT_ID,                 /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE,  */
       /* HORIZONTAL_ACCURACY,     */
       /* FK_DB_CAT,               */
       /* FK_GEN_DB_CAT,           */
-         FK_GEO_STATE,               /* OK */
-         FK_GEO_COUNTY,               /* OK */
-         FK_MAD_HMETHOD,               /* OK */
-         FK_MAD_HDATUM,               /* OK */
-         FK_MAD_VMETHOD,               /* OK */
-         FK_MAD_VDATUM,               /* OK */
+         fa_station.FK_GEO_STATE,               /* OK */
+         fa_station.FK_GEO_COUNTY,               /* OK */
+         fa_station.FK_MAD_HMETHOD,               /* OK */
+         fa_station.FK_MAD_HDATUM,               /* OK */
+         fa_station.FK_MAD_VMETHOD,               /* OK */
+         fa_station.FK_MAD_VDATUM,               /* OK */
       /* STD_LATITUDE,            */
       /* STD_LONGITUDE,           */
       /* FK_STD_HDATUM,           */
-         FK_ORG,                     /* OK */
+         fa_station.FK_ORG,                     /* OK */
       /* FK_STATN_TYPES,          */
       /* FK_ESTRY_PRIMARY,        */
       /* FK_ESTRY_SECONDARY,      */
       /* BLOB_ID,                 */
-         FK_PRIMARY_TYPE,            /* OK */
+         fa_station.FK_PRIMARY_TYPE,            /* OK */
       /* FK_SECONDARY_TYPE,       */
       /* FK_HORIZONTAL_DATUM,     */
       /* FK_GEOPOSITIONING_METHOD,*/
@@ -706,21 +706,21 @@ create or replace package body create_storet_objects
       /* FK_SECONDARY_ESTUARY,    */
       /* FK_COUNTRY_CODE,         */
       /* FK_STATE_POSTAL_CODE,    */
-         SOURCE_SYSTEM,
+         fa_station.SOURCE_SYSTEM,
       /* SOURCE_UID,              */
-         GEOM,                       /* OK */
+         fa_station.GEOM,                       /* OK */
       /* WELL_TYPE_NAME,          */
       /* WELL_FORMATION_TYPE,     */
       /* WELL_HOLE_DEPTH,         */
       /* WELL_AQUIFER_NAME,       */
-         PK_ISN,                     /* OK */
+         fa_station.PK_ISN,                     /* OK */
       /* OBJECTID,                */
       /* FK_GEN_GEO_STATE,        */
       /* FK_GEN_GEO_COUNTY,       */
-         nvl2(fa_station.elevation, nvl(elevation_unit, ''ft''), null) elevation_unit,             /* OK */
-         HUCTWELVEDIGITCODE,         /* OK */
-         WGS84_LATITUDE,             /* OK */
-         WGS84_LONGITUDE,            /* OK */
+         nvl2(fa_station.elevation, nvl(fa_station.elevation_unit, ''ft''), null) elevation_unit,             /* OK */
+         fa_station.HUCTWELVEDIGITCODE,         /* OK */
+         fa_station.WGS84_LATITUDE,             /* OK */
+         fa_station.WGS84_LONGITUDE,            /* OK */
       /* FK_WGS84_HDATUM,         */
       /* LAST_TRANSACTION_ID,     */
       /* FK_DATE_LC,              */
