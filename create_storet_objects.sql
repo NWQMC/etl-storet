@@ -1514,7 +1514,7 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_station_sum_3' || suffix || ' on ' ||
-               table_name || ' (fips_state_code, fips_county_code) nologging';
+               table_name || ' (state_cd, county_cd) nologging';
 
       append_email_text(stmt);
       execute immediate stmt;
@@ -1546,7 +1546,7 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_2' || suffix || ' on ' ||
-               table_name || ' (fips_state_code, fips_county_code) local nologging';
+               table_name || ' (state_cd, county_cd) local nologging';
 
       append_email_text(stmt);
       execute immediate stmt;
@@ -1594,7 +1594,7 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_2' || suffix || ' on ' ||
-               table_name || ' (fips_state_code, fips_county_code) local nologging';
+               table_name || ' (state_cd, county_cd) local nologging';
 
       append_email_text(stmt);
       execute immediate stmt;
