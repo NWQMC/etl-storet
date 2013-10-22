@@ -751,7 +751,7 @@ create or replace package body create_storet_objects
 
       cleanup(2) := 'drop table FA_STATION' || suffix || ' cascade constraints purge';
       
-      execute immediate 'alter table fa_station' || suffix || ' add geom (geom mdsys.sdo_geometry)';
+      execute immediate 'alter table fa_station' || suffix || ' add (geom mdsys.sdo_geometry)';
       execute immediate 'update fa_station' || suffix || ' set geom = mdsys.sdo_geometry(2001, 8307, mdsys.sdo_point_type(wgs84_longitude, wgs84_latitude, null), null, null)
                           where wgs84_latitude is not null and
                                 wgs84_longitude is not null';
