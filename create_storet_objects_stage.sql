@@ -133,72 +133,70 @@ create or replace package body create_storet_objects
          LAB_SAMP_PRP_START_DATE_TIME
        )
        SELECT
-         fa_regular_result.PK_ISN,
-         fa_regular_result.ORGANIZATION_ID,
-         fa_regular_result.organization_id || ''-'' || fa_regular_result.station_id STATION_ID,
-         fa_regular_result.ACTIVITY_START_DATE_TIME,
-         fa_regular_result.ACT_START_TIME_ZONE,
-         fa_regular_result.TRIP_ID,
-         fa_regular_result.CHARACTERISTIC_GROUP_TYPE,
-         fa_regular_result.CHARACTERISTIC_NAME,
-         fa_regular_result.RESULT_VALUE,
-         fa_regular_result.RESULT_UNIT,
-         fa_regular_result.RESULT_VALUE_TEXT,
-         fa_regular_result.SAMPLE_FRACTION_TYPE,
-         fa_regular_result.RESULT_VALUE_TYPE,
-         fa_regular_result.STATISTIC_TYPE,
-         fa_regular_result.RESULT_VALUE_STATUS,
-         fa_regular_result.WEIGHT_BASIS_TYPE,
-         fa_regular_result.TEMPERATURE_BASIS_LEVEL,
-         fa_regular_result.DURATION_BASIS,
-         fa_regular_result.ANALYTICAL_PROCEDURE_SOURCE,
-         fa_regular_result.ANALYTICAL_PROCEDURE_ID,
-         fa_regular_result.LAB_NAME,
-         fa_regular_result.ANALYSIS_DATE_TIME,
-         fa_regular_result.DETECTION_LIMIT,
-         fa_regular_result.DETECTION_LIMIT_UNIT,
-         fa_regular_result.DETECTION_LIMIT_DESCRIPTION,
-         fa_regular_result.LAB_REMARK,
-         fa_regular_result.PARTICLE_SIZE,
-         fa_regular_result.PRECISION,
-         fa_regular_result.ACTIVITY_MEDIUM,
-         fa_regular_result.FK_STATION,
-         fa_regular_result.FK_ORG,
-         fa_regular_result.FK_GEO_COUNTY,
-         fa_regular_result.FK_GEO_STATE,
-         fa_regular_result.FK_ACT_MEDIUM,
-         fa_regular_result.FK_ACT_MATRIX,
-         fa_regular_result.FK_CHAR,
-         fa_regular_result.FK_UNIT_CONVERSION,
-         fa_regular_result.ACTIVITY_ID,
-         fa_regular_result.REPLICATE_NUMBER,
-         fa_regular_result.ACTIVITY_TYPE,
-         fa_regular_result.ACTIVITY_STOP_DATE_TIME,
-         fa_regular_result.ACT_STOP_TIME_ZONE,
-         fa_regular_result.ACTIVITY_DEPTH,
-         fa_regular_result.ACTIVITY_DEPTH_UNIT,
-         fa_regular_result.ACTIVITY_UPPER_DEPTH,
-         fa_regular_result.ACTIVITY_LOWER_DEPTH,
-         fa_regular_result.UPR_LWR_DEPTH_UNIT,
-         fa_regular_result.FIELD_PROCEDURE_ID,
-         fa_regular_result.FIELD_GEAR_ID,
-         fa_regular_result.RESULT_COMMENT,
-         fa_regular_result.ITIS_NUMBER,
-         fa_regular_result.ACTIVITY_COMMENT,
-         fa_regular_result.ACTIVITY_DEPTH_REF_POINT,
-         fa_regular_result.PROJECT_ID,
-         fa_regular_result.RESULT_MEAS_QUAL_CODE,
-         fa_regular_result.ACTIVITY_COND_ORG_TEXT,
-         fa_regular_result.RESULT_DEPTH_MEAS_VALUE,
-         fa_regular_result.RESULT_DEPTH_MEAS_UNIT_CODE,
-         fa_regular_result.RESULT_DEPTH_ALT_REF_PT_TXT,
-         fa_regular_result.SOURCE_SYSTEM,
-         fa_regular_result.LAB_SAMP_PRP_METHOD_ID,
-         fa_regular_result.LAB_SAMP_PRP_START_DATE_TIME,
-         di_activity_matrix.matrix_name
-      from storetw.fa_regular_result
-           left join storetw.di_activity_matrix
-             on fk_act_matrix = di_activity_matrix.pk_isn';
+         PK_ISN,
+         ORGANIZATION_ID,
+         STATION_ID,
+         ACTIVITY_START_DATE_TIME,
+         ACT_START_TIME_ZONE,
+         TRIP_ID,
+         CHARACTERISTIC_GROUP_TYPE,
+         CHARACTERISTIC_NAME,
+         RESULT_VALUE,
+         RESULT_UNIT,
+         RESULT_VALUE_TEXT,
+         SAMPLE_FRACTION_TYPE,
+         RESULT_VALUE_TYPE,
+         STATISTIC_TYPE,
+         RESULT_VALUE_STATUS,
+         WEIGHT_BASIS_TYPE,
+         TEMPERATURE_BASIS_LEVEL,
+         DURATION_BASIS,
+         ANALYTICAL_PROCEDURE_SOURCE,
+         ANALYTICAL_PROCEDURE_ID,
+         LAB_NAME,
+         ANALYSIS_DATE_TIME,
+         DETECTION_LIMIT,
+         DETECTION_LIMIT_UNIT,
+         DETECTION_LIMIT_DESCRIPTION,
+         LAB_REMARK,
+         PARTICLE_SIZE,
+         PRECISION,
+         ACTIVITY_MEDIUM,
+         FK_STATION,
+         FK_ORG,
+         FK_GEO_COUNTY,
+         FK_GEO_STATE,
+         FK_ACT_MEDIUM,
+         FK_ACT_MATRIX,
+         FK_CHAR,
+         FK_UNIT_CONVERSION,
+         ACTIVITY_ID,
+         REPLICATE_NUMBER,
+         ACTIVITY_TYPE,
+         ACTIVITY_STOP_DATE_TIME,
+         ACT_STOP_TIME_ZONE,
+         ACTIVITY_DEPTH,
+         ACTIVITY_DEPTH_UNIT,
+         ACTIVITY_UPPER_DEPTH,
+         ACTIVITY_LOWER_DEPTH,
+         UPR_LWR_DEPTH_UNIT,
+         FIELD_PROCEDURE_ID,
+         FIELD_GEAR_ID,
+         RESULT_COMMENT,
+         ITIS_NUMBER,
+         ACTIVITY_COMMENT,
+         ACTIVITY_DEPTH_REF_POINT,
+         PROJECT_ID,
+         RESULT_MEAS_QUAL_CODE,
+         ACTIVITY_COND_ORG_TEXT,
+         RESULT_DEPTH_MEAS_VALUE,
+         RESULT_DEPTH_MEAS_UNIT_CODE,
+         RESULT_DEPTH_ALT_REF_PT_TXT,
+         SOURCE_SYSTEM,
+         LAB_SAMP_PRP_METHOD_ID,
+         LAB_SAMP_PRP_START_DATE_TIME
+      FROM
+         storetw.FA_REGULAR_RESULT';
 
      commit;
 
@@ -217,58 +215,36 @@ create or replace package body create_storet_objects
       execute immediate 'truncate table fa_station';
       execute immediate 'insert /*+ append nologging */ into fa_station
       select
-         fa_station.organization_id || ''-'' || fa_station.station_id STATION_ID,
-         trim(fa_station.station_name) STATION_NAME,
-         fa_station.ORGANIZATION_ID,
-         fa_station.LATITUDE,
-         fa_station.LONGITUDE,
-         regexp_substr(fa_station.map_scale, ''[[:digit:]]+$'') MAP_SCALE,
-         fa_station.ELEVATION,
-         fa_station.GENERATED_HUC,
-         fa_station.STATION_GROUP_TYPE,
-         trim(fa_station.description_text) DESCRIPTION_TEXT,
-         fa_station.PROJECT_ID,
-         fa_station.FK_GEO_STATE,
-         fa_station.FK_GEO_COUNTY,
-         fa_station.FK_MAD_HMETHOD,
-         fa_station.FK_MAD_HDATUM,
-         fa_station.FK_MAD_VMETHOD,
-         fa_station.FK_MAD_VDATUM,
-         fa_station.FK_ORG,
-         fa_station.FK_PRIMARY_TYPE,
-         fa_station.SOURCE_SYSTEM,
-         fa_station.PK_ISN,
-         nvl2(fa_station.elevation, nvl(fa_station.elevation_unit, ''ft''), null) ELEVATION_UNIT,
-         fa_station.HUCTWELVEDIGITCODE,
-         fa_station.WGS84_LATITUDE,
-         fa_station.WGS84_LONGITUDE
-         di_org.organization_name,
-         di_geo_state.country_code country_cd,
-         di_geo_state.country_name country_name,
-         rtrim(di_geo_state.fips_state_code) state_cd,
-         di_geo_state.state_name,
-         di_geo_county.fips_county_code county_cd,
-         di_geo_county.county_name,
-         nvl(lu_mad_hmethod.geopositioning_method, ''Unknown'') geopositioning_method,
-         nvl(rtrim(lu_mad_hdatum.id_code), ''Unknown'') hdatum_id_code,
-         regexp_substr(fa_station.elevation, ''^[[:digit:]]+'') elevation_value,
-         nvl2(fa_station.elevation, lu_mad_vmethod.elevation_method, null) elevation_method,
-         nvl2(fa_station.elevation, nvl(lu_mad_vdatum.id_code, ''Unknown''), null) vdatum_id_code
-      from fstoretw.a_station
-           left join storetw.di_org on fk_org = di_org.pk_isn
-           left join storetw.di_geo_state on fk_geo_state = di_geo_state.pk_isn
-           left join storetw.di_geo_county on fk_geo_county = di_geo_county.pk_isn
-           left join storetw.lu_mad_hmethod on fk_mad_hmethod = lu_mad_hmethod.pk_isn
-           left join storetw.lu_mad_hdatum on fk_mad_hdatum = lu_mad_hdatum.pk_isn
-           left join storetw.lu_mad_vmethod on fk_mad_vmethod = lu_mad_vmethod.pk_isn
-           left join storetw.lu_mad_vdatum on fk_mad_vdatum = lu_mad_vdatum.pk_isn';
+         STATION_ID,
+         STATION_NAME,
+         ORGANIZATION_ID,
+         LATITUDE,
+         LONGITUDE,
+         MAP_SCALE,
+         ELEVATION,
+         GENERATED_HUC,
+         STATION_GROUP_TYPE,
+         DESCRIPTION_TEXT,
+         PROJECT_ID,
+         FK_GEO_STATE,
+         FK_GEO_COUNTY,
+         FK_MAD_HMETHOD,
+         FK_MAD_HDATUM,
+         FK_MAD_VMETHOD,
+         FK_MAD_VDATUM,
+         FK_ORG,
+         FK_PRIMARY_TYPE,
+         SOURCE_SYSTEM,
+         GEOM,
+         PK_ISN,
+         ELEVATION_UNIT,
+         HUCTWELVEDIGITCODE,
+         WGS84_LATITUDE,
+         WGS84_LONGITUDE
+      FROM
+         storetw.FA_STATION';
 
       commit;
-
-      execute immediate 'alter table fa_station' || suffix || ' add geom (geom mdsys.sdo_geometry)';
-      execute immediate 'update fa_station' || suffix || ' set geom = mdsys.sdo_geometry(2001, 8307, mdsys.sdo_point_type(wgs84_longitude, wgs84_latitude, null), null, null)
-                          where wgs84_latitude is not null and
-                                wgs84_longitude is not null';
 
    exception
       when others then
@@ -285,13 +261,13 @@ create or replace package body create_storet_objects
 
       execute immediate 'truncate table storet_station_sum';
       execute immediate 'insert /*+ append nologging */ into storet_station_sum
-         select 
+         select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) full(c) parallel(c, 4) full(d) parallel(d, 4) use_hash(a) use_hash(b) use_hash(c) use_hash(d) */
             a.pk_isn,
-            station_id,
+            a.organization_id || ''-'' || station_id station_id,
             geom,
-            country_cd,
-            state_cd,
-            county_cd,
+            country_code,
+            fips_state_code,
+            fips_county_code,
             station_group_type,
             a.organization_id,
             organization_name,
@@ -301,13 +277,19 @@ create or replace package body create_storet_objects
             description_text,
             cast(nvl(result_count, 0) as number(9)) result_count
          from
-            fa_station'    || suffix || ' a
-            left join (select fk_station, count(*) result_count from fa_regular_result' || suffix || ' group by fk_station) e
+            fa_station a
+            left join di_geo_state b
+              on a.fk_geo_state  = b.pk_isn
+            left join di_geo_county c
+              on a.fk_geo_county = c.pk_isn
+            left join di_org d
+              on a.fk_org = d.pk_isn
+            left join (select fk_station, count(*) result_count from fa_regular_result group by fk_station) e
               on a.pk_isn = e.fk_station
          order by
-            country_cd,
-            state_cd,
-            county_cd,
+            country_code,
+            fips_state_code,
+            fips_county_code,
             station_group_type';
       commit;
 
@@ -318,34 +300,39 @@ create or replace package body create_storet_objects
          select /*+ full(a) parallel(a, 4) full(b) parallel(b, 4) use_hash(a) use_hash(b) */
             b.fk_station,
             a.station_id,
-            a.country_cd,
-            a.state_cd,
-            a.county_cd,
+            a.country_code,
+            a.fips_state_code,
+            a.fips_county_code,
             a.station_group_type,
             a.organization_id,
             a.generated_huc,
             b.activity_medium,
             b.characteristic_group_type,
-            b.characteristic_name,
+            b.display_name,
             b.activity_start_date_time,
             b.result_count
          from
-            storet_station_sum' || suffix || ' a,
-            (select /*+ parallel(4) */
-                fk_station,
-                activity_medium,
-                characteristic_group_type,
-                characteristic_name,
-                trunc(activity_start_date_time) activity_start_date_time,
+            storet_station_sum a,
+            (select /*+ full(r) parallel(r, 4) full(m) parallel(m, 4) full(z) parallel(z, 4) use_hash(r) use_hash(m) use_hash(z) */
+                r.fk_station,
+                m.activity_medium,
+                z.characteristic_group_type,
+                z.display_name,
+                trunc(r.activity_start_date_time) activity_start_date_time,
                 cast(count(*) as number(9)) result_count
              from
-                fa_regular_result'  || suffix || ' 
+                fa_regular_result r,
+                di_activity_medium m,
+                di_characteristic z
+             where
+                r.fk_act_medium = m.pk_isn(+) and
+                r.fk_char       = z.pk_isn(+)
              group by
-                fk_station,
-                activity_medium,
-                characteristic_group_type,
-                characteristic_name,
-                trunc(activity_start_date_time)) b
+                r.fk_station,
+                m.activity_medium,
+                z.characteristic_group_type,
+                z.display_name,
+                trunc(r.activity_start_date_time)) b
          where
              b.fk_station = a.pk_isn(+)
          order by
@@ -353,7 +340,7 @@ create or replace package body create_storet_objects
              station_id,
              activity_medium,
              characteristic_group_type,
-             characteristic_name';
+             display_name';
       commit;
 
       append_email_text('creating storet_result_ct_sum...');
@@ -363,36 +350,36 @@ create or replace package body create_storet_objects
         select /*+ full(a) parallel(a, 4) */
             fk_station,
             station_id,
-            country_cd,
-            state_cd,
-            county_cd,
+            country_code,
+            fips_state_code,
+            fips_county_code,
             station_group_type,
             organization_id,
             generated_huc,
             activity_medium,
             characteristic_group_type,
-            characteristic_name,
+            display_name,
             cast(sum(result_count) as number(9)) result_count
          from
             storet_result_sum a
          group by
             fk_station,
             station_id,
-            country_cd,
-            state_cd,
-            county_cd,
+            country_code,
+            fips_state_code,
+            fips_county_code,
             station_group_type,
             organization_id,
             generated_huc,
             activity_medium,
             characteristic_group_type,
-            characteristic_name
+            display_name
          order by
             fk_station,
             station_id,
             activity_medium,
             characteristic_group_type,
-            characteristic_name';
+            display_name';
       commit;
 
       execute immediate 'truncate table storet_result_nr_sum';
@@ -401,7 +388,7 @@ create or replace package body create_storet_objects
             fk_station,
             activity_medium,
             characteristic_group_type,
-            characteristic_name,
+            display_name,
             activity_start_date_time,
             cast(sum(result_count) as number(9)) result_count
          from
@@ -410,13 +397,13 @@ create or replace package body create_storet_objects
             fk_station,
             activity_medium,
             characteristic_group_type,
-            characteristic_name,
+            display_name,
             activity_start_date_time
          order by
             fk_station,
             activity_medium,
             characteristic_group_type,
-            characteristic_name';
+            display_name';
       commit;
 
       append_email_text('creating storet_lctn_loc...');
@@ -424,11 +411,15 @@ create or replace package body create_storet_objects
 	  execute immediate 'truncate table storet_lctn_loc';
       execute immediate 'insert /*+ append nologging */ into storet_lctn_loc
       select /*+ parallel(4) */ distinct
-             country_cd,
-             state_cd state_fips,
-             organization_id,
-             organization_name
-       from fa_station';
+             b.country_code country_cd,
+             b.fips_state_code state_fips,
+             c.organization_id,
+             c.organization_name
+       from fa_station a
+            left join di_geo_state b
+              on a.fk_geo_state  = b.pk_isn
+            left join di_org c
+              on a.organization_id = c.organization_id';
       commit;
 
    exception
@@ -603,7 +594,7 @@ create or replace package body create_storet_objects
          cast(sum(case when months_between(sysdate, activity_start_date_time) between 0 and 12 then 1 else 0 end) as number(7)) as results_past_12_months,
          cast(sum(case when months_between(sysdate, activity_start_date_time) between 0 and 60 then 1 else 0 end) as number(7)) as results_past_60_months,
          cast(count(*) as number(7)) as results_all_time
-      from /* TODO remove join*/
+      from
          fa_regular_result result,
          fa_station station,
          di_geo_state state,
@@ -634,45 +625,6 @@ create or replace package body create_storet_objects
                    order by 1)';
       commit;
  
-      execute immediate 'truncate table characteristictype';
-      execute immediate 'insert /*+ append nologging */ into characteristictype
-       select code_value,
-              cast(null as varchar2(4000 char)) description,
-              rownum sort_order
-         from (select distinct characteristic_group_type code_value
-                 from fa_regular_result
-                   order by 1)';
-      commit;
-
-      execute immediate 'truncate table country';
-      execute immediate 'insert /*+ append nologging */ into country
-       select code_value,
-              description,
-              rownum sort_order
-         from (select distinct country_cd code_value,
-                      country_name description
-                 from fa_station
-                   order by country_name desc)';
-      commit;
-
-      execute immediate 'truncate table county';
-      execute immediate 'insert /*+ append nologging */ into county
-       select code_value,
-              description,
-              country_cd,
-              state_cd,
-              rownum sort_order
-         from (select distinct country_cd||'':''||state_cd|| '':''||county_cd code_value,
-                      country_cd||'', ''||state_name||'', ''||county_name description,
-                      country_cd,
-                      state_cd,
-                      county_cd
-                 from fa_station
-                   order by country_cd desc,
-                            state_cd,
-                            county_cd)';
-      commit;
-
       execute immediate 'truncate table organization';
       execute immediate 'insert /*+ append nologging */ into organization
        select code_value,
@@ -706,23 +658,6 @@ create or replace package body create_storet_objects
          from (select distinct station_group_type code_value
                  from fa_station
                    order by 1)';
-      commit;
-
-      execute immediate 'truncate table state';
-      execute immediate 'insert /*+ append nologging */ into state
-       select code_value,
-              description_with_country,
-              description_with_out_country,
-              country_cd,
-              rownum sort_order
-         from (select distinct country_cd||'':''||state_cd code_value,
-                      country_cd||'', ''||state_name description_with_country,
-                      state_name description_with_out_country,
-                      country_cd,
-                      state_cd
-                 from fa_station
-                   order by country_cd desc,
-                            state_cd)';
       commit;
 
    exception
