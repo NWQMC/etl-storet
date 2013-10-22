@@ -1653,7 +1653,7 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_nr_sum_4' || suffix || ' on ' ||
-               table_name || ' (display_name             ) local nologging';
+               table_name || ' (characteristic_name             ) local nologging';
 
       append_email_text(stmt);
       execute immediate stmt;
@@ -1727,13 +1727,13 @@ create or replace package body create_storet_objects
       append_email_text('analyze storet_lctn_loc...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_LCTN_LOC'     || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze characteristicname...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICNAME'  || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICNAME'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze organization...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'ORGANIZATION'        || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_stats.gather_table_stats('STORETMODERN', 'ORGANIZATION'        || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze samplemedia...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'SAMPLEMEDIA'         || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_stats.gather_table_stats('STORETMODERN', 'SAMPLEMEDIA'         || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze sitetype...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'SITETYPE'            || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_stats.gather_table_stats('STORETMODERN', 'SITETYPE'            || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
 
 
    exception
