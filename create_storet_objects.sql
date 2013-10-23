@@ -153,8 +153,8 @@ create or replace package body create_storet_objects
          fa_regular_result_no_source.TRIP_ID,          /* OK */
       /* TRIP_NAME,                         */
       /* STATION_VISIT_ID,  */
-         fa_regular_result_no_source.CHARACTERISTIC_GROUP_TYPE,    /* OK */
-         fa_regular_result_no_source.CHARACTERISTIC_NAME,          /* leave it just in case */
+         di_characteristic.characteristic_group_type,
+         di_characteristic.display_name characteristic_name,
          fa_regular_result_no_source.RESULT_VALUE,                 /* OK */
          fa_regular_result_no_source.RESULT_UNIT,                  /* OK */
          fa_regular_result_no_source.RESULT_VALUE_TEXT,            /* OK */
@@ -197,7 +197,7 @@ create or replace package body create_storet_objects
       /* HYDROLOGIC_UNIT_CODE, */
       /* GENERATED_HUC, */
       /* RESULT_IS_NUMBER, */
-         fa_regular_result_no_source.ACTIVITY_MEDIUM,     /* Ok */
+         di_activity_medium.activity_medium,
          fa_regular_result_no_source.FK_STATION,          /* OK */
          fa_regular_result_no_source.FK_ORG,
       /* FK_DB_CAT, */
@@ -299,167 +299,77 @@ create or replace package body create_storet_objects
       /* FK_DATE_LC */
          di_activity_matrix.matrix_name
       from fa_regular_result_no_source
-           left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn';
+           left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn
+           left join di_characteristic@storetw on fk_char = di_characteristic.pk_isn
+           left join di_activity_medium@storetw on fk_act_medium = di_activity_medium.pk_isn';
 
       cleanup(1) := 'drop table FA_REGULAR_RESULT' || suffix || ' cascade constraints purge';
 
       execute immediate '
       insert /*+ append nologging */ into fa_regular_result' || suffix ||
         '(
-         PK_ISN,                      /* might be handy*/
-         ORGANIZATION_ID,             /* OK */
-      /* ORGANIZATION_IS_NUMBER,   */
-         STATION_ID,                        /* OK */
-      /* STATION_NAME,                      */
-         ACTIVITY_START_DATE_TIME,          /* OK */
-         ACT_START_TIME_ZONE,          /* OK */
-         TRIP_ID,          /* OK */
-      /* TRIP_NAME,                         */
-      /* STATION_VISIT_ID,  */
-         CHARACTERISTIC_GROUP_TYPE,    /* OK */
-         CHARACTERISTIC_NAME,          /* leave it just in case */
-         RESULT_VALUE,                 /* OK */
-         RESULT_UNIT,                  /* OK */
-         RESULT_VALUE_TEXT,            /* OK */
-         SAMPLE_FRACTION_TYPE,         /* OK */
-         RESULT_VALUE_TYPE,            /* OK */
-         STATISTIC_TYPE,               /* OK */
-         RESULT_VALUE_STATUS,          /* OK */
-         WEIGHT_BASIS_TYPE,          /* OK */
-         TEMPERATURE_BASIS_LEVEL,          /* OK */
-         DURATION_BASIS,          /* OK */
-         ANALYTICAL_PROCEDURE_SOURCE,      /* OK */
-         ANALYTICAL_PROCEDURE_ID,         /* OK */
-      /* LAB_ID,                       */
-         LAB_NAME,                        /* OK */
-      /* LAB_CERTIFIED, */
-      /* LAB_BATCH_ID, */
+         PK_ISN,
+         ORGANIZATION_ID,
+         STATION_ID,
+         ACTIVITY_START_DATE_TIME,
+         ACT_START_TIME_ZONE,
+         TRIP_ID,
+         CHARACTERISTIC_GROUP_TYPE,
+         CHARACTERISTIC_NAME,
+         RESULT_VALUE,
+         RESULT_UNIT,
+         RESULT_VALUE_TEXT,
+         SAMPLE_FRACTION_TYPE,
+         RESULT_VALUE_TYPE,
+         STATISTIC_TYPE,
+         RESULT_VALUE_STATUS,
+         WEIGHT_BASIS_TYPE,
+         TEMPERATURE_BASIS_LEVEL,
+         DURATION_BASIS,
+         ANALYTICAL_PROCEDURE_SOURCE,
+         ANALYTICAL_PROCEDURE_ID,
+         LAB_NAME,
          ANALYSIS_DATE_TIME,
-      /* ANALYSIS_TIME_ZONE, */
-      /* LOWER_QUANTITATION_LIMIT, */
-      /* UPPER_QUANTITATION_LIMIT, */
-         DETECTION_LIMIT,                 /* OK */
-         DETECTION_LIMIT_UNIT,                 /* OK */
-         DETECTION_LIMIT_DESCRIPTION,                 /* OK */
-         LAB_REMARK,                     /* OK */
-      /* DISTANCE_MEASURE_FROM,              */
-      /* DISTANCE_MEASURE_TO,                */
-         PARTICLE_SIZE,                  /* OK */
-      /* REPLICATE_ANALYSIS_COUNT,     */
-         PRECISION,                      /* OK */
-      /* CONFIDENCE_LEVEL,             */
-      /* DILUTION_INDICATOR,           */
-      /* RECOVERY_INDICATOR,           */
-      /* CORRECTION_INDICATOR,           */
-      /* STN_LATITUDE,  */
-      /* STN_LONGITUDE,  */
-      /* STN_HDATUM,  */
-      /* STN_STD_LATITUDE,  */
-      /* STN_STD_LONGITUDE,  */
-      /* STN_STD_HDATUM,  */
-      /* HYDROLOGIC_UNIT_CODE, */
-      /* GENERATED_HUC, */
-      /* RESULT_IS_NUMBER, */
-         ACTIVITY_MEDIUM,     /* Ok */
-         FK_STATION,          /* OK */
+         DETECTION_LIMIT,
+         DETECTION_LIMIT_UNIT,
+         DETECTION_LIMIT_DESCRIPTION,
+         LAB_REMARK,
+         PARTICLE_SIZE,
+         PRECISION,
+         ACTIVITY_MEDIUM,
+         FK_STATION,
          FK_ORG,
-      /* FK_DB_CAT, */
-      /* FK_GEN_DB_CAT, */
-         FK_GEO_COUNTY,      /* OK */
-         FK_GEO_STATE,       /* OK */
-      /* FK_DATE_ACT_START, */
-         FK_ACT_MEDIUM,      /* OK */
-         FK_ACT_MATRIX,      /* OK */
-      /* ACTIVITY_IS_NUMBER, */
+         FK_GEO_COUNTY,
+         FK_GEO_STATE,
+         FK_ACT_MEDIUM,
+         FK_ACT_MATRIX,
          FK_CHAR,
          FK_UNIT_CONVERSION,
-         ACTIVITY_ID,          /* OK */
-         REPLICATE_NUMBER,          /* OK */
-         ACTIVITY_TYPE,          /* OK */
-      /* ACTIVITY_CATEGORY, */
-      /* ACTIVITY_INTENT,   */
-      /* LOCATION_POINT_TYPE, */
-      /* POINT_SEQUENCE_NUMBER, */
-      /* WELL_NUMBER,  */
-      /* PIPE_NUMBER,  */
-         ACTIVITY_STOP_DATE_TIME,          /* OK */
-         ACT_STOP_TIME_ZONE,          /* OK */
-      /* ACTIVITY_REL_DEPTH,   */
-         ACTIVITY_DEPTH,          /* OK */
-         ACTIVITY_DEPTH_UNIT,          /* OK */
-         ACTIVITY_UPPER_DEPTH,          /* OK */
-         ACTIVITY_LOWER_DEPTH,          /* OK */
-         UPR_LWR_DEPTH_UNIT,            /* OK */
-         FIELD_PROCEDURE_ID,            /* OK */
-      /* GEAR_CONFIG_ID, */
-      /* ACTIVITY_LATITUDE, */
-      /* ACTIVITY_LONGITUDE, */
-      /* ACT_STD_LATITUDE,  */
-      /* ACT_STD_LONGITUDE,  */
-      /* ACT_STD_HDATUM,  */
-      /* STD_VALUE,  */
-      /* STD_UNIT,  */
-      /* FK_ACT_MAD_HDATUM,  */
-      /* FK_ACT_MAD_HMETHOD,  */
-      /* ACTIVITY_ISN, */
-      /* VISIT_START_DATE_TIME, */
-      /* VISIT_START_TIME_ZONE, */
-      /* VISIT_STOP_DATE_TIME, */
-      /* VISIT_STOP_TIME_ZONE, */
-      /* ACTIVITY_MATRIX, */
-      /* FIELD_SET, */
-      /* POINT_NAME, */
-      /* SGO_INDICATOR, */
-      /* MAP_SCALE, */
-         FIELD_GEAR_ID,       /* OK */
-      /* BIAS, */
-      /* CONF_LVL_CORR_BIAS, */
-         RESULT_COMMENT,      /* OK */
-      /* TEXT_RESULT,  */
-      /* CAS_NUMBER, */
-      /* EPA_REG_NUMBER, */
-         ITIS_NUMBER,   /* OK */
-      /* CONTAINER_DESC, */
-      /* TEMP_PRESERVN_TYPE, */
-      /* PRESRV_STRGE_PRCDR, */
-      /* PORTABLE_DATA_LOGGER, */
-      /* FK_STN_ACT_PT,  */
-      /* FK_STATN_TYPES, */
-      /* LAST_USERID,  */
-      /* LAST_CHANGE_DATE,  */
-      /* BLOB_ID,    */
-      /* BLOB_TITLE,    */
-      /* ACT_BLOB_ID,    */
-      /* ACT_BLOB_TITLE,    */
-         ACTIVITY_COMMENT,    /* OK */
-         ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         PROJECT_ID,   /* OK */
-      /* TRIBAL_WATER_QUALITY_MEASURE, */
-         RESULT_MEAS_QUAL_CODE,  /* OK */
-         ACTIVITY_COND_ORG_TEXT,    /* OK */
-         RESULT_DEPTH_MEAS_VALUE,     /* OK */
-         RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
-         RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
-      /* ANALYTICAL_METHOD_LIST_AGENCY,  */
-      /* ANALYTICAL_METHOD_LIST_VER,  */
-      /* SMPRP_TRANSPORT_STORAGE_DESC,  */
-         SOURCE_SYSTEM,                  /* might be handy */
-      /* SOURCE_UID, */
-      /* ETL_ID, */
-      /* HORIZONTAL_ACCURACY_MEASURE, */
-      /* LAB_ACCRED_AUTHORITY, */
-      /* METHOD_SPECIATION, */
-         LAB_SAMP_PRP_METHOD_ID,  /* OK */
-      /* LAB_SAMP_PRP_METHOD_CONTEXT, */
-      /* LAB_SAMP_PRP_METHOD_QUAL_TYPE, */
-         LAB_SAMP_PRP_START_DATE_TIME,  /* OK */
-      /* LAB_SAMP_PRP_START_TMZONE, */
-      /* LAB_SAMP_PRP_END_DATE_TIME, */
-      /* LAB_SAMP_PRP_END_TMZONE, */
-      /* LAB_SAMP_PRP_DILUTION_FACTOR, */
-      /* SAMPLING_POINT_NAME, */
-      /* LAST_TRANSACTION_ID, */
-      /* FK_DATE_LC */
+         ACTIVITY_ID,
+         REPLICATE_NUMBER,
+         ACTIVITY_TYPE,
+         ACTIVITY_STOP_DATE_TIME,
+         ACT_STOP_TIME_ZONE,
+         ACTIVITY_DEPTH,
+         ACTIVITY_DEPTH_UNIT,
+         ACTIVITY_UPPER_DEPTH,
+         ACTIVITY_LOWER_DEPTH,
+         UPR_LWR_DEPTH_UNIT,
+         FIELD_PROCEDURE_ID,
+         FIELD_GEAR_ID,
+         RESULT_COMMENT,
+         ITIS_NUMBER,
+         ACTIVITY_COMMENT,
+         ACTIVITY_DEPTH_REF_POINT,
+         PROJECT_ID,
+         RESULT_MEAS_QUAL_CODE,
+         ACTIVITY_COND_ORG_TEXT,
+         RESULT_DEPTH_MEAS_VALUE,
+         RESULT_DEPTH_MEAS_UNIT_CODE,
+         RESULT_DEPTH_ALT_REF_PT_TXT,
+         SOURCE_SYSTEM,
+         LAB_SAMP_PRP_METHOD_ID,
+         LAB_SAMP_PRP_START_DATE_TIME,
          matrix_name
        )
        SELECT
@@ -473,8 +383,8 @@ create or replace package body create_storet_objects
          fa_regular_result.TRIP_ID,          /* OK */
       /* TRIP_NAME,                         */
       /* STATION_VISIT_ID,  */
-         fa_regular_result.CHARACTERISTIC_GROUP_TYPE,    /* OK */
-         fa_regular_result.CHARACTERISTIC_NAME,          /* leave it just in case */
+         di_characteristic.characteristic_group_type,
+         di_characteristic.display_name characteristic_name,
          fa_regular_result.RESULT_VALUE,                 /* OK */
          fa_regular_result.RESULT_UNIT,                  /* OK */
          fa_regular_result.RESULT_VALUE_TEXT,            /* OK */
@@ -517,7 +427,7 @@ create or replace package body create_storet_objects
       /* HYDROLOGIC_UNIT_CODE, */
       /* GENERATED_HUC, */
       /* RESULT_IS_NUMBER, */
-         fa_regular_result.ACTIVITY_MEDIUM,     /* Ok */
+         di_activity_medium.activity_medium,
          fa_regular_result.FK_STATION,          /* OK */
          fa_regular_result.FK_ORG,
       /* FK_DB_CAT, */
@@ -619,7 +529,9 @@ create or replace package body create_storet_objects
       /* FK_DATE_LC */
          di_activity_matrix.matrix_name
       from fa_regular_result@storetw
-           left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn';
+           left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn
+           left join di_characteristic@storetw on fk_char = di_characteristic.pk_isn
+           left join di_activity_medium@storetw on fk_act_medium = di_activity_medium.pk_isn';
 
      exception
       when others then
@@ -1184,8 +1096,8 @@ create or replace package body create_storet_objects
       execute immediate
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
       select
-         cast(trim(state.fips_state_code) as varchar2(2)) fips_state_code,
-         cast(trim(county.fips_county_code) as varchar2(3)) fips_county_code,
+         cast(trim(station.state_cd) as varchar2(2)) fips_state_code,
+         cast(trim(station.county_cde as varchar2(3)) fips_county_code,
          cast(trim(station.station_group_type) as varchar2(30)) site_type,
          /*   took out because multiple per station: cast(trim(result.characteristic_group_type) as varchar2(80)) characteristic_group,  */
          cast(trim(station.generated_huc) as varchar2(8)) as huc8,
@@ -1202,18 +1114,14 @@ create or replace package body create_storet_objects
       from /* TODO remove join*/
          fa_regular_result' || suffix || '  result,
          fa_station'        || suffix || '  station,
-         di_geo_state'      || suffix || '  state,
-         di_geo_county'     || suffix || '  county
       where
-         length(trim(state.fips_state_code  )) = 2  and
-         length(trim(county.fips_county_code)) = 3  and
-         trim(state.fips_state_code) between ''01'' and ''56'' and
-         result.fk_station     = station.pk_isn     and
-         station.fk_geo_state  = state.pk_isn  (+)  and
-         station.fk_geo_county = county.pk_isn (+)
+         length(trim(station.state_cd  )) = 2  and
+         length(trim(station.county_cd)) = 3  and
+         trim(station.state_cd) between ''01'' and ''56'' and
+         result.fk_station     = station.pk_isn
       group by
-         cast(trim(state.fips_state_code) as varchar2(2)) ,
-         cast(trim(county.fips_county_code) as varchar2(3)) ,
+         cast(trim(station.state_cd) as varchar2(2)) ,
+         cast(trim(station.county_cd) as varchar2(3)) ,
          cast(trim(station.station_group_type) as varchar2(30)) ,
          /* took out cast(trim(result.characteristic_group_type) as varchar2(80)) ,  */
          cast(trim(station.generated_huc) as varchar2(8)) ,
@@ -1582,7 +1490,7 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_8' || suffix || ' on ' ||
-               table_name || ' (display_name             ) local nologging';
+               table_name || ' (characteristic_name      ) local nologging';
 
 
       table_name := 'STORET_RESULT_CT_SUM' || suffix;
@@ -1630,7 +1538,7 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_8' || suffix || ' on ' ||
-               table_name || ' (display_name             ) local nologging';
+               table_name || ' (characteristic_name      ) local nologging';
 
       table_name := 'STORET_RESULT_NR_SUM' || suffix;
 
@@ -2080,7 +1988,7 @@ create or replace package body create_storet_objects
       fetch c into grant_count;
       close c;
 
-      if grant_count < 28 then
+      if grant_count < 45 then /* 48 as of 23OCT2013 */
          pass_fail := 'FAIL';
       else
          pass_fail := 'PASS';
