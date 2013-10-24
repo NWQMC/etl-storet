@@ -1113,7 +1113,7 @@ create or replace package body create_storet_objects
          cast(count(*) as number(7)) as results_all_time
       from /* TODO remove join*/
          fa_regular_result' || suffix || '  result,
-         fa_station'        || suffix || '  station,
+         fa_station'        || suffix || '  station
       where
          length(trim(station.state_cd  )) = 2  and
          length(trim(station.county_cd)) = 3  and
