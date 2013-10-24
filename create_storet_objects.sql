@@ -1148,6 +1148,7 @@ create or replace package body create_storet_objects
               rownum sort_order
          from (select distinct characteristic_group_type code_value
                  from fa_regular_result' || suffix || '
+                where characteristic_group_type is not null
                    order by 1)';
       cleanup(23) := 'drop table characteristictype' || suffix || ' cascade constraints purge';
 
