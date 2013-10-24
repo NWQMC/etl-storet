@@ -1097,7 +1097,7 @@ create or replace package body create_storet_objects
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
       select
          cast(trim(station.state_cd) as varchar2(2)) fips_state_code,
-         cast(trim(station.county_cde) as varchar2(3)) fips_county_code,
+         cast(trim(station.county_cd) as varchar2(3)) fips_county_code,
          cast(trim(station.station_group_type) as varchar2(30)) site_type,
          /*   took out because multiple per station: cast(trim(result.characteristic_group_type) as varchar2(80)) characteristic_group,  */
          cast(trim(station.generated_huc) as varchar2(8)) as huc8,
