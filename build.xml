@@ -97,7 +97,6 @@
 		<condition property="stopRun">
 			<contains string="${pullResult}" substring="Since no differences, quitting." />
 		</condition>
-		<echoproperties/>
 	</target>
 		
 	<target name="dropStoretWTables" depends="setStopRun" unless="stopRun">
