@@ -1591,9 +1591,13 @@ create or replace package body create_storet_objects
       execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on characteristicname'   || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on characteristictype'   || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on country'              || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on county'               || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on organization'         || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on samplemedia'          || suffix || ' to storetuser, nwq_stg';
       execute immediate 'grant select on sitetype'             || suffix || ' to storetuser, nwq_stg';
+      execute immediate 'grant select on state'                || suffix || ' to storetuser, nwq_stg';
 
       append_email_text('analyze fa_station...');  /* takes about 1.5 minutes*/
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
@@ -1637,12 +1641,20 @@ create or replace package body create_storet_objects
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_LCTN_LOC'     || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze characteristicname...');
       dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICNAME'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze characteristictype...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICTYPE'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze country...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'COUNTRY'             || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze county...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'COUNTY'              || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze organization...');
       dbms_stats.gather_table_stats('STORETMODERN', 'ORGANIZATION'        || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze samplemedia...');
       dbms_stats.gather_table_stats('STORETMODERN', 'SAMPLEMEDIA'         || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       append_email_text('analyze sitetype...');
       dbms_stats.gather_table_stats('STORETMODERN', 'SITETYPE'            || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      append_email_text('analyze state...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'STATE'               || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
 
 
    exception
