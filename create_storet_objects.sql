@@ -1172,15 +1172,19 @@ create or replace package body create_storet_objects
               country_cd,
               state_cd,
               rownum sort_order
-         from (select distinct country_cd||'':''||state_cd|| '':''||county_cd code_value,
-                      country_cd||'', ''||state_name||'', ''||county_name description,
-                      country_cd,
-                      state_cd,
-                      county_cd
-                 from fa_station' || suffix || '
-                   order by country_cd desc,
-                            state_cd,
-                            county_cd)';
+         from (select di_geo_state.country_code||'':''||rtrim(di_geo_state.fips_state_code)||'':''||di_geo_county.fips_county_code code_value,
+                      di_geo_state.country_code||'', ''||di_geo_state.state_name||'', ''||di_geo_county.county_name description,
+                      di_geo_state.country_code country_cd,
+                      rtrim(di_geo_state.fips_state_code) state_cd
+                 from di_geo_state
+                      join di_geo_county
+                        on di_geo_state.pk_isn = di_geo_county.fk_geo_state
+                where exists (select null
+                                from fa_station' || suffix || '
+                               where di_geo_county.pk_isn = fk_geo_county)
+                   order by country_code desc,
+                            fips_state_code,
+                            fips_county_code)';
      cleanup(25) := 'drop table county' || suffix || ' cascade constraints purge';
 
       execute immediate
