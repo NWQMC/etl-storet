@@ -146,7 +146,7 @@ create or replace package body create_storet_objects
          fa_regular_result_no_source.PK_ISN,                      /* might be handy*/
          fa_regular_result_no_source.ORGANIZATION_ID,             /* OK */
       /* ORGANIZATION_IS_NUMBER,   */
-         fa_regular_result_no_source.organization_id || ''-'' || fa_regular_result_no_source.station_id STATION_ID,                        /* OK */
+         fa_regular_result_no_source.STATION_ID,                        /* OK */
       /* STATION_NAME,                      */
          fa_regular_result_no_source.ACTIVITY_START_DATE_TIME,          /* OK */
          fa_regular_result_no_source.ACT_START_TIME_ZONE,          /* OK */
@@ -156,8 +156,8 @@ create or replace package body create_storet_objects
          di_characteristic.characteristic_group_type,
          di_characteristic.display_name characteristic_name,
          fa_regular_result_no_source.RESULT_VALUE,                 /* OK */
-         fa_regular_result_no_source.RESULT_UNIT,                  /* OK */
-         fa_regular_result_no_source.RESULT_VALUE_TEXT,            /* OK */
+         nvl2(fa_regular_result_no_source.result_value, fa_regular_result_no_source.result_unit, null) result_unit,                  /* OK */
+         nvl2(fa_regular_result_no_source.result_value, null, fa_regular_result_no_source.result_value_text) result_value_text,            /* OK */
          fa_regular_result_no_source.SAMPLE_FRACTION_TYPE,         /* OK */
          fa_regular_result_no_source.RESULT_VALUE_TYPE,            /* OK */
          fa_regular_result_no_source.STATISTIC_TYPE,               /* OK */
@@ -227,7 +227,7 @@ create or replace package body create_storet_objects
          fa_regular_result_no_source.ACTIVITY_UPPER_DEPTH,          /* OK */
          fa_regular_result_no_source.ACTIVITY_LOWER_DEPTH,          /* OK */
          fa_regular_result_no_source.UPR_LWR_DEPTH_UNIT,            /* OK */
-         fa_regular_result_no_source.FIELD_PROCEDURE_ID,            /* OK */
+         nvl(fa_regular_result_no_source.FIELD_PROCEDURE_ID, 'USEPA') field_procedure_id,            /* OK */
       /* GEAR_CONFIG_ID, */
       /* ACTIVITY_LATITUDE, */
       /* ACTIVITY_LONGITUDE, */
@@ -248,7 +248,7 @@ create or replace package body create_storet_objects
       /* POINT_NAME, */
       /* SGO_INDICATOR, */
       /* MAP_SCALE, */
-         fa_regular_result_no_source.FIELD_GEAR_ID,       /* OK */
+         nvl(fa_regular_result_no_source.FIELD_GEAR_ID, ''Unknown'') field_gear_id,       /* OK */
       /* BIAS, */
       /* CONF_LVL_CORR_BIAS, */
          fa_regular_result_no_source.RESULT_COMMENT,      /* OK */
@@ -270,13 +270,13 @@ create or replace package body create_storet_objects
       /* ACT_BLOB_TITLE,    */
          fa_regular_result_no_source.ACTIVITY_COMMENT,    /* OK */
          fa_regular_result_no_source.ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         fa_regular_result_no_source.PROJECT_ID,   /* OK */
+         nvl(fa_regular_result.PROJECT_ID,''EPA'') project_id   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
          fa_regular_result_no_source.RESULT_MEAS_QUAL_CODE,  /* OK */
          fa_regular_result_no_source.ACTIVITY_COND_ORG_TEXT,    /* OK */
          fa_regular_result_no_source.RESULT_DEPTH_MEAS_VALUE,     /* OK */
-         fa_regular_result_no_source.RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
-         fa_regular_result_no_source.RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
+         nvl2(fa_regular_result_no_source.result_depth_meas_value, fa_regular_result_no_source.result_depth_meas_unit_code, null) result_depth_meas_unit_code,     /* OK */
+         nvl2(fa_regular_result_no_source.result_depth_meas_value, fa_regular_result_no_source.result_depth_alt_ref_pt_txt, null) result_depth_alt_ref_pt_txt,     /* OK */
       /* ANALYTICAL_METHOD_LIST_AGENCY,  */
       /* ANALYTICAL_METHOD_LIST_VER,  */
       /* SMPRP_TRANSPORT_STORAGE_DESC,  */
@@ -297,7 +297,13 @@ create or replace package body create_storet_objects
       /* SAMPLING_POINT_NAME, */
       /* LAST_TRANSACTION_ID, */
       /* FK_DATE_LC */
-         di_activity_matrix.matrix_name
+         di_activity_matrix.matrix_name,
+         nvl2(fa_regular_result_no_source.activity_upper_depth, fa_regular_result_no_source.upr_lwr_depth_unit, null) as activity_upper_depth_unit,
+         nvl2(fa_regular_result_no_source.activity_lower_depth, fa_regular_result_no_source.upr_lwr_depth_unit, null) as activity_lower_depth_unit,
+         nvl2(coalesce(fa_regular_result_no_source.activity_upper_depth, fa_regular_result_no_source.activity_lower_depth), fa_regular_result_no_source.activity_depth_ref_point, null) as activity_uprlwr_depth_ref_pt,
+         regexp_replace(fa_regular_result_no_source.detection_limit, ''[[:space:]].*'') as myql,
+         nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_unit, null) as myqlunits,
+         nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_description, null) as myqldesc
       from fa_regular_result_no_source
            left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn
            left join di_characteristic@storetw on fk_char = di_characteristic.pk_isn
@@ -370,13 +376,19 @@ create or replace package body create_storet_objects
          SOURCE_SYSTEM,
          LAB_SAMP_PRP_METHOD_ID,
          LAB_SAMP_PRP_START_DATE_TIME,
-         matrix_name
+         matrix_name,
+         activity_upper_depth_unit,
+         activity_lower_depth_unit,
+         activity_uprlwr_depth_ref_pt,
+         myql,
+         myqlunits,
+         myqldesc
        )
        SELECT
          fa_regular_result.PK_ISN,                      /* might be handy*/
          fa_regular_result.ORGANIZATION_ID,             /* OK */
       /* ORGANIZATION_IS_NUMBER,   */
-         fa_regular_result.organization_id || ''-'' || fa_regular_result.station_id STATION_ID,                        /* OK */
+         fa_regular_result.STATION_ID,                        /* OK */
       /* STATION_NAME,                      */
          fa_regular_result.ACTIVITY_START_DATE_TIME,          /* OK */
          fa_regular_result.ACT_START_TIME_ZONE,          /* OK */
@@ -386,8 +398,8 @@ create or replace package body create_storet_objects
          di_characteristic.characteristic_group_type,
          di_characteristic.display_name characteristic_name,
          fa_regular_result.RESULT_VALUE,                 /* OK */
-         fa_regular_result.RESULT_UNIT,                  /* OK */
-         fa_regular_result.RESULT_VALUE_TEXT,            /* OK */
+         nvl2(fa_regular_result.result_value, fa_regular_result.result_unit, null) result_unit,                  /* OK */
+         nvl2(fa_regular_result.result_value, null, fa_regular_result.result_value_text) result_value_text,            /* OK */
          fa_regular_result.SAMPLE_FRACTION_TYPE,         /* OK */
          fa_regular_result.RESULT_VALUE_TYPE,            /* OK */
          fa_regular_result.STATISTIC_TYPE,               /* OK */
@@ -457,7 +469,7 @@ create or replace package body create_storet_objects
          fa_regular_result.ACTIVITY_UPPER_DEPTH,          /* OK */
          fa_regular_result.ACTIVITY_LOWER_DEPTH,          /* OK */
          fa_regular_result.UPR_LWR_DEPTH_UNIT,            /* OK */
-         fa_regular_result.FIELD_PROCEDURE_ID,            /* OK */
+         nvl(fa_regular_result.FIELD_PROCEDURE_ID, 'USEPA') field_procedure_id,            /* OK */
       /* GEAR_CONFIG_ID, */
       /* ACTIVITY_LATITUDE, */
       /* ACTIVITY_LONGITUDE, */
@@ -478,7 +490,7 @@ create or replace package body create_storet_objects
       /* POINT_NAME, */
       /* SGO_INDICATOR, */
       /* MAP_SCALE, */
-         fa_regular_result.FIELD_GEAR_ID,       /* OK */
+         nvl(fa_regular_result.FIELD_GEAR_ID, 'Unknown') field_gear_id,       /* OK */
       /* BIAS, */
       /* CONF_LVL_CORR_BIAS, */
          fa_regular_result.RESULT_COMMENT,      /* OK */
@@ -500,13 +512,13 @@ create or replace package body create_storet_objects
       /* ACT_BLOB_TITLE,    */
          fa_regular_result.ACTIVITY_COMMENT,    /* OK */
          fa_regular_result.ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         fa_regular_result.PROJECT_ID,   /* OK */
+         nvl(fa_regular_result.PROJECT_ID,'EPA') project_id   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
          fa_regular_result.RESULT_MEAS_QUAL_CODE,  /* OK */
          fa_regular_result.ACTIVITY_COND_ORG_TEXT,    /* OK */
          fa_regular_result.RESULT_DEPTH_MEAS_VALUE,     /* OK */
-         fa_regular_result.RESULT_DEPTH_MEAS_UNIT_CODE,     /* OK */
-         fa_regular_result.RESULT_DEPTH_ALT_REF_PT_TXT,     /* OK */
+         nvl2(fa_regular_result.result_depth_meas_value, fa_regular_result.result_depth_meas_unit_code, null) result_depth_meas_unit_code,     /* OK */
+         nvl2(fa_regular_result.result_depth_meas_value, fa_regular_result.result_depth_alt_ref_pt_txt, null) result_depth_alt_ref_pt_txt,     /* OK */
       /* ANALYTICAL_METHOD_LIST_AGENCY,  */
       /* ANALYTICAL_METHOD_LIST_VER,  */
       /* SMPRP_TRANSPORT_STORAGE_DESC,  */
@@ -527,7 +539,13 @@ create or replace package body create_storet_objects
       /* SAMPLING_POINT_NAME, */
       /* LAST_TRANSACTION_ID, */
       /* FK_DATE_LC */
-         di_activity_matrix.matrix_name
+         di_activity_matrix.matrix_name,
+         nvl2(fa_regular_result.activity_upper_depth, fa_regular_result.upr_lwr_depth_unit, null) as activity_upper_depth_unit,
+         nvl2(fa_regular_result.activity_lower_depth, fa_regular_result.upr_lwr_depth_unit, null) as activity_lower_depth_unit,
+         nvl2(coalesce(fa_regular_result.activity_upper_depth, fa_regular_result.activity_lower_depth), fa_regular_result.activity_depth_ref_point, null) as activity_uprlwr_depth_ref_pt,
+         regexp_replace(fa_regular_result.detection_limit, ''[[:space:]].*'') as myql,
+         nvl2(fa_regular_result.detection_limit, fa_regular_result.detection_limit_unit, null) as myqlunits,
+         nvl2(fa_regular_result.detection_limit, fa_regular_result.detection_limit_description, null) as myqldesc
       from fa_regular_result@storetw
            left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn
            left join di_characteristic@storetw on fk_char = di_characteristic.pk_isn
