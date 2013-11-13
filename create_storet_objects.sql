@@ -113,32 +113,32 @@ create or replace package body create_storet_objects
       append_email_text('creating regular_result...');
 
       execute immediate '
-      create table fa_regular_result' || suffix || ' parallel 4 compress pctfree 0 nologging cache
+      create table fa_regular_result' || suffix || q'! parallel 4 compress pctfree 0 nologging cache
       partition by range(activity_start_date_time)
       (
-         partition fa_regular_result_pre_1990 values less than (to_date(''01-JAN-1990'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1990     values less than (to_date(''01-JAN-1991'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1991     values less than (to_date(''01-JAN-1992'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1992     values less than (to_date(''01-JAN-1993'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1993     values less than (to_date(''01-JAN-1994'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1994     values less than (to_date(''01-JAN-1995'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1995     values less than (to_date(''01-JAN-1996'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1996     values less than (to_date(''01-JAN-1997'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1997     values less than (to_date(''01-JAN-1998'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1998     values less than (to_date(''01-JAN-1999'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_1999     values less than (to_date(''01-JAN-2000'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2000     values less than (to_date(''01-JAN-2001'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2001     values less than (to_date(''01-JAN-2002'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2002     values less than (to_date(''01-JAN-2003'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2003     values less than (to_date(''01-JAN-2004'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2004     values less than (to_date(''01-JAN-2005'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2005     values less than (to_date(''01-JAN-2006'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2006     values less than (to_date(''01-JAN-2007'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2007     values less than (to_date(''01-JAN-2008'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2008     values less than (to_date(''01-JAN-2009'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2009     values less than (to_date(''01-JAN-2010'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2010     values less than (to_date(''01-JAN-2011'', ''DD-MON-YYYY'')),
-         partition fa_regular_result_2011     values less than (to_date(''01-JAN-2012'', ''DD-MON-YYYY'')),
+         partition fa_regular_result_pre_1990 values less than (to_date('01-JAN-1990', 'DD-MON-YYYY')),
+         partition fa_regular_result_1990     values less than (to_date('01-JAN-1991', 'DD-MON-YYYY')),
+         partition fa_regular_result_1991     values less than (to_date('01-JAN-1992', 'DD-MON-YYYY')),
+         partition fa_regular_result_1992     values less than (to_date('01-JAN-1993', 'DD-MON-YYYY')),
+         partition fa_regular_result_1993     values less than (to_date('01-JAN-1994', 'DD-MON-YYYY')),
+         partition fa_regular_result_1994     values less than (to_date('01-JAN-1995', 'DD-MON-YYYY')),
+         partition fa_regular_result_1995     values less than (to_date('01-JAN-1996', 'DD-MON-YYYY')),
+         partition fa_regular_result_1996     values less than (to_date('01-JAN-1997', 'DD-MON-YYYY')),
+         partition fa_regular_result_1997     values less than (to_date('01-JAN-1998', 'DD-MON-YYYY')),
+         partition fa_regular_result_1998     values less than (to_date('01-JAN-1999', 'DD-MON-YYYY')),
+         partition fa_regular_result_1999     values less than (to_date('01-JAN-2000', 'DD-MON-YYYY')),
+         partition fa_regular_result_2000     values less than (to_date('01-JAN-2001', 'DD-MON-YYYY')),
+         partition fa_regular_result_2001     values less than (to_date('01-JAN-2002', 'DD-MON-YYYY')),
+         partition fa_regular_result_2002     values less than (to_date('01-JAN-2003', 'DD-MON-YYYY')),
+         partition fa_regular_result_2003     values less than (to_date('01-JAN-2004', 'DD-MON-YYYY')),
+         partition fa_regular_result_2004     values less than (to_date('01-JAN-2005', 'DD-MON-YYYY')),
+         partition fa_regular_result_2005     values less than (to_date('01-JAN-2006', 'DD-MON-YYYY')),
+         partition fa_regular_result_2006     values less than (to_date('01-JAN-2007', 'DD-MON-YYYY')),
+         partition fa_regular_result_2007     values less than (to_date('01-JAN-2008', 'DD-MON-YYYY')),
+         partition fa_regular_result_2008     values less than (to_date('01-JAN-2009', 'DD-MON-YYYY')),
+         partition fa_regular_result_2009     values less than (to_date('01-JAN-2010', 'DD-MON-YYYY')),
+         partition fa_regular_result_2010     values less than (to_date('01-JAN-2011', 'DD-MON-YYYY')),
+         partition fa_regular_result_2011     values less than (to_date('01-JAN-2012', 'DD-MON-YYYY')),
          partition fa_regular_result_last     values less than (maxvalue)
       )
       as
@@ -248,7 +248,7 @@ create or replace package body create_storet_objects
       /* POINT_NAME, */
       /* SGO_INDICATOR, */
       /* MAP_SCALE, */
-         nvl(fa_regular_result_no_source.FIELD_GEAR_ID, ''Unknown'') field_gear_id,       /* OK */
+         nvl(fa_regular_result_no_source.FIELD_GEAR_ID, 'Unknown') field_gear_id,       /* OK */
       /* BIAS, */
       /* CONF_LVL_CORR_BIAS, */
          fa_regular_result_no_source.RESULT_COMMENT,      /* OK */
@@ -270,7 +270,7 @@ create or replace package body create_storet_objects
       /* ACT_BLOB_TITLE,    */
          fa_regular_result_no_source.ACTIVITY_COMMENT,    /* OK */
          fa_regular_result_no_source.ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         nvl(fa_regular_result.PROJECT_ID,''EPA'') project_id   /* OK */
+         nvl(fa_regular_result.PROJECT_ID,'EPA') project_id   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
          fa_regular_result_no_source.RESULT_MEAS_QUAL_CODE,  /* OK */
          fa_regular_result_no_source.ACTIVITY_COND_ORG_TEXT,    /* OK */
@@ -301,19 +301,19 @@ create or replace package body create_storet_objects
          nvl2(fa_regular_result_no_source.activity_upper_depth, fa_regular_result_no_source.upr_lwr_depth_unit, null) as activity_upper_depth_unit,
          nvl2(fa_regular_result_no_source.activity_lower_depth, fa_regular_result_no_source.upr_lwr_depth_unit, null) as activity_lower_depth_unit,
          nvl2(coalesce(fa_regular_result_no_source.activity_upper_depth, fa_regular_result_no_source.activity_lower_depth), fa_regular_result_no_source.activity_depth_ref_point, null) as activity_uprlwr_depth_ref_pt,
-         regexp_replace(fa_regular_result_no_source.detection_limit, ''[[:space:]].*'') as myql,
+         regexp_replace(fa_regular_result_no_source.detection_limit, '[[:space:]].*') as myql,
          nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_unit, null) as myqlunits,
          nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_description, null) as myqldesc
       from fa_regular_result_no_source
            left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn
            left join di_characteristic@storetw on fk_char = di_characteristic.pk_isn
-           left join di_activity_medium@storetw on fk_act_medium = di_activity_medium.pk_isn';
+           left join di_activity_medium@storetw on fk_act_medium = di_activity_medium.pk_isn!';
 
       cleanup(1) := 'drop table FA_REGULAR_RESULT' || suffix || ' cascade constraints purge';
 
       execute immediate '
       insert /*+ append nologging */ into fa_regular_result' || suffix ||
-        '(
+        q'!(
          PK_ISN,
          ORGANIZATION_ID,
          STATION_ID,
@@ -543,13 +543,13 @@ create or replace package body create_storet_objects
          nvl2(fa_regular_result.activity_upper_depth, fa_regular_result.upr_lwr_depth_unit, null) as activity_upper_depth_unit,
          nvl2(fa_regular_result.activity_lower_depth, fa_regular_result.upr_lwr_depth_unit, null) as activity_lower_depth_unit,
          nvl2(coalesce(fa_regular_result.activity_upper_depth, fa_regular_result.activity_lower_depth), fa_regular_result.activity_depth_ref_point, null) as activity_uprlwr_depth_ref_pt,
-         regexp_replace(fa_regular_result.detection_limit, ''[[:space:]].*'') as myql,
+         regexp_replace(fa_regular_result.detection_limit, '[[:space:]].*') as myql,
          nvl2(fa_regular_result.detection_limit, fa_regular_result.detection_limit_unit, null) as myqlunits,
          nvl2(fa_regular_result.detection_limit, fa_regular_result.detection_limit_description, null) as myqldesc
       from fa_regular_result@storetw
            left join di_activity_matrix@storetw on fk_act_matrix = di_activity_matrix.pk_isn
            left join di_characteristic@storetw on fk_char = di_characteristic.pk_isn
-           left join di_activity_medium@storetw on fk_act_medium = di_activity_medium.pk_isn';
+           left join di_activity_medium@storetw on fk_act_medium = di_activity_medium.pk_isn!';
 
      exception
       when others then
