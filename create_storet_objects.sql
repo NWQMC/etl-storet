@@ -270,7 +270,7 @@ create or replace package body create_storet_objects
       /* ACT_BLOB_TITLE,    */
          fa_regular_result_no_source.ACTIVITY_COMMENT,    /* OK */
          fa_regular_result_no_source.ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         nvl(fa_regular_result.PROJECT_ID,'EPA') project_id   /* OK */
+         nvl(fa_regular_result_no_source.PROJECT_ID,'EPA') project_id,   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
          fa_regular_result_no_source.RESULT_MEAS_QUAL_CODE,  /* OK */
          fa_regular_result_no_source.ACTIVITY_COND_ORG_TEXT,    /* OK */
@@ -512,7 +512,7 @@ create or replace package body create_storet_objects
       /* ACT_BLOB_TITLE,    */
          fa_regular_result.ACTIVITY_COMMENT,    /* OK */
          fa_regular_result.ACTIVITY_DEPTH_REF_POINT,   /* OK */
-         nvl(fa_regular_result.PROJECT_ID,'EPA') project_id   /* OK */
+         nvl(fa_regular_result.PROJECT_ID,'EPA') project_id,   /* OK */
       /* TRIBAL_WATER_QUALITY_MEASURE, */
          fa_regular_result.RESULT_MEAS_QUAL_CODE,  /* OK */
          fa_regular_result.ACTIVITY_COND_ORG_TEXT,    /* OK */
