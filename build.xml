@@ -3,6 +3,8 @@
 
 	<target name="dev" depends="buildPackage, runPackage"/>
 
+    <target name="wiwqp" depends="buildPackageWiwqp, runPackage"/>
+
 	<target name="ci" depends="buildPackage, compilePackageEmptyCiDB, runPackage"/>
 
 	<target name="buildPackage">
@@ -141,4 +143,12 @@
 		</exec>
 	</target>
 	
+    <target name="buildPackageWiwqp">
+        <echo>Rebuiling the etl database package and body</echo>
+        <exec executable="sqlplus" failonerror="true">
+            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
+            <arg value="@${basedir}/create_storet_objects_wiwqp.sql"/>
+        </exec>
+    </target>
+    
 </project>
