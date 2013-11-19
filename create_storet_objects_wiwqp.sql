@@ -2023,7 +2023,7 @@ create or replace package body create_storet_objects
       fetch c into grant_count;
       close c;
 
-      if grant_count < 45 then /* 48 as of 23OCT2013 */
+      if grant_count < 25 then /* 28 as of 19NOV2013 */
          pass_fail := 'FAIL';
       else
          pass_fail := 'PASS';
