@@ -8,7 +8,7 @@
 	<target name="ci" depends="buildPackage, compilePackageEmptyCiDB, runPackage"/>
 
 	<target name="buildPackage">
-		<echo>Rebuiling the etl database package and body</echo>
+		<echo>Rebuiling the etl database package and body in ${instance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/create_storet_objects.sql"/>
@@ -16,7 +16,7 @@
 	</target>
 	
 	<target name="compilePackageEmptyCiDB">
-		<echo>Rebuiling the etl database package and body</echo>
+		<echo>Rebuiling the etl database package and body in ${instance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/emptyCiDB.sql"/>
@@ -24,7 +24,7 @@
 	</target>
 	
 	<target name="runPackage" depends="setStopRun" unless="stopRun">
-		<echo>Running the main ETL Package</echo>
+		<echo>Running the main ETL Package in ${instance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/runPackage.sql"/>
@@ -39,7 +39,7 @@
 	</target>
 
 	<target name="dos2unix">
-		<echo>Fix cr/lf</echo>
+		<echo>Fix cr/lf at ${storet_host}</echo>
 		<sshexec host="${storet_host}"
 			trust="true"
 			username="storet_user"
@@ -48,7 +48,7 @@
 	</target>
 	
 	<target name="qwStoretEtl">
-		<echo>Run the script</echo>
+		<echo>Run the script at ${storet_host}</echo>
 		<sshexec host="${storet_host}"
 			trust="true"
 			failonerror="true"
@@ -58,10 +58,10 @@
 		/>
 	</target>
 	
-	<target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackage"/>
+	<target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackage, mvLogToRef"/>
 
 	<target name="buildPackageStage">
-		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<echo>Rebuiling the etl database package and body in ${stagingInstance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
 			<arg value="@${basedir}/create_storet_objects_stage.sql"/>
@@ -74,7 +74,7 @@
 	</target>
 
 	<target name="dos2unixStage">
-		<echo>Fix cr/lf</echo>
+		<echo>Fix cr/lf in script at ${storet_host}</echo>
 		<sshexec host="${storet_host}"
 			trust="true"
 			username="storet_user"
@@ -83,7 +83,7 @@
 	</target>
 	
 	<target name="pullStoretWData">
-		<echo>Run the script</echo>
+		<echo>Run the script at ${storet_host}</echo>
 		<sshexec host="${storet_host}"
 			trust="true"
 			failonerror="true"
@@ -102,7 +102,7 @@
 	</target>
 		
 	<target name="dropStoretWTables" depends="setStopRun" unless="stopRun">
-		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<echo>Drop tables from last import in ${stagingInstance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
 			<arg value="@${basedir}/storetw_drops.sql"/>
@@ -110,7 +110,7 @@
 	</target>
 	
 	<target name="importViaDataPump" depends="setStopRun" unless="stopRun">
-		<echo>Using impdp to load the storetw schema</echo>
+		<echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
 		<exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
 			<arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
 			<arg value="parfile=impdp.par"/>
@@ -118,7 +118,7 @@
 	</target>
 	
 	<target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
-		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<echo>Grant select on the imported tables in ${stagingInstance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="storetw/${storetw_password}@${stagingInstance}"/>
 			<arg value="@${basedir}/storetw_grants.sql"/>
@@ -126,7 +126,7 @@
 	</target>
 	
 	<target name="runPackageStage" depends="setStopRun" unless="stopRun">
-		<echo>Running the main ETL Package</echo>
+		<echo>Running the main ETL Package in ${stagingInstance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
 			<arg value="@${basedir}/runPackage.sql"/>
@@ -136,15 +136,26 @@
 	</target>
 
 	<target name="buildPackageDw" depends="setStopRun" unless="stopRun">
-		<echo>Rebuiling the etl database package and body at EROS</echo>
+		<echo>Rebuiling the etl database package and body in ${instance}</echo>
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/create_storet_objects_dw.sql"/>
 		</exec>
 	</target>
 	
+    <target name="mvLogToRef" depends="setStopRun" unless="stopRun">
+        <echo>Move the export log file to the export ref file at ${storet_host}</echo>
+        <sshexec host="${storet_host}"
+            trust="true"
+            failonerror="true"
+            username="storet_user"
+            password="${storet_password}"
+            command="mv /u01/oradata/dbstage/pdc_temp/stormodb_shire_storetw_expdp.log /u01/oradata/dbstage/pdc_temp/stormodb_shire_storetw_expdp.ref"
+        />
+    </target>
+	
     <target name="buildPackageWiwqp">
-        <echo>Rebuiling the etl database package and body</echo>
+        <echo>Rebuiling the etl database package and body in ${instance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
             <arg value="@${basedir}/create_storet_objects_wiwqp.sql"/>
