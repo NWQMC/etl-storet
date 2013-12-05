@@ -1,11 +1,11 @@
 <project name="QwStoretEtl" default="default">
 	<target name="default" depends="buildPackage, scpScript, dos2unix, qwStoretEtl"/>
 
-	<target name="dev" depends="buildPackage, runPackage"/>
+	<target name="dev" depends="buildPackageDw, runPackage"/>
 
     <target name="wiwqp" depends="buildPackageWiwqp, runPackage"/>
 
-	<target name="ci" depends="buildPackage, compilePackageEmptyCiDB, runPackage"/>
+	<target name="ci" depends="buildPackageDw, compilePackageEmptyCiDB, runPackage"/>
 
 	<target name="buildPackage">
 		<echo>Rebuiling the etl database package and body in ${instance}</echo>
