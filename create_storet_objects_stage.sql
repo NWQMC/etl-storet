@@ -200,7 +200,7 @@ create or replace package body create_storet_objects
 
      commit;
 
-     execute immediate 'insert /*+ append nologging */ into fa_regular_result' || suffix || '
+     execute immediate 'insert /*+ append nologging */ into fa_regular_result
       select /*+  full(FA_REGULAR_RESULT_NO_SOURCE) parallel(FA_REGULAR_RESULT_NO_SOURCE, 4)*/
          PK_ISN,
          ORGANIZATION_ID,
