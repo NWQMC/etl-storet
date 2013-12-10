@@ -1329,12 +1329,12 @@ create or replace package body create_storet_objects
          end if;
       end if;
       
-      $IF $$ci_db $THEN
-         dbms_output.put_line('Not emailing from ci database.');
+--      $IF $$ci_db $THEN
+--         dbms_output.put_line('Not emailing from ci database.');
          dbms_output.put_line(email_text);
-	  $ELSE
-         utl_mail.send@dbtrans.er.usgs.gov(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
-      $END
+--	  $ELSE
+--         utl_mail.send@dbtrans.er.usgs.gov(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
+--      $END
       mesg := message;
 
    end main;
