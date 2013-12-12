@@ -250,7 +250,7 @@ create or replace package body create_storet_objects
            left join lu_mad_vmethod
              on fk_mad_vmethod = lu_mad_vmethod.pk_isn
            left join lu_mad_vdatum
-             on fk_mad_vdatum = lu_mad_vdatum.pk_isn';
+             on fk_mad_vdatum = lu_mad_vdatum.pk_isn!';
 
        commit;
 
