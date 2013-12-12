@@ -456,7 +456,7 @@ create or replace package body create_storet_objects
                               where di_geo_county.pk_isn = fk_geo_county)
                   order by country_code desc,
                            fips_state_code,
-                           fips_county_code)';
+                           fips_county_code)!';
 
       dbms_output.put_line(systimestamp || ' creating organization');
       execute immediate 'truncate table organization';
