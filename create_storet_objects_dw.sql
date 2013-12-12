@@ -1230,7 +1230,7 @@ create or replace package body create_storet_objects
       close to_nocache;
    end drop_old_stuff;
 
-   procedure main(p_dblink in varchar) is
+   procedure main(p_dblink in varchar2) is
       k int;
    begin
       dbms_output.enable(100000);
@@ -1243,7 +1243,7 @@ create or replace package body create_storet_objects
       create_regular_result(p_dblink);
       create_station(p_dblink);
       create_lookups(p_dblink);
-      create_summaries;
+      create_summaries(p_dblink);
       create_index;
       if validate then
          install;
