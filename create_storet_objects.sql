@@ -2070,7 +2070,11 @@ create or replace package body create_storet_objects
       execute immediate 'create or replace synonym organization         for organization'         || suffix;
       execute immediate 'create or replace synonym samplemedia          for samplemedia'          || suffix;
       execute immediate 'create or replace synonym sitetype             for sitetype'             || suffix;
-      
+      execute immediate 'create or replace synonym characteristictype   for characteristictype'   || suffix;
+      execute immediate 'create or replace synonym country              for country'              || suffix;
+      execute immediate 'create or replace synonym county               for county'               || suffix;
+      execute immediate 'create or replace synonym state                for state'                || suffix;
+     
       execute immediate 'create or replace synonym storet_lctn_loc_new  for storet_lctn_loc'      || suffix;
       execute immediate 'create or replace synonym storet_lctn_loc_old  for storet_lctn_loc_'
                           || to_char(to_number(substr(suffix, 2) - 1), 'fm00000');
