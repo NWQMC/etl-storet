@@ -28,8 +28,7 @@
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
 			<arg value="@${basedir}/runPackage.sql"/>
-			<arg value="${success_notify}"/>
-			<arg value="${failure_notify}"/>
+            <arg value="${dblink}"/>
 		</exec>
 	</target>
 	
@@ -130,8 +129,6 @@
 		<exec executable="sqlplus" failonerror="true">
 			<arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
 			<arg value="@${basedir}/runPackage.sql"/>
-			<arg value="${success_notify}"/>
-			<arg value="${failure_notify}"/>
 		</exec>
 	</target>
 
