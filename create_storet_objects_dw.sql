@@ -1239,9 +1239,9 @@ create or replace package body create_storet_objects
       end loop;
       dbms_output.put_line(systimestamp || ' started storet table transformation.');
       determine_suffix;
-      create_regular_result(p_dblink in varchar2);
-      create_station(p_dblink in varchar2);
-      create_lookups(p_dblink in varchar2);
+      create_regular_result(p_dblink);
+      create_station(p_dblink);
+      create_lookups(p_dblink);
       create_summaries;
       create_index;
       if validate then
