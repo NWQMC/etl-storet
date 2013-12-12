@@ -1,7 +1,7 @@
 create or replace package create_storet_objects
    authid definer
    as
-   procedure main();
+   procedure main;
 end create_storet_objects;
 /
 
@@ -18,9 +18,6 @@ create or replace package body create_storet_objects
 
         -----------------------------------------------------------------------------------*/
    as
-   lf constant varchar(1) := chr(10);
-
-   type cursor_type is ref cursor;
 
    procedure create_regular_result
    is
@@ -513,7 +510,7 @@ create or replace package body create_storet_objects
 
    end create_lookups;
 
-  procedure main() is
+  procedure main is
    begin
       dbms_output.enable(100000);
 
