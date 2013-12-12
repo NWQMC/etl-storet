@@ -1229,7 +1229,7 @@ create or replace package body create_storet_objects
       close to_nocache;
    end drop_old_stuff;
 
-   procedure main(p_dblink in varchar)) is
+   procedure main(p_dblink in varchar) is
       k int;
    begin
       dbms_output.enable(100000);
