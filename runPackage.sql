@@ -9,7 +9,7 @@ exec dbms_output.enable(100000);
 select 'start time: ' || systimestamp from dual;
 
 begin
-   create_storet_objects.main(&1);
+   create_storet_objects.main('&1');
 end;
 /
 
