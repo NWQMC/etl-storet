@@ -1,7 +1,7 @@
 create or replace package create_storet_objects
    authid definer
    as
-   procedure main(mesg in out varchar2, success_notify in varchar2, failure_notify in varchar2);
+   procedure main(p_dblink in varchar2);
 end create_storet_objects;
 /
 
@@ -12,38 +12,14 @@ create or replace package body create_storet_objects
         A lot of this package was borrowed from create_nad_objects()
 
         This package is run after 14 staging tables are loaded into a staging database
-        ('barry' on pubsdb) from the expdp files downloaded from EPA.  Most of the tables
-        are copied "as is" into WIDW.  The big table, FA_REGULAR_RESULT, is an export of
-        "changeable" rows (SOURCE_SYSTEM is not null) and those rows are combined with
-        rows not subject to change.
-
-        FA_REGULAR_RESULT
-        FA_STATION
-        DI_ACTIVITY_MATRIX
-        DI_ACTIVITY_MEDIUM
-        DI_CHARACTERISTIC
-        DI_GEO_COUNTY
-        DI_GEO_STATE
-        DI_ORG
-        DI_STATN_TYPES
-        LU_MAD_HMETHOD
-        LU_MAD_HDATUM
-        LU_MAD_VMETHOD
-        LU_MAD_VDATUM
-        MT_WH_CONFIG
+        (storetmodern on __stage) from the expdp files downloaded from EPA.  Most of the tables
+        are copied "as is" into __DW.
 
         -----------------------------------------------------------------------------------*/
    as
-   lf constant varchar(1) := chr(10);
-
-   message varchar2(4000);
    suffix varchar2(10);
-
    type cleanuptable is table of varchar2(80) index by binary_integer;
    cleanup cleanuptable;
-   email_text varchar2(32000);
-
-   
    table_list varchar2(4000 char) := 'translate(table_name, ''0123456789'', ''0000000000'') in ' ||
                                      '(''FA_REGULAR_RESULT_00000'',''FA_STATION_00000'',''DI_ACTIVITY_MATRIX_00000'',''DI_ACTIVITY_MEDIUM_00000'',' ||
                                       '''DI_CHARACTERISTIC_00000'',''DI_GEO_COUNTY_00000'',''DI_GEO_STATE_00000'',''DI_ORG_00000'',' ||
@@ -53,24 +29,6 @@ create or replace package body create_storet_objects
                                       '''CHARACTERISTICNAME_00000'',''ORGANIZATION_00000'',''SAMPLEMEDIA_00000'',''SITETYPE_00000'')';
                                       
    type cursor_type is ref cursor;
-
-   procedure append_email_text(addition in varchar2)
-   is
-      addition_with_time varchar2(4000);
-   begin
-
-      addition_with_time := to_char(sysdate, 'YYYY.MM.DD HH24:MI:SS ') || addition;
-      dbms_output.put_line(addition_with_time);
-      if nvl(length(email_text), 0) + nvl(length(addition_with_time), 0) + nvl(length(lf), 0) < 32000 then
-         email_text := email_text || addition_with_time || lf;
-      end if;
-
-   exception
-      when others then
-         if message is null then
-            message := 'failed to append to email message';
-         end if;
-   end append_email_text;
 
    procedure determine_suffix
    is
@@ -88,28 +46,23 @@ create or replace package body create_storet_objects
         where translate(table_name, '0123456789', '0000000000') = 'FA_REGULAR_RESULT_00000';
 
 
-      append_email_text('using ''' || suffix || ''' for suffix.');
+      dbms_output.put_line(systimestamp || ' using ''' || suffix || ''' for suffix.');
 
       open drop_remnants for query using suffix;
       loop
          fetch drop_remnants into drop_name;
          exit when drop_remnants%NOTFOUND;
          stmt := 'drop table ' || drop_name || ' cascade constraints purge';
-         append_email_text('CLEANUP remnants: ' || stmt);
+         dbms_output.put_line(systimestamp || ' CLEANUP remnants: ' || stmt);
          execute immediate stmt;
       end loop;
-
-   exception
-      when others then
-         message := 'FAIL to determine suffix: ' || SQLERRM;
-         append_email_text(message);
    end determine_suffix;
 
-   procedure create_regular_result
+   procedure create_regular_result(p_dblink in varchar2)
    is
    begin
 
-      append_email_text('creating regular_result...');
+      dbms_output.put_line(systimestamp || ' creating regular_result...');
 
       execute immediate '
       create table fa_regular_result' || suffix || ' parallel 4 compress pctfree 0 nologging cache
@@ -142,51 +95,39 @@ create or replace package body create_storet_objects
       )
       as
       select *
-        from fa_regular_result@storetmodern_dbstage.er.usgs.gov';
+        from fa_regular_result@' || p_dblink;
 
       cleanup(1) := 'drop table fa_regular_result' || suffix || ' cascade constraints purge';
-
-
-
-     exception
-      when others then
-         message := 'FAIL to create fa_regular_result: ' || SQLERRM;
-         append_email_text(message);
    end create_regular_result;
 
-   procedure create_station
+   procedure create_station(p_dblink in varchar2)
    is
    begin
 
-      append_email_text('creating station...');
+      dbms_output.put_line(systimestamp || ' creating station...');
 
       execute immediate
      'create table fa_station' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
       select *
-        from fa_station@storetmodern_dbstage.er.usgs.gov';
+        from fa_station@' || p_dblink;
 
       cleanup(2) := 'drop table fa_station' || suffix || ' cascade constraints purge';
-   exception
-      when others then
-         message := 'FAIL to create fa_station: ' || SQLERRM;
-         append_email_text(message);
    end create_station;
 
-
-  procedure create_summaries
+  procedure create_summaries(p_dblink in varchar2)
    is
    begin
 
-      append_email_text('creating storet_station_sum...');
+      dbms_output.put_line(systimestamp || ' creating storet_station_sum...');
 
       execute immediate    /* seem to be problems with parallel 4 so make it parallel 1 */
      'create table storet_station_sum' || suffix || ' pctfree 0 cache compress nologging parallel 1 as
          select *
-           from storet_station_sum@storetmodern_dbstage.er.usgs.gov';
+           from storet_station_sum@' || p_dblink;
 
       cleanup(3) := 'drop table STORET_STATION_SUM' || suffix || ' cascade constraints purge';
 
-      append_email_text('creating storet_result_sum...');
+      dbms_output.put_line(systimestamp || ' creating storet_result_sum...');
 
       execute immediate
      'create table storetmodern.storet_result_sum' || suffix || ' pctfree 0 cache compress nologging parallel 4
@@ -219,11 +160,11 @@ create or replace package body create_storet_objects
          )
          as
          select *
-           from storet_result_sum@storetmodern_dbstage.er.usgs.gov';
+           from storet_result_sum@' || p_dblink;
 
       cleanup(4) := 'drop table storet_result_sum' || suffix || ' cascade constraints purge';
 
-      append_email_text('creating storet_result_ct_sum...');
+      dbms_output.put_line(systimestamp || ' creating storet_result_ct_sum...');
 
       execute immediate
      'create table storet_result_ct_sum' || suffix || ' pctfree 0 cache compress nologging parallel 4
@@ -242,7 +183,7 @@ create or replace package body create_storet_objects
             partition storet_result_ct_sum_def  values (default)
         )
         as select *
-         from storet_result_ct_sum@storetmodern_dbstage.er.usgs.gov';
+         from storet_result_ct_sum@' || p_dblink;
 
       cleanup(5) := 'drop table storet_result_ct_sum' || suffix || ' cascade constraints purge';
 
@@ -276,152 +217,170 @@ create or replace package body create_storet_objects
             partition storet_result_nr_sum_last     values less than (maxvalue)
          )
         as select *
-            from storet_result_nr_sum@storetmodern_dbstage.er.usgs.gov';
+            from storet_result_nr_sum@' || p_dblink;
 
       cleanup(6) := 'drop table storet_result_nr_sum' || suffix || ' cascade constraints purge';
 
-      append_email_text('creating storet_lctn_loc...');
+      dbms_output.put_line(systimestamp || ' creating storet_lctn_loc...');
 
       execute immediate
      'create table storet_lctn_loc' || suffix || ' compress pctfree 0 nologging parallel 1 as
       select *
-        from storet_lctn_loc@storetmodern_dbstage.er.usgs.gov';
+        from storet_lctn_loc@' || p_dblink;
 
       cleanup(7) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
-      
-   exception
-      when others then
-         message := 'FAIL to create summaries: ' || SQLERRM;
-         append_email_text(message);
    end create_summaries;
 
-   procedure create_lookups
+   procedure create_lookups(p_dblink in varchar2)
    is
    begin
 
-      append_email_text('creating lookups...');
-
+      dbms_output.put_line(systimestamp || ' creating di_activity_matrix');
       execute immediate
      'create table di_activity_matrix' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_activity_matrix@storetmodern_dbstage.er.usgs.gov';
-
+        from di_activity_matrix@' || p_dblink;
       cleanup(8) := 'drop table di_activity_matrix' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating di_activity_medium');
       execute immediate
      'create table di_activity_medium' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_activity_medium@storetmodern_dbstage.er.usgs.gov';
-
+        from di_activity_medium@' || p_dblink;
       cleanup(9) := 'drop table di_activity_medium' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating di_characteristic');
       execute immediate
      'create table di_characteristic' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_characteristic@storetmodern_dbstage.er.usgs.gov';
-
+        from di_characteristic@' || p_dblink;
       cleanup(10) := 'drop table di_characteristic' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating di_geo_county');
       execute immediate
      'create table di_geo_county' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_geo_county@storetmodern_dbstage.er.usgs.gov';
-
+        from di_geo_county@' || p_dblink;
       cleanup(11) := 'drop table di_geo_county' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating di_geo_state');
       execute immediate
      'create table di_geo_state' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_geo_state@storetmodern_dbstage.er.usgs.gov';
-
+        from di_geo_state@' || p_dblink;
       cleanup(12) := 'drop table di_geo_state' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating di_org');
       execute immediate
      'create table di_org' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_org@storetmodern_dbstage.er.usgs.gov';
-
+        from di_org@' || p_dblink;
       cleanup(13) := 'drop table di_org' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating di_statn_types');
       execute immediate
      'create table di_statn_types' || suffix || ' compress pctfree 0 nologging as
       select *
-        from di_statn_types@storetmodern_dbstage.er.usgs.gov';
-
+        from di_statn_types@' || p_dblink;
       cleanup(14) := 'drop table di_statn_types' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating lu_mad_hmethod');
       execute immediate
      'create table lu_mad_hmethod' || suffix || ' compress pctfree 0 nologging as
       select *
-        from lu_mad_hmethod@storetmodern_dbstage.er.usgs.gov';
-
+        from lu_mad_hmethod@' || p_dblink;
       cleanup(15) := 'drop table lu_mad_hmethod' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating lu_mad_hdatum');
       execute immediate
      'create table lu_mad_hdatum' || suffix || ' compress pctfree 0 nologging as
       select *
-        from lu_mad_hdatum@storetmodern_dbstage.er.usgs.gov';
-
+        from lu_mad_hdatum@' || p_dblink;
       cleanup(16) := 'drop table lu_mad_hdatum' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating lu_mad_vmethod');
       execute immediate
      'create table lu_mad_vmethod' || suffix || ' compress pctfree 0 nologging as
       select *
-        from lu_mad_vmethod@storetmodern_dbstage.er.usgs.gov';
-
+        from lu_mad_vmethod@' || p_dblink;
       cleanup(17) := 'drop table lu_mad_vmethod' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating lu_mad_vdatum');
       execute immediate
      'create table lu_mad_vdatum' || suffix || ' compress pctfree 0 nologging as
       select *
-        from lu_mad_vdatum@storetmodern_dbstage.er.usgs.gov';
-
+        from lu_mad_vdatum@' || p_dblink;
       cleanup(18) := 'drop table lu_mad_vdatum' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating mt_wh_config');
       execute immediate
      'create table mt_wh_config' || suffix || ' compress pctfree 0 nologging as
       select *
-        from mt_wh_config@storetmodern_dbstage.er.usgs.gov';
-
+        from mt_wh_config@' || p_dblink;
       cleanup(19) := 'drop table mt_wh_config' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating storet_sum');
       execute immediate
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
       select *
-        from storet_sum@storetmodern_dbstage.er.usgs.gov';
-
+        from storet_sum@' || p_dblink;
       cleanup(20) := 'drop table storet_sum' || suffix || ' cascade constraints purge';
       
+      dbms_output.put_line(systimestamp || ' creating characteristicname');
       execute immediate
       'create table characteristicname' || suffix || ' compress pctfree 0 nologging as
        select *
-         from characteristicname@storetmodern_dbstage.er.usgs.gov';
+         from characteristicname@' || p_dblink;
       cleanup(21) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating characteristictype');
+      execute immediate
+      'create table characteristictype' || suffix || ' compress pctfree 0 nologging as
+       select *
+         from characteristictype@' || p_dblink;
+      cleanup(22) := 'drop table characteristictype' || suffix || ' cascade constraints purge';
+
+      dbms_output.put_line(systimestamp || ' creating country');
+      execute immediate
+      'create table country' || suffix || ' compress pctfree 0 nologging as
+       select *
+         from country@' || p_dblink;
+      cleanup(23) := 'drop table country' || suffix || ' cascade constraints purge';
+
+      dbms_output.put_line(systimestamp || ' creating county');
+      execute immediate
+      'create table county' || suffix || ' compress pctfree 0 nologging as
+       select *
+         from county@' || p_dblink;
+      cleanup(24) := 'drop table county' || suffix || ' cascade constraints purge';
+
+      dbms_output.put_line(systimestamp || ' creating organization');
       execute immediate
       'create table organization' || suffix || ' compress pctfree 0 nologging as
        select *
-         from organization@storetmodern_dbstage.er.usgs.gov';
-      cleanup(22) := 'drop table organization' || suffix || ' cascade constraints purge';
+         from organization@' || p_dblink;
+      cleanup(25) := 'drop table organization' || suffix || ' cascade constraints purge';
 
-            
+      dbms_output.put_line(systimestamp || ' creating samplemedia');
       execute immediate
       'create table samplemedia' || suffix || ' compress pctfree 0 nologging as
        select *
-         from samplemedia@storetmodern_dbstage.er.usgs.gov';
-      cleanup(23) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
-
+         from samplemedia@' || p_dblink;
+      cleanup(26) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
             
+      dbms_output.put_line(systimestamp || ' creating sitetype');
       execute immediate
       'create table sitetype' || suffix || ' compress pctfree 0 nologging as
        select *
-         from sitetype@storetmodern_dbstage.er.usgs.gov';
-      cleanup(24) := 'drop table sitetype' || suffix || ' cascade constraints purge';
-
-   exception
-      when others then
-         message := 'FAIL to create a lookup: ' || SQLERRM;
-         append_email_text(message);
+         from sitetype@' || p_dblink;
+      cleanup(27) := 'drop table sitetype' || suffix || ' cascade constraints purge';
+            
+      dbms_output.put_line(systimestamp || ' creating state');
+      execute immediate
+      'create table state' || suffix || ' compress pctfree 0 nologging as
+       select *
+         from state@' || p_dblink;
+      cleanup(28) := 'drop table state' || suffix || ' cascade constraints purge';
    end create_lookups;
 
    procedure create_index
@@ -430,54 +389,54 @@ create or replace package body create_storet_objects
       table_name      varchar2(   80);
    begin
 
-      append_email_text('creating indexes....');
+      dbms_output.put_line(systimestamp || ' creating indexes....');
 
       table_name := 'FA_STATION' || suffix;
 
       stmt := 'alter table ' || table_name || ' add constraint pk_' || table_name || ' primary key (pk_isn) using index nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_station_org_sta' || suffix || ' on ' ||
                table_name || ' (organization_id || ''-'' || station_id) parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_station_fk_geo_state' || suffix || ' on ' ||
                table_name || ' (fk_geo_state) parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create index fa_station_fk_geo_county' || suffix || ' on ' ||
                table_name || ' (fk_geo_county) parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create index fa_station_stn_grp_type' || suffix || ' on ' ||
                table_name || ' (station_group_type) parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create index fa_station_org_id' || suffix || ' on ' ||
                table_name || ' (organization_id) parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create index fa_station_gen_huc' || suffix || ' on ' ||
                table_name || ' (generated_huc) parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       table_name := 'FA_REGULAR_RESULT' || suffix;
 
       stmt := 'create bitmap index fa_reg_fk_char' || suffix || ' on ' ||
                table_name || ' (FK_CHAR) local parallel 4 nologging ';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_reg_act_med' || suffix || ' on ' ||
                table_name || ' (FK_ACT_MEDIUM) local parallel 4 nologging ';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_reg_fk_station' || suffix || ' on ' ||
@@ -486,24 +445,24 @@ create or replace package body create_storet_objects
 
       stmt := 'create bitmap index fa_reg_fk_org' || suffix || ' on ' ||
                table_name || ' (fk_org) local parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_reg_activity_id' || suffix || ' on ' ||
                table_name || ' (activity_id) local parallel 4 nologging';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_reg_char_name' || suffix || ' on ' ||
                table_name || ' (characteristic_name) local parallel 4 nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_reg_activity_medium' || suffix || ' on ' ||
                table_name || ' (activity_medium) local parallel 4 nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       /* note: this view seems to use the invoker rather than the definer.
@@ -517,80 +476,80 @@ create or replace package body create_storet_objects
 
       stmt := 'create index fa_station_geom' || suffix || ' on ' ||
               'FA_STATION' || suffix || ' (GEOM) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_ACTIVITY_MATRIX' || suffix || ' add constraint pk_di_activity_matrix' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_ACTIVITY_MEDIUM' || suffix || ' add constraint pk_di_activity_medium' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_CHARACTERISTIC' || suffix || ' add constraint pk_di_characteristic' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_GEO_COUNTY' || suffix || ' add constraint pk_di_geo_county' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_GEO_STATE' || suffix || ' add constraint pk_di_geo_state' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_ORG' || suffix || ' add constraint pk_di_org' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'DI_STATN_TYPES' || suffix || ' add constraint pk_di_statn_types' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'LU_MAD_HMETHOD' || suffix || ' add constraint pk_lu_mad_hmethod' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'LU_MAD_HDATUM' || suffix || ' add constraint pk_lu_mad_hdatum' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'LU_MAD_VMETHOD' || suffix || ' add constraint pk_lu_mad_vmethod' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'alter table ' || 'LU_MAD_VDATUM' || suffix || ' add constraint pk_lu_mad_vdatum' || suffix ||
               ' primary key (pk_isn) using index nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       table_name := 'STORET_STATION_SUM' || suffix;
       stmt := 'create bitmap index storet_station_sum_1' || suffix || ' on ' ||
                table_name || ' (station_id          ) nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       delete from user_sdo_geom_metadata where table_name = 'STORET_STATION_SUM' || suffix;
@@ -602,31 +561,31 @@ create or replace package body create_storet_objects
       stmt := 'create        index storet_station_sum_2' || suffix || ' on ' ||
                table_name || ' (geom                ) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_station_sum_3' || suffix || ' on ' ||
-               table_name || ' (fips_state_code, fips_county_code) nologging';
+               table_name || ' (state_cd, county_cd) nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_station_sum_4' || suffix || ' on ' ||
                table_name || ' (station_group_type  ) nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_station_sum_5' || suffix || ' on ' ||
                table_name || ' (organization_id     ) nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_station_sum_6' || suffix || ' on ' ||
                table_name || ' (generated_huc       ) nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       table_name := 'STORET_RESULT_SUM' || suffix;
@@ -634,47 +593,47 @@ create or replace package body create_storet_objects
       stmt := 'create bitmap index storet_result_sum_1' || suffix || ' on ' ||
                table_name || ' (fk_station               ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_2' || suffix || ' on ' ||
-               table_name || ' (fips_state_code, fips_county_code) local nologging';
+               table_name || ' (state_cd, county_cd) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_3' || suffix || ' on ' ||
                table_name || ' (station_group_type       ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_4' || suffix || ' on ' ||
                table_name || ' (organization_id          ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_5' || suffix || ' on ' ||
                table_name || ' (generated_huc            ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_6' || suffix || ' on ' ||
                table_name || ' (activity_medium          ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_7' || suffix || ' on ' ||
                table_name || ' (characteristic_group_type) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_sum_8' || suffix || ' on ' ||
-               table_name || ' (display_name             ) local nologging';
+               table_name || ' (characteristic_name      ) local nologging';
 
 
       table_name := 'STORET_RESULT_CT_SUM' || suffix;
@@ -682,77 +641,77 @@ create or replace package body create_storet_objects
       stmt := 'create bitmap index storet_result_ct_sum_1' || suffix || ' on ' ||
                table_name || ' (fk_station               ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_2' || suffix || ' on ' ||
-               table_name || ' (fips_state_code, fips_county_code) local nologging';
+               table_name || ' (state_cd, county_cd) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_3' || suffix || ' on ' ||
                table_name || ' (station_group_type       ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_4' || suffix || ' on ' ||
                table_name || ' (organization_id          ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_5' || suffix || ' on ' ||
                table_name || ' (generated_huc            ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_6' || suffix || ' on ' ||
                table_name || ' (activity_medium          ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_7' || suffix || ' on ' ||
                table_name || ' (characteristic_group_type) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_ct_sum_8' || suffix || ' on ' ||
-               table_name || ' (display_name             ) local nologging';
+               table_name || ' (characteristic_name      ) local nologging';
 
       table_name := 'STORET_RESULT_NR_SUM' || suffix;
 
       stmt := 'create bitmap index storet_result_nr_sum_1' || suffix || ' on ' ||
                table_name || ' (fk_station               ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_nr_sum_2' || suffix || ' on ' ||
                table_name || ' (activity_medium          ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_nr_sum_3' || suffix || ' on ' ||
                table_name || ' (characteristic_group_type) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index storet_result_nr_sum_4' || suffix || ' on ' ||
-               table_name || ' (display_name             ) local nologging';
+               table_name || ' (characteristic_name             ) local nologging';
 
-      append_email_text(stmt);
+      dbms_output.put_line(stmt);
       execute immediate stmt;
 
 
 
-      append_email_text('grants...');
+      dbms_output.put_line(systimestamp || ' grants...');
       execute immediate 'grant select on fa_station'           || suffix || ' to storetuser';
       execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser';
@@ -773,68 +732,73 @@ create or replace package body create_storet_objects
       execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser';
       execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser';
       execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser';
-      execute immediate 'grant select on characteristicname'   || suffix || ' to storetuser';
+      execute immediate 'grant select on characteristictype'   || suffix || ' to storetuser';
+      execute immediate 'grant select on country'              || suffix || ' to storetuser';
+      execute immediate 'grant select on county'               || suffix || ' to storetuser';
       execute immediate 'grant select on organization'         || suffix || ' to storetuser';
       execute immediate 'grant select on samplemedia'          || suffix || ' to storetuser';
       execute immediate 'grant select on sitetype'             || suffix || ' to storetuser';
+      execute immediate 'grant select on state'                || suffix || ' to storetuser';
 
-      append_email_text('analyze fa_station...');  /* takes about 1.5 minutes*/
+      dbms_output.put_line(systimestamp || ' analyze fa_station...');  /* takes about 1.5 minutes*/
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze fa_regular_result...');  /* takes about 50 minutes */
+      dbms_output.put_line(systimestamp || ' analyze fa_regular_result...');  /* takes about 50 minutes */
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_REGULAR_RESULT'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_activity_medium...');
+      dbms_output.put_line(systimestamp || ' analyze di_activity_medium...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_ACTIVITY_MEDIUM'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_characteristic...');
+      dbms_output.put_line(systimestamp || ' analyze di_characteristic...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_CHARACTERISTIC'   || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_geo_county...');
+      dbms_output.put_line(systimestamp || ' analyze di_geo_county...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_GEO_COUNTY'       || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_geo_state...');
+      dbms_output.put_line(systimestamp || ' analyze di_geo_state...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_GEO_STATE'        || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_org...');
+      dbms_output.put_line(systimestamp || ' analyze di_org...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_ORG'              || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_statn_types...');
+      dbms_output.put_line(systimestamp || ' analyze di_statn_types...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_STATN_TYPES'      || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze lu_mad_hmethod...');
+      dbms_output.put_line(systimestamp || ' analyze lu_mad_hmethod...');
       dbms_stats.gather_table_stats('STORETMODERN', 'LU_MAD_HMETHOD'      || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze lu_mad_hdatum...');
+      dbms_output.put_line(systimestamp || ' analyze lu_mad_hdatum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'LU_MAD_HDATUM'       || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze lu_mad_vmethod...');
+      dbms_output.put_line(systimestamp || ' analyze lu_mad_vmethod...');
       dbms_stats.gather_table_stats('STORETMODERN', 'LU_MAD_VMETHOD'      || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze lu_mad_vdatum...');
+      dbms_output.put_line(systimestamp || ' analyze lu_mad_vdatum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'LU_MAD_VDATUM'       || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze di_activity_matrix...');
+      dbms_output.put_line(systimestamp || ' analyze di_activity_matrix...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_ACTIVITY_MATRIX'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze mt_wh_config...');
+      dbms_output.put_line(systimestamp || ' analyze mt_wh_config...');
       dbms_stats.gather_table_stats('STORETMODERN', 'MT_WH_CONFIG'        || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze storet_sum...');
+      dbms_output.put_line(systimestamp || ' analyze storet_sum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_SUM'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze storet_station_sum...');
+      dbms_output.put_line(systimestamp || ' analyze storet_station_sum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_STATION_SUM'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze storet_result_sum...');
+      dbms_output.put_line(systimestamp || ' analyze storet_result_sum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_RESULT_SUM'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze storet_result_ct_sum...');
+      dbms_output.put_line(systimestamp || ' analyze storet_result_ct_sum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_RESULT_CT_SUM'|| suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze storet_result_nr_sum...');
+      dbms_output.put_line(systimestamp || ' analyze storet_result_nr_sum...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_RESULT_NR_SUM'|| suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze storet_lctn_loc...');
+      dbms_output.put_line(systimestamp || ' analyze storet_lctn_loc...');
       dbms_stats.gather_table_stats('STORETMODERN', 'STORET_LCTN_LOC'     || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze characteristicname...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICNAME'  || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze organization...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'ORGANIZATION'        || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze samplemedia...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'SAMPLEMEDIA'         || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      append_email_text('analyze sitetype...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'SITETYPE'            || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-
-
-   exception
-      when others then
-         message := 'FAIL with index: ' || stmt || '  --> ' || SQLERRM;
-         append_email_text(message);
+      dbms_output.put_line(systimestamp || ' analyze characteristicname...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICNAME'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze characteristictype...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'CHARACTERISTICTYPE'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze country...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'COUNTRY'             || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze county...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'COUNTY'              || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze organization...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'ORGANIZATION'        || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze samplemedia...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'SAMPLEMEDIA'         || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze sitetype...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'SITETYPE'            || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze state...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'STATE'               || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
    end create_index;
 
-   procedure validate
+   function validate return boolean
    is
       old_rows     int;
       new_rows     int;
@@ -847,7 +811,7 @@ create or replace package body create_storet_objects
       situation    varchar2(200);
    begin
 
-      append_email_text('validating...');
+      dbms_output.put_line(systimestamp || ' validating...');
 
       select count(*) into old_rows from fa_regular_result;
       query := 'select count(*) from fa_regular_result' || suffix;
@@ -864,7 +828,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for fa_regular_result: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -884,7 +848,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for fa_station: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -904,7 +868,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_activity_matrix: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -924,7 +888,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_activity_medium: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -944,7 +908,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_characteristic: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -964,7 +928,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_geo_county: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -984,7 +948,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_geo_state: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1004,7 +968,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_org: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1024,7 +988,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for di_statn_types: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1044,7 +1008,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_hmethod: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1064,7 +1028,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_hdatum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1084,7 +1048,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_vmethod: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1104,7 +1068,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_vdatum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1124,7 +1088,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for mt_wh_config: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1144,7 +1108,7 @@ create or replace package body create_storet_objects
       	 $END
       end if;
       situation := pass_fail || ': table comparison for storet_sum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1161,7 +1125,7 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       end if;
       situation := pass_fail || ': found ' || to_char(index_count) || ' indexes.';
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
@@ -1178,23 +1142,19 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       end if;
       situation := pass_fail || ': found ' || to_char(grant_count) || ' grants.';
-      append_email_text(situation);
+      dbms_output.put_line(situation);
       if pass_fail = 'FAIL' and message is null then
          message := situation;
       end if;
 
-   exception
-      when others then
-         message := 'FAIL validation with query problem: ' || query || ' ' || SQLERRM;
-         append_email_text(message);
-
+      return message is not null;
    end validate;
 
    procedure install
    is
    begin
 
-      append_email_text('installing...');
+      dbms_output.put_line(systimestamp || ' installing...');
 
       execute immediate 'create or replace synonym fa_station           for fa_station'           || suffix;
       execute immediate 'create or replace synonym fa_regular_result    for fa_regular_result'    || suffix;
@@ -1219,16 +1179,14 @@ create or replace package body create_storet_objects
       execute immediate 'create or replace synonym organization         for organization'         || suffix;
       execute immediate 'create or replace synonym samplemedia          for samplemedia'          || suffix;
       execute immediate 'create or replace synonym sitetype             for sitetype'             || suffix;
-      
+      execute immediate 'create or replace synonym characteristictype   for characteristictype'   || suffix;
+      execute immediate 'create or replace synonym country              for country'              || suffix;
+      execute immediate 'create or replace synonym county               for county'               || suffix;
+      execute immediate 'create or replace synonym state                for state'                || suffix;
+     
       execute immediate 'create or replace synonym storet_lctn_loc_new  for storet_lctn_loc'      || suffix;
       execute immediate 'create or replace synonym storet_lctn_loc_old  for storet_lctn_loc_'
                           || to_char(to_number(substr(suffix, 2) - 1), 'fm00000');
-
-   exception
-      when others then
-         message := 'FAIL with synonyms: ' || SQLERRM;
-         append_email_text(message);
-
    end install;
 
    procedure drop_old_stuff
@@ -1248,14 +1206,14 @@ create or replace package body create_storet_objects
       stmt         varchar2(80);
    begin
 
-      append_email_text('drop_old_stuff...');
+      dbms_output.put_line(systimestamp || ' drop_old_stuff...');
 
       open to_drop for drop_query using suffix;
       loop
          fetch to_drop into drop_name;
          exit when to_drop%NOTFOUND;
          stmt := 'drop table ' || drop_name || ' cascade constraints purge';
-         append_email_text('CLEANUP old stuff: ' || stmt);
+         dbms_output.put_line(systimestamp || ' CLEANUP old stuff: ' || stmt);
          execute immediate stmt;
       end loop;
       close to_drop;
@@ -1265,77 +1223,38 @@ create or replace package body create_storet_objects
          fetch to_nocache into nocache_name;
          exit when to_nocache%NOTFOUND;
          stmt := 'alter table ' || nocache_name || ' nocache';
-         append_email_text('CLEANUP old stuff: ' || stmt);
+         dbms_output.put_line(systimestamp || ' CLEANUP old stuff: ' || stmt);
          execute immediate stmt;
       end loop;
       close to_nocache;
-
-   exception
-      when others then
-         message := 'tried to drop ' || drop_name || ' : ' || SQLERRM;
-         append_email_text(message);
-
    end drop_old_stuff;
 
-   procedure main(mesg in out varchar2, success_notify in varchar2, failure_notify in varchar2) is
-      email_subject varchar2(  80);
-      email_notify  varchar2( 400);
+   procedure main(p_dblink in varchar)) is
       k int;
    begin
-      message := null;
       dbms_output.enable(100000);
 
-      for k in 1 .. 25 loop
+      for k in 1 .. 30 loop
          cleanup(k) := NULL;
       end loop;
-      append_email_text('started storet table transformation.');
+      dbms_output.put_line(systimestamp || ' started storet table transformation.');
       determine_suffix;
-      if message is null then create_regular_result; end if;
-      if message is null then create_station;        end if;
-      if message is null then create_lookups;        end if;
-      if message is null then create_summaries;      end if;
-      if message is null then create_index;          end if;
-      if message is null then validate;              end if;
-      if message is null then
+      create_regular_result(p_dblink in varchar2);
+      create_station(p_dblink in varchar2);
+      create_lookups(p_dblink in varchar2);
+      create_summaries;
+      create_index;
+      if validate then
          install;
+         drop_old_stuff;
       else
-         append_email_text('completed. (failed)');
-         dbms_output.put_line('errors occurred.');
-         email_subject := 'storet load FAILED';
-         email_text := email_subject || lf || lf || email_text;
-         email_notify := failure_notify;
-         for k in 1 .. 20 loop
+         for k in 1 .. 30 loop
             if cleanup(k) is not null then
-               append_email_text('CLEANUP: ' || cleanup(k));
+               dbms_output.put_line('CLEANUP: ' || cleanup(k));
                execute immediate cleanup(k);
             end if;
          end loop;
       end if;
-
-      if message is null then
-         drop_old_stuff;
-         if message is null then
-            append_email_text('completed. (success)');
-            message := 'OK';
-            email_subject := 'storet successful';
-            email_text := email_subject || lf || lf || email_text || lf || 'have a nice day!' || lf || '-barry''s program';
-            email_notify := success_notify;
-         else
-            append_email_text('completed. (failed)');
-            dbms_output.put_line('errors occurred.');
-            email_subject := 'storet FAILED in drop_old_stuff';
-            email_text := email_subject || lf || lf || email_text;
-            email_notify := failure_notify;
-         end if;
-      end if;
-      
---      $IF $$ci_db $THEN
---         dbms_output.put_line('Not emailing from ci database.');
-         dbms_output.put_line(email_text);
---	  $ELSE
---         utl_mail.send@dbtrans.er.usgs.gov(sender => 'bheck@usgs.gov', recipients => email_notify, subject => email_subject, message => email_text);
---      $END
-      mesg := message;
 
    end main;
 end create_storet_objects;

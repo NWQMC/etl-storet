@@ -325,6 +325,45 @@ create or replace package body create_storet_objects
              b.fk_station = a.pk_isn(+)';
       commit;
 
+      dbms_output.put_line(systimestamp || ' creating storet_result_ct_sum...');
+
+      execute immediate 'truncate table storet_result_ct_sum';
+      execute immediate 'insert /*+ append nologging */ into storet_result_ct_sum
+        select /*+ full(a) parallel(a, 4) */
+            fk_station,
+            station_id,
+            country_cd,
+            state_cd,
+            county_cd,
+            station_group_type,
+            organization_id,
+            generated_huc,
+            activity_medium,
+            characteristic_group_type,
+            characteristic_name,
+            sum(result_count) result_count
+         from
+            storet_result_sum a
+         group by
+            fk_station,
+            station_id,
+            country_cd,
+            state_cd,
+            county_cd,
+            station_group_type,
+            organization_id,
+            generated_huc,
+            activity_medium,
+            characteristic_group_type,
+            characteristic_name
+         order by
+            fk_station,
+            station_id,
+            activity_medium,
+            characteristic_group_type,
+            characteristic_name';
+      commit;
+
       dbms_output.put_line(systimestamp || ' creating storet_result_nr_sum...');
 
       execute immediate 'truncate table storet_result_nr_sum';
