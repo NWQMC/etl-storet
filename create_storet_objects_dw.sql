@@ -809,6 +809,7 @@ create or replace package body create_storet_objects
       query        varchar2(4000);
       pass_fail    varchar2(15);
       situation    varchar2(200);
+      message      varchar2(200);
    begin
 
       dbms_output.put_line(systimestamp || ' validating...');
