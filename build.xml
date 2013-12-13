@@ -74,7 +74,7 @@
         <echo>Running the main ETL Package in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
-            <arg value="begin create_storet_objects.main end;"/>
+            <arg value="@${basedir}/runPackageStage.sql"/>
         </exec>
     </target>
 
