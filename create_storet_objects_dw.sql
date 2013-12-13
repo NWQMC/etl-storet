@@ -1195,6 +1195,7 @@ create or replace package body create_storet_objects
       to_drop cursor_type;
       drop_query varchar2(4000) := 'select table_name from user_tables where ' || table_list ||
             ' and substr(table_name, -5) <= to_char(to_number(substr(:current_suffix, 2) - 2), ''fm00000'')' ||
+            ' and substr(table_name, -5) <> '00000')' ||
                ' order by case when table_name like ''FA_STATION%'' then 2 else 1 end, table_name';
 
       to_nocache cursor_type;
