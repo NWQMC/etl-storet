@@ -1194,7 +1194,7 @@ create or replace package body create_storet_objects
       to_drop cursor_type;
       drop_query varchar2(4000) := 'select table_name from user_tables where ' || table_list ||
             ' and substr(table_name, -5) <= to_char(to_number(substr(:current_suffix, 2) - 2), ''fm00000'')' ||
-            ' and substr(table_name, -5) <> ''00000'')' ||
+            ' and substr(table_name, -5) <> ''00000''' ||
                ' order by case when table_name like ''FA_STATION%'' then 2 else 1 end, table_name';
 
       to_nocache cursor_type;
@@ -1254,6 +1254,11 @@ create or replace package body create_storet_objects
          install;
          drop_old_stuff;
       else
+         raise_application_error(-20666, 'Job failed.');
+      end if;
+      
+   exception
+      when others then
          for k in 1 .. 30 loop
             if cleanup(k) is not null then
                dbms_output.put_line('CLEANUP: ' || cleanup(k));
@@ -1261,7 +1266,6 @@ create or replace package body create_storet_objects
             end if;
          end loop;
          raise_application_error(-20666, 'Job failed.');
-      end if;
 
    end main;
 end create_storet_objects;
