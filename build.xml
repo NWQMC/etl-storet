@@ -67,6 +67,7 @@
         <exec executable="sqlplus" failonerror="true">
             <arg value="storetw/${storetw_password}@${stagingInstance}"/>
             <arg value="@${basedir}/storetw_grants.sql"/>
+        	<arg value="dummy"/>
         </exec>
     </target>
     
