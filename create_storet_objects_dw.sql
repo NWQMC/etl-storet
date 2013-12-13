@@ -472,7 +472,7 @@ create or replace package body create_storet_objects
       delete from user_sdo_geom_metadata where table_name = 'FA_STATION' || suffix;
       insert INTO USER_SDO_GEOM_METADATA VALUES('FA_STATION' || suffix, 'GEOM',
                   MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', -180, 180, 0.005), MDSYS.SDO_DIM_ELEMENT('Y', -90, 90, 0.005)), 8307);
-      commit work;
+      commit;
 
       stmt := 'create index fa_station_geom' || suffix || ' on ' ||
               'FA_STATION' || suffix || ' (GEOM) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
@@ -553,10 +553,9 @@ create or replace package body create_storet_objects
       execute immediate stmt;
 
       delete from user_sdo_geom_metadata where table_name = 'STORET_STATION_SUM' || suffix;
-
       insert INTO USER_SDO_GEOM_METADATA VALUES('STORET_STATION_SUM' || suffix, 'GEOM',
                   MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', -180, 180, 0.005), MDSYS.SDO_DIM_ELEMENT('Y', -90, 90, 0.005)), 8307);
-      commit work;
+      commit;
 
       stmt := 'create        index storet_station_sum_2' || suffix || ' on ' ||
                table_name || ' (geom                ) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
@@ -1217,6 +1216,11 @@ create or replace package body create_storet_objects
          stmt := 'drop table ' || drop_name || ' cascade constraints purge';
          dbms_output.put_line(systimestamp || ' CLEANUP old stuff: ' || stmt);
          execute immediate stmt;
+         if drop_name like '%STATION%' then
+            stmt := 'delete from user_sdo_geom_metadata where table_name = ''' || drop_name || '''';
+            dbms_output.put_line(systimestamp || ' CLEANUP old stuff: ' || stmt);
+            execute immediate stmt;
+         end if;
       end loop;
       close to_drop;
 
@@ -1256,6 +1260,7 @@ create or replace package body create_storet_objects
                execute immediate cleanup(k);
             end if;
          end loop;
+         raise_application_error(-20666, 'Job failed.');
       end if;
 
    end main;
