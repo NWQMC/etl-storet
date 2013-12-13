@@ -1148,7 +1148,7 @@ create or replace package body create_storet_objects
          message := situation;
       end if;
 
-      return message is not null;
+      return message is null;
    end validate;
 
    procedure install
