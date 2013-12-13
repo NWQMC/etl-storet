@@ -67,7 +67,6 @@
         <exec executable="sqlplus" failonerror="true">
             <arg value="storetw/${storetw_password}@${stagingInstance}"/>
             <arg value="@${basedir}/storetw_grants.sql"/>
-        	<arg value="dummy"/>
         </exec>
     </target>
     
@@ -76,6 +75,7 @@
         <exec executable="sqlplus" failonerror="true">
             <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
             <arg value="@${basedir}/runPackage.sql"/>
+            <arg value="dummy"/>
         </exec>
     </target>
 
