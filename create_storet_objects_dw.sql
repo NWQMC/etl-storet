@@ -26,7 +26,7 @@ create or replace package body create_storet_objects
                                       '''DI_STATN_TYPES_00000'',''LU_MAD_HMETHOD_00000'',''LU_MAD_HDATUM_00000'',''LU_MAD_VMETHOD_00000'',' ||
                                       '''LU_MAD_VDATUM_00000'',''MT_WH_CONFIG_00000'',''STORET_SUM_00000'',''STORET_STATION_SUM_00000'',''STORET_RESULT_SUMT_00000'',' ||
                                       '''STORET_RESULT_SUM_00000'',''STORET_RESULT_CT_SUM_00000'',''STORET_RESULT_NR_SUM_00000'',''STORET_LCTN_LOC_00000'',' ||
-                                      '''CHARACTERISTICNAME_00000'',''ORGANIZATION_00000'',''SAMPLEMEDIA_00000'',''SITETYPE_00000'')';
+                                      '''CHARACTERISTICNAME_00000'',''CHARACTERISTICTYPE_00000'',''COUNTRY_00000'',''COUNTY_00000'',''ORGANIZATION_00000'',''SAMPLEMEDIA_00000'',''SITETYPE_00000'')';
                                       
    type cursor_type is ref cursor;
 
@@ -731,6 +731,7 @@ create or replace package body create_storet_objects
       execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser';
       execute immediate 'grant select on storet_result_nr_sum' || suffix || ' to storetuser';
       execute immediate 'grant select on storet_lctn_loc'      || suffix || ' to storetuser';
+      execute immediate 'grant select on characteristicname'   || suffix || ' to storetuser';
       execute immediate 'grant select on characteristictype'   || suffix || ' to storetuser';
       execute immediate 'grant select on country'              || suffix || ' to storetuser';
       execute immediate 'grant select on county'               || suffix || ' to storetuser';
@@ -1265,7 +1266,7 @@ create or replace package body create_storet_objects
                execute immediate cleanup(k);
             end if;
          end loop;
-         raise_application_error(-20666, 'Job failed.');
+         raise_application_error(-20666, 'Job failed. ' || sqlerrm);
 
    end main;
 end create_storet_objects;
