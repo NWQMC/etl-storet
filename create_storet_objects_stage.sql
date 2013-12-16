@@ -279,7 +279,8 @@ create or replace package body create_storet_objects
             station_name,
             fk_primary_type,
             description_text,
-            nvl(result_count, 0) result_count
+            nvl(result_count, 0) result_count,
+            a.pk_isn fk_station
          from
             fa_station a
             left join (select fk_station, count(*) result_count from fa_regular_result group by fk_station) e
