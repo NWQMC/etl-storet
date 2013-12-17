@@ -27,7 +27,7 @@ create or replace package body create_storet_objects
 
       execute immediate 'truncate table fa_regular_result'; 
       execute immediate q'!insert /*+ append nologging */ into fa_regular_result
-      select
+      select /*+ parallel (4) */
          fa_regular_result_no_source.pk_isn,
          fa_regular_result_no_source.organization_id,
          fa_regular_result_no_source.station_id,
@@ -108,7 +108,7 @@ create or replace package body create_storet_objects
      commit;
 
      execute immediate q'!insert /*+ append nologging */ into fa_regular_result
-       select
+       select /*+ parallel (4) */
          storetw_fa_regular_result.pk_isn,
          storetw_fa_regular_result.organization_id,
          storetw_fa_regular_result.station_id,
@@ -197,7 +197,7 @@ create or replace package body create_storet_objects
 
       execute immediate 'truncate table fa_station';
       execute immediate q'!insert /*+ append nologging */ into fa_station
-      select
+      select /*+ parallel (4) */
          storetw_fa_station.organization_id || '-' || storetw_fa_station.station_id station_id,
          trim(storetw_fa_station.station_name) station_name,
          storetw_fa_station.organization_id,
@@ -265,7 +265,7 @@ create or replace package body create_storet_objects
 
       execute immediate 'truncate table storet_station_sum';
       execute immediate 'insert /*+ append nologging */ into storet_station_sum
-         select
+         select /*+ parallel (4) */
             a.pk_isn,
             station_id,
             geom,
@@ -412,7 +412,7 @@ create or replace package body create_storet_objects
       dbms_output.put_line(systimestamp || ' creating storet_sum');
       execute immediate 'truncate table storet_sum';
       execute immediate q'!insert /*+ append nologging */ into storet_sum
-      select
+      select /*+ parallel (4) */
          cast(trim(station.state_cd) as varchar2(2)) fips_state_code,
          cast(trim(station.county_cd) as varchar2(3)) fips_county_code,
          cast(trim(station.station_group_type) as varchar2(30)) site_type,
@@ -448,7 +448,7 @@ create or replace package body create_storet_objects
       select code_value,
              null description,
              rownum sort_order
-        from (select distinct characteristic_name code_value
+        from (select /*+ parallel (4) */ distinct characteristic_name code_value
                 from fa_regular_result
                where characteristic_name is not null
                   order by 1)';
@@ -460,7 +460,7 @@ create or replace package body create_storet_objects
       select code_value,
              null description,
              rownum sort_order
-        from (select distinct characteristic_group_type code_value
+        from (select /*+ parallel (4) */ distinct characteristic_group_type code_value
                 from fa_regular_result
                where characteristic_group_type is not null
                   order by 1)';
@@ -471,7 +471,7 @@ create or replace package body create_storet_objects
       select code_value,
              description,
              rownum sort_order
-        from (select distinct country_cd code_value,
+        from (select /*+ parallel (4) */ distinct country_cd code_value,
                               country_name description
                 from fa_station
                   order by country_name desc)';
@@ -484,7 +484,8 @@ create or replace package body create_storet_objects
              country_cd,
              state_cd,
              rownum sort_order
-        from (select di_geo_state.country_code || ':' || rtrim(di_geo_state.fips_state_code) || ':' || di_geo_county.fips_county_code code_value,
+        from (select /*+ parallel (4) */
+                     di_geo_state.country_code || ':' || rtrim(di_geo_state.fips_state_code) || ':' || di_geo_county.fips_county_code code_value,
                      di_geo_state.country_code || ', ' || di_geo_state.state_name || ', ' || di_geo_county.county_name description,
                      di_geo_state.country_code country_cd,
                      rtrim(di_geo_state.fips_state_code) state_cd
@@ -504,7 +505,8 @@ create or replace package body create_storet_objects
        select code_value,
               description,
               rownum sort_order
-         from (select distinct organization_id code_value,
+         from (select /*+ parallel (4) */
+                      distinct organization_id code_value,
                                organization_name description
                  from fa_station
                     order by 1)';
@@ -515,7 +517,7 @@ create or replace package body create_storet_objects
        select code_value,
               null description,
               rownum sort_order
-         from (select distinct activity_medium as code_value
+         from (select /*+ parallel (4) */ distinct activity_medium as code_value
                  from fa_regular_result
                 where fk_act_medium is not null
                    order by activity_medium)';
@@ -526,7 +528,7 @@ create or replace package body create_storet_objects
        select code_value,
               null description,
               rownum sort_order
-         from (select distinct station_group_type code_value
+         from (select /*+ parallel (4) */ distinct station_group_type code_value
                  from fa_station
                    order by 1)';
 
@@ -538,7 +540,8 @@ create or replace package body create_storet_objects
               description_with_out_country,
               country_cd,
               rownum sort_order
-         from (select distinct country_cd || ':' || state_cd code_value,
+         from (select /*+ parallel (4) */
+                      distinct country_cd || ':' || state_cd code_value,
                                country_cd || ', ' || state_name description_with_country,
                                state_name description_with_out_country,
                                country_cd,
