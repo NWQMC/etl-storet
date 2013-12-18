@@ -474,6 +474,7 @@ create or replace package body create_storet_objects
         from (select /*+ parallel (4) */ distinct country_cd code_value,
                               country_name description
                 from fa_station
+               where country_cd is not null
                   order by country_name desc)';
 
       dbms_output.put_line(systimestamp || ' creating county');
@@ -509,6 +510,7 @@ create or replace package body create_storet_objects
                       distinct organization_id code_value,
                                organization_name description
                  from fa_station
+                where organization_id is not null
                     order by 1)';
 
       dbms_output.put_line(systimestamp || ' creating samplemedia');
@@ -519,7 +521,7 @@ create or replace package body create_storet_objects
               rownum sort_order
          from (select /*+ parallel (4) */ distinct activity_medium as code_value
                  from fa_regular_result
-                where fk_act_medium is not null
+                where activity_medium is not null
                    order by activity_medium)';
             
       dbms_output.put_line(systimestamp || ' creating sitetype');
@@ -530,6 +532,7 @@ create or replace package body create_storet_objects
               rownum sort_order
          from (select /*+ parallel (4) */ distinct station_group_type code_value
                  from fa_station
+                where station_group_type is not null
                    order by 1)';
 
       dbms_output.put_line(systimestamp || ' creating state');
@@ -547,6 +550,7 @@ create or replace package body create_storet_objects
                                country_cd,
                                state_cd
                  from fa_station
+                where country_cd is not null
                    order by country_cd desc,
                             state_cd)!';
       commit;
