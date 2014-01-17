@@ -713,7 +713,7 @@ create or replace package body create_storet_objects
 
       dbms_output.put_line(systimestamp || ' grants...');
       execute immediate 'grant select on fa_station'           || suffix || ' to storetuser';
-      execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser, wqp_user';
+      execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_medium'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_characteristic'    || suffix || ' to storetuser';
@@ -726,7 +726,7 @@ create or replace package body create_storet_objects
       execute immediate 'grant select on lu_mad_vmethod'       || suffix || ' to storetuser';
       execute immediate 'grant select on lu_mad_vdatum'        || suffix || ' to storetuser';
       execute immediate 'grant select on mt_wh_config'         || suffix || ' to storetuser';
-      execute immediate 'grant select on storet_sum'           || suffix || ' to storetuser';
+      execute immediate 'grant select on storet_sum'           || suffix || ' to storetuser, nwis_ws_star';
       execute immediate 'grant select on storet_station_sum'   || suffix || ' to storetuser';
       execute immediate 'grant select on storet_result_sum'    || suffix || ' to storetuser';
       execute immediate 'grant select on storet_result_ct_sum' || suffix || ' to storetuser';

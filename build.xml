@@ -42,7 +42,7 @@
     <target name="setStopRun">
         <echo>Check if we had changes and should continue</echo>
         <condition property="stopRun">
-            <contains string="${pullResult}" substring="Since no differences, quitting." />
+            <contains string="${pullResult}" substring="quitting" />
         </condition>
     </target>
         
