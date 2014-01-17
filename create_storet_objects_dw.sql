@@ -398,18 +398,23 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      stmt := 'create bitmap index fa_station_org_sta' || suffix || ' on ' ||
-               table_name || ' (organization_id || ''-'' || station_id) parallel 4 nologging';
+      stmt := 'create bitmap index fa_station_station_id' || suffix || ' on ' ||
+               table_name || ' (station_id) parallel 4 nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      stmt := 'create bitmap index fa_station_fk_geo_state' || suffix || ' on ' ||
-               table_name || ' (fk_geo_state) parallel 4 nologging';
+      stmt := 'create bitmap index fa_station_country_cd' || suffix || ' on ' ||
+               table_name || ' (country_cd) parallel 4 nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      stmt := 'create index fa_station_fk_geo_county' || suffix || ' on ' ||
-               table_name || ' (fk_geo_county) parallel 4 nologging';
+      stmt := 'create bitmap index fa_station_state_cd' || suffix || ' on ' ||
+               table_name || ' (state_cd) parallel 4 nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index fa_station_county_cd' || suffix || ' on ' ||
+               table_name || ' (county_cd) parallel 4 nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
@@ -430,23 +435,8 @@ create or replace package body create_storet_objects
 
       table_name := 'FA_REGULAR_RESULT' || suffix;
 
-      stmt := 'create bitmap index fa_reg_fk_char' || suffix || ' on ' ||
-               table_name || ' (FK_CHAR) local parallel 4 nologging ';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index fa_reg_act_med' || suffix || ' on ' ||
-               table_name || ' (FK_ACT_MEDIUM) local parallel 4 nologging ';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
       stmt := 'create bitmap index fa_reg_fk_station' || suffix || ' on ' ||
                table_name || ' (fk_station) local parallel 4 nologging';
-      execute immediate stmt;
-
-      stmt := 'create bitmap index fa_reg_fk_org' || suffix || ' on ' ||
-               table_name || ' (fk_org) local parallel 4 nologging';
-      dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index fa_reg_activity_id' || suffix || ' on ' ||
@@ -456,6 +446,12 @@ create or replace package body create_storet_objects
 
       stmt := 'create bitmap index fa_reg_char_name' || suffix || ' on ' ||
                table_name || ' (characteristic_name) local parallel 4 nologging';
+
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index fa_reg_char_grp' || suffix || ' on ' ||
+               table_name || ' (characteristic_group_type) local parallel 4 nologging';
 
       dbms_output.put_line(stmt);
       execute immediate stmt;
