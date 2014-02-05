@@ -709,7 +709,7 @@ create or replace package body create_storet_objects
 
       dbms_output.put_line(systimestamp || ' grants...');
       execute immediate 'grant select on fa_station'           || suffix || ' to storetuser';
-      execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser';
+      execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser, wqp_user';
       execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_medium'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_characteristic'    || suffix || ' to storetuser';
