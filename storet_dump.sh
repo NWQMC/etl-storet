@@ -18,7 +18,7 @@ export table_count=`grep "exported " $explog | wc -l`
 export complete_count=`grep "successfully completed" $explog | wc -l`
 
 if [ $table_count -ne 19 -o $complete_count -ne 1 ] ; then
-   echo "table_count("$table_count") not 14 or complete_count("$complete_count") not 1. quitting."
+   echo "table_count("$table_count") not 19 or complete_count("$complete_count") not 1. quitting."
    exit 1
 fi
 

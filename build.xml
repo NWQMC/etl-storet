@@ -1,5 +1,5 @@
 <project name="QwStoretEtl" default="defaultEros">
-    <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, dropStoretWTables, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
+    <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
 
 	<target name="dev" depends="buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
 
@@ -46,14 +46,6 @@
         </condition>
     </target>
         
-    <target name="dropStoretWTables" depends="setStopRun" unless="stopRun">
-        <echo>Drop tables from last import in ${stagingInstance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="storetw/${storetw_password}@${stagingInstance}"/>
-            <arg value="@${basedir}/storetw_drops.sql"/>
-        </exec>
-    </target>
-    
     <target name="importViaDataPump" depends="setStopRun" unless="stopRun">
         <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
         <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
