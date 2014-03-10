@@ -334,6 +334,7 @@ create or replace package body create_storet_objects
             b.characteristic_group_type,
             b.characteristic_name,
             b.activity_start_date_time,
+            b.nemi_url,
             b.result_count
          from
             storet_station_sum a,
@@ -343,6 +344,7 @@ create or replace package body create_storet_objects
                 characteristic_group_type,
                 characteristic_name,
                 trunc(activity_start_date_time) activity_start_date_time,
+                nemi_url,
                 count(*) result_count
              from
                 fa_regular_result
@@ -351,7 +353,8 @@ create or replace package body create_storet_objects
                 activity_medium,
                 characteristic_group_type,
                 characteristic_name,
-                trunc(activity_start_date_time)) b
+                trunc(activity_start_date_time),
+                nemi_url) b
          where
              b.fk_station = a.pk_isn(+)';
       commit;
@@ -372,6 +375,7 @@ create or replace package body create_storet_objects
             activity_medium,
             characteristic_group_type,
             characteristic_name,
+            nemi_url,
             sum(result_count) result_count
          from
             storet_result_sum a
@@ -386,13 +390,15 @@ create or replace package body create_storet_objects
             generated_huc,
             activity_medium,
             characteristic_group_type,
-            characteristic_name
+            characteristic_name,
+            nemi_url
          order by
             fk_station,
             station_id,
             activity_medium,
             characteristic_group_type,
-            characteristic_name';
+            characteristic_name,
+            nemi_url';
       commit;
 
       dbms_output.put_line(systimestamp || ' creating storet_result_nr_sum...');
@@ -405,6 +411,7 @@ create or replace package body create_storet_objects
             characteristic_group_type,
             characteristic_name,
             activity_start_date_time,
+            nemi_url,
             sum(result_count) result_count
          from
             storet_result_sum a
@@ -413,12 +420,14 @@ create or replace package body create_storet_objects
             activity_medium,
             characteristic_group_type,
             characteristic_name,
-            activity_start_date_time
+            activity_start_date_time,
+            nemi_url
          order by
             fk_station,
             activity_medium,
             characteristic_group_type,
-            characteristic_name';
+            characteristic_name,
+            nemi_url';
       commit;
 
       dbms_output.put_line(systimestamp || ' creating storet_lctn_loc...');

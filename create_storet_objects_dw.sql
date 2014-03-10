@@ -462,6 +462,12 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
+      stmt := 'create bitmap index fa_reg_nemi_url' || suffix || ' on ' ||
+               table_name || ' (nemi_url) local parallel 4 nologging';
+
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
       /* note: this view seems to use the invoker rather than the definer.
                so, must run as STORETMODERN, despite the fact that everything
                else in this large package would work as any user with rights
@@ -631,6 +637,16 @@ create or replace package body create_storet_objects
       stmt := 'create bitmap index storet_result_sum_8' || suffix || ' on ' ||
                table_name || ' (characteristic_name      ) local nologging';
 
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index storet_result_sum_9' || suffix || ' on ' ||
+               table_name || ' (nemi_url) local nologging';
+
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      
 
       table_name := 'STORET_RESULT_CT_SUM' || suffix;
 
@@ -679,6 +695,16 @@ create or replace package body create_storet_objects
       stmt := 'create bitmap index storet_result_ct_sum_8' || suffix || ' on ' ||
                table_name || ' (characteristic_name      ) local nologging';
 
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index storet_result_ct_sum_9' || suffix || ' on ' ||
+               table_name || ' (nemi_url) local nologging';
+
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+
       table_name := 'STORET_RESULT_NR_SUM' || suffix;
 
       stmt := 'create bitmap index storet_result_nr_sum_1' || suffix || ' on ' ||
@@ -701,6 +727,12 @@ create or replace package body create_storet_objects
 
       stmt := 'create bitmap index storet_result_nr_sum_4' || suffix || ' on ' ||
                table_name || ' (characteristic_name             ) local nologging';
+
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+            stmt := 'create bitmap index storet_result_nr_sum_5' || suffix || ' on ' ||
+               table_name || ' (nemi_url) local nologging';
 
       dbms_output.put_line(stmt);
       execute immediate stmt;
@@ -1117,7 +1149,7 @@ create or replace package body create_storet_objects
       fetch c into index_count;
       close c;
 
-      if index_count < 54 then  /* there are exactly 54 as of 01MAY2013 */
+      if index_count < 58 then  /* there are exactly 58 as of 10MAR2014 */
          pass_fail := 'FAIL';
       else
          pass_fail := 'PASS';
