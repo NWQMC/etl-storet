@@ -118,7 +118,7 @@ create or replace package body create_storet_objects
              on fk_act_medium = di_activity_medium.pk_isn
            left join wqp_nemi_epa_crosswalk nemi
              on trim(fa_regular_result_no_source.analytical_procedure_source) = nemi.analytical_procedure_source and
-                fa_regular_result_no_source.analytical_procedure_id = nemi.analytical_procedure_id!';
+                trim(fa_regular_result_no_source.analytical_procedure_id) = nemi.analytical_procedure_id!';
 
      commit;
 
@@ -214,7 +214,7 @@ create or replace package body create_storet_objects
              on fk_act_medium = di_activity_medium.pk_isn
            left join wqp_nemi_epa_crosswalk nemi
              on trim(storetw_fa_regular_result.analytical_procedure_source) = nemi.analytical_procedure_source and
-                storetw_fa_regular_result.analytical_procedure_id = nemi.analytical_procedure_id!';
+                trim(storetw_fa_regular_result.analytical_procedure_id) = nemi.analytical_procedure_id!';
          
       commit;
    end create_regular_result;
