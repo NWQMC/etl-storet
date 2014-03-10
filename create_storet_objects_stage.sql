@@ -97,13 +97,28 @@ create or replace package body create_storet_objects
          regexp_replace(fa_regular_result_no_source.detection_limit, '[[:space:]].*') as myql,
          nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_unit, null) as myqlunits,
          nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_description, null) as myqldesc
+         cast(case
+                when nemi.method_id is not null
+                  then
+                    case nemi.method_type
+                      when 'analytical'
+                        then 'https://www.nemi.gov/methods/method_summary/' || method_id || '/'
+                      when 'statistical'
+                        then 'https://www.nemi.gov/methods/sams_method_summary/' || method_id || '/'
+                    end
+                else 
+                  null 
+              end as varchar2(256 char)) nemi_url
       from fa_regular_result_no_source
            left join di_activity_matrix
              on fk_act_matrix = di_activity_matrix.pk_isn
            left join di_characteristic
              on fk_char = di_characteristic.pk_isn
            left join di_activity_medium
-             on fk_act_medium = di_activity_medium.pk_isn!';
+             on fk_act_medium = di_activity_medium.pk_isn
+           left join wqp_nemi_epa_crosswalk nemi
+             on trim(fa_regular_result_no_source.analytical_procedure_source) = nemi.analytical_procedure_source and
+                fa_regular_result_no_source.analytical_procedure_id = nemi.analytical_procedure_id!';
 
      commit;
 
@@ -178,13 +193,28 @@ create or replace package body create_storet_objects
          regexp_replace(storetw_fa_regular_result.detection_limit, '[[:space:]].*') myql,
          nvl2(storetw_fa_regular_result.detection_limit, storetw_fa_regular_result.detection_limit_unit, null) myqlunits,
          nvl2(storetw_fa_regular_result.detection_limit, storetw_fa_regular_result.detection_limit_description, null) myqldesc
+         cast(case
+                when nemi.method_id is not null
+                  then
+                    case nemi.method_type
+                      when 'analytical'
+                        then 'https://www.nemi.gov/methods/method_summary/' || method_id || '/'
+                      when 'statistical'
+                        then 'https://www.nemi.gov/methods/sams_method_summary/' || method_id || '/'
+                    end
+                else 
+                  null 
+              end as varchar2(256 char)) nemi_url
       from storetw_fa_regular_result
            left join di_activity_matrix
              on fk_act_matrix = di_activity_matrix.pk_isn
            left join di_characteristic
              on fk_char = di_characteristic.pk_isn
            left join di_activity_medium
-             on fk_act_medium = di_activity_medium.pk_isn!';
+             on fk_act_medium = di_activity_medium.pk_isn
+           left join wqp_nemi_epa_crosswalk nemi
+             on trim(storetw_fa_regular_result.analytical_procedure_source) = nemi.analytical_procedure_source and
+                storetw_fa_regular_result.analytical_procedure_id = nemi.analytical_procedure_id!';
          
       commit;
    end create_regular_result;
