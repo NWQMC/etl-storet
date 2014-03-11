@@ -96,7 +96,7 @@ create or replace package body create_storet_objects
          nvl2(coalesce(fa_regular_result_no_source.activity_upper_depth, fa_regular_result_no_source.activity_lower_depth), fa_regular_result_no_source.activity_depth_ref_point, null) activity_uprlwr_depth_ref_pt,
          regexp_replace(fa_regular_result_no_source.detection_limit, '[[:space:]].*') as myql,
          nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_unit, null) as myqlunits,
-         nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_description, null) as myqldesc
+         nvl2(fa_regular_result_no_source.detection_limit, fa_regular_result_no_source.detection_limit_description, null) as myqldesc,
          cast(case
                 when nemi.method_id is not null
                   then
@@ -192,7 +192,7 @@ create or replace package body create_storet_objects
          nvl2(coalesce(storetw_fa_regular_result.activity_upper_depth, storetw_fa_regular_result.activity_lower_depth), storetw_fa_regular_result.activity_depth_ref_point, null) activity_uprlwr_depth_ref_pt,
          regexp_replace(storetw_fa_regular_result.detection_limit, '[[:space:]].*') myql,
          nvl2(storetw_fa_regular_result.detection_limit, storetw_fa_regular_result.detection_limit_unit, null) myqlunits,
-         nvl2(storetw_fa_regular_result.detection_limit, storetw_fa_regular_result.detection_limit_description, null) myqldesc
+         nvl2(storetw_fa_regular_result.detection_limit, storetw_fa_regular_result.detection_limit_description, null) myqldesc,
          cast(case
                 when nemi.method_id is not null
                   then
