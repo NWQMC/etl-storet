@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export work=/u01/oradata/dbstage/pdc_temp
-export file_stub=stormodb_shire_storetw
+export file_stub=stormodb_shire_storetw_Weekly
 export explog=${file_stub}_expdp.log
 export expref=${file_stub}_expdp.ref
 export http_base=http://www.epa.gov/storet/download/storetw
@@ -17,7 +17,7 @@ egrep '^Export|successfully completed' $explog
 export table_count=`grep "exported " $explog | wc -l`
 export complete_count=`grep "successfully completed" $explog | wc -l`
 
-if [ $table_count -ne 19 -o $complete_count -ne 1 ] ; then
+if [ $table_count -ne 23 -o $complete_count -ne 1 ] ; then
    echo "table_count("$table_count") not 19 or complete_count("$complete_count") not 1. quitting."
    exit 1
 fi
