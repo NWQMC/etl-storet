@@ -6,3 +6,4 @@ tables=(FA_REGULAR_RESULT,FA_STATION,DI_GEO_COUNTY,DI_GEO_STATE,DI_CHARACTERISTI
         MT_WH_CONFIG,FA_BIOLOGICAL_RESULT)
 table_exists_action=replace
 EXCLUDE=constraint,index,grant
+remap_tablespace=STORETARCHDATA:STORETDATA
