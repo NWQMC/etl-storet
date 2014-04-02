@@ -93,7 +93,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="mv /u01/oradata/dbstage/pdc_temp/stormodb_shire_storetw_expdp.log /u01/oradata/dbstage/pdc_temp/stormodb_shire_storetw_expdp.ref"
+            command="mv /u01/oradata/dbstage/pdc_temp/stormodb_shire_storetw_Weekly_expdp.log /u01/oradata/dbstage/pdc_temp/stormodb_shire_storetw_Weekly_expdp.ref"
         />
     </target>
     
