@@ -11,7 +11,7 @@ cd $work
 
 (
 
-curl $http_base/$explog > $explog 2> curlout.log.1
+curl -f $http_base/$explog > $explog 2> curlout.log.1
 
 egrep '^Export|successfully completed' $explog
 export table_count=`grep "exported " $explog | wc -l`
