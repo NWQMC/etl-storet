@@ -27,8 +27,8 @@ create or replace package body create_storet_objects
                                       '''LU_MAD_VDATUM_00000'',''MT_WH_CONFIG_00000'',''STORET_SUM_00000'',''STORET_STATION_SUM_00000'',''STORET_RESULT_SUMT_00000'',' ||
                                       '''STORET_RESULT_SUM_00000'',''STORET_RESULT_CT_SUM_00000'',''STORET_RESULT_NR_SUM_00000'',''STORET_LCTN_LOC_00000'',' ||
                                       '''CHARACTERISTICNAME_00000'',''CHARACTERISTICTYPE_00000'',''COUNTRY_00000'',''COUNTY_00000'',''ORGANIZATION_00000'',' ||
-                                      '''SAMPLEMEDIA_00000'',''STATE_00000'',''SITETYPE_00000'')';
-                                      
+                                      '''SAMPLEMEDIA_00000'',''STATE_00000'',''SITETYPE_00000'', ''BIOLOGICAL_RESULT_00000'')';
+
    type cursor_type is ref cursor;
 
    procedure determine_suffix
@@ -114,6 +114,20 @@ create or replace package body create_storet_objects
 
       cleanup(2) := 'drop table fa_station' || suffix || ' cascade constraints purge';
    end create_station;
+
+   procedure create_biological_result(p_dblink in varchar2)
+   is
+   begin
+
+      dbms_output.put_line(systimestamp || ' creating station...');
+
+      execute immediate
+     'create table biological_result' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
+      select /*+ parallel (4) */ *
+        from biological_result_temp@' || p_dblink;
+
+      cleanup(2) := 'drop table biological_result' || suffix || ' cascade constraints purge';
+   end create_biological_result;
 
   procedure create_summaries(p_dblink in varchar2)
    is
@@ -326,7 +340,7 @@ create or replace package body create_storet_objects
       select /*+ parallel (4) */ *
         from storet_sum@' || p_dblink;
       cleanup(20) := 'drop table storet_sum' || suffix || ' cascade constraints purge';
-      
+
       dbms_output.put_line(systimestamp || ' creating characteristicname');
       execute immediate
       'create table characteristicname' || suffix || ' compress pctfree 0 nologging as
@@ -368,14 +382,14 @@ create or replace package body create_storet_objects
        select /*+ parallel (4) */ *
          from samplemedia@' || p_dblink;
       cleanup(26) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
-            
+
       dbms_output.put_line(systimestamp || ' creating sitetype');
       execute immediate
       'create table sitetype' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from sitetype@' || p_dblink;
       cleanup(27) := 'drop table sitetype' || suffix || ' cascade constraints purge';
-            
+
       dbms_output.put_line(systimestamp || ' creating state');
       execute immediate
       'create table state' || suffix || ' compress pctfree 0 nologging as
@@ -646,7 +660,7 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      
+
 
       table_name := 'STORET_RESULT_CT_SUM' || suffix;
 
@@ -731,9 +745,75 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-            stmt := 'create bitmap index storet_result_nr_sum_5' || suffix || ' on ' ||
+      stmt := 'create bitmap index storet_result_nr_sum_5' || suffix || ' on ' ||
                table_name || ' (nemi_url) local nologging';
 
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      table_name := 'biological_result';
+      stmt := 'create bitmap index bio_result_station' || suffix || ' on ' ||
+               table_name || ' (station_id) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_country' || suffix || ' on ' ||
+               table_name || ' (country_cd) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_state' || suffix || ' on ' ||
+               table_name || ' (state_cd) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_county' || suffix || ' on ' ||
+               table_name || ' (county_cd) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_sitetype' || suffix || ' on ' ||
+               table_name || ' (site_type) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_huc8' || suffix || ' on ' ||
+               table_name || ' (huc_8) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_org' || suffix || ' on ' ||
+               table_name || ' (organization_id) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_chartype' || suffix || ' on ' ||
+               table_name || ' (characteristic_type) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_charname' || suffix || ' on ' ||
+               table_name || ' (characteristic_name) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_media' || suffix || ' on ' ||
+               table_name || ' (sample_media) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      stmt := 'create bitmap index bio_result_nemi' || suffix || ' on ' ||
+               table_name || ' (nemi_url) local nologging';
+      dbms_output.put_line(stmt);
+      execute immediate stmt;
+
+      delete from user_sdo_geom_metadata where table_name = table_name || suffix;
+      insert INTO USER_SDO_GEOM_METADATA VALUES(table_name || suffix, 'GEOM',
+                  MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', -180, 180, 0.005), MDSYS.SDO_DIM_ELEMENT('Y', -90, 90, 0.005)), 8307);
+      commit;
+
+      stmt := 'create index bio_result_geom' || suffix || ' on ' ||
+              table_name || suffix || ' (GEOM) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
@@ -742,6 +822,7 @@ create or replace package body create_storet_objects
       dbms_output.put_line(systimestamp || ' grants...');
       execute immediate 'grant select on fa_station'           || suffix || ' to storetuser';
       execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser, wqp_user';
+      execute immediate 'grant select on biological_result'    || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_medium'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_characteristic'    || suffix || ' to storetuser';
@@ -773,6 +854,8 @@ create or replace package body create_storet_objects
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       dbms_output.put_line(systimestamp || ' analyze fa_regular_result...');  /* takes about 50 minutes */
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_REGULAR_RESULT'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+      dbms_output.put_line(systimestamp || ' analyze biological_result...');
+      dbms_stats.gather_table_stats('STORETMODERN', 'BIOLOGICAL_RESULT'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       dbms_output.put_line(systimestamp || ' analyze di_activity_medium...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_ACTIVITY_MEDIUM'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       dbms_output.put_line(systimestamp || ' analyze di_characteristic...');
@@ -853,9 +936,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for fa_regular_result: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -873,9 +956,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+        $END
       end if;
       situation := pass_fail || ': table comparison for fa_station: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -893,9 +976,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_activity_matrix: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -913,9 +996,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_activity_medium: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -933,9 +1016,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_characteristic: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -953,9 +1036,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_geo_county: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -973,9 +1056,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_geo_state: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -993,9 +1076,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_org: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1013,9 +1096,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for di_statn_types: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1033,9 +1116,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_hmethod: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1053,9 +1136,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_hdatum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1073,9 +1156,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_vmethod: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1093,9 +1176,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for lu_mad_vdatum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1113,9 +1196,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for mt_wh_config: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1133,9 +1216,9 @@ create or replace package body create_storet_objects
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
-      	 $IF $$empty_db $THEN
-      	    pass_fail := 'PASS empty_db';
-      	 $END
+         $IF $$empty_db $THEN
+           pass_fail := 'PASS empty_db';
+         $END
       end if;
       situation := pass_fail || ': table comparison for storet_sum: was ' || trim(to_char(old_rows, '999,999,999')) || ', now ' || trim(to_char(new_rows, '999,999,999'));
       dbms_output.put_line(situation);
@@ -1188,6 +1271,7 @@ create or replace package body create_storet_objects
 
       execute immediate 'create or replace synonym fa_station           for fa_station'           || suffix;
       execute immediate 'create or replace synonym fa_regular_result    for fa_regular_result'    || suffix;
+      execute immediate 'create or replace synonym biological_result    for biological_result'    || suffix;
       execute immediate 'create or replace synonym di_activity_matrix   for di_activity_matrix'   || suffix;
       execute immediate 'create or replace synonym di_activity_medium   for di_activity_medium'   || suffix;
       execute immediate 'create or replace synonym di_characteristic    for di_characteristic'    || suffix;
@@ -1213,7 +1297,7 @@ create or replace package body create_storet_objects
       execute immediate 'create or replace synonym country              for country'              || suffix;
       execute immediate 'create or replace synonym county               for county'               || suffix;
       execute immediate 'create or replace synonym state                for state'                || suffix;
-     
+
       execute immediate 'create or replace synonym storet_lctn_loc_new  for storet_lctn_loc'      || suffix;
       execute immediate 'create or replace synonym storet_lctn_loc_old  for storet_lctn_loc_'
                           || to_char(to_number(substr(suffix, 2) - 1), 'fm00000');
@@ -1246,7 +1330,7 @@ create or replace package body create_storet_objects
          stmt := 'drop table ' || drop_name || ' cascade constraints purge';
          dbms_output.put_line(systimestamp || ' CLEANUP old stuff: ' || stmt);
          execute immediate stmt;
-         if drop_name like '%STATION%' then
+         if drop_name like '%STATION%' or drop_name like '%BIOLOGICAL%' then
             stmt := 'delete from user_sdo_geom_metadata where table_name = ''' || drop_name || '''';
             dbms_output.put_line(systimestamp || ' CLEANUP old stuff: ' || stmt);
             execute immediate stmt;
@@ -1277,6 +1361,7 @@ create or replace package body create_storet_objects
       determine_suffix;
       create_regular_result(p_dblink);
       create_station(p_dblink);
+      create_biological_result(p_dblink);
       create_lookups(p_dblink);
       create_summaries(p_dblink);
       create_index;
@@ -1286,7 +1371,7 @@ create or replace package body create_storet_objects
       else
          raise_application_error(-20666, 'Job failed.');
       end if;
-      
+
    exception
       when others then
          for k in 1 .. 30 loop

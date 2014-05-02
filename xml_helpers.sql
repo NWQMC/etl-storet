@@ -3,7 +3,7 @@ create or replace package xml_helpers as
                          organization_name di_org.organization_name%type)
     return clob deterministic;
 
-  function biological_activity (organization_id                fa_biological_result.organization_id%type,
+    function biological_activity (organization_id                fa_biological_result.organization_id%type,
                                 activity_id                    fa_biological_result.activity_id%type,
                                 trip_id                        fa_biological_result.trip_id%type,
                                 replicate_number               fa_biological_result.replicate_number%type,
@@ -53,7 +53,7 @@ create or replace package xml_helpers as
                                 smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type                                
                                )
     return clob deterministic;
-    
+
 /*  function regular_result (result_value_text            fa_regular_result.result_value_text%type,
                            characteristic_name          fa_regular_result.characteristic_name%type,
                            sample_fraction_type         fa_regular_result.sample_fraction_type%type,
@@ -85,7 +85,7 @@ create or replace package xml_helpers as
                            lab_samp_prp_start_date_time fa_regular_result.lab_samp_prp_start_date_time%type
                           )
     return clob deterministic;*/
-    
+
   function biological_result (result_value_text             fa_biological_result.result_value_text%type,
                               characteristic_name           fa_biological_result.characteristic_name%type,
                               sample_fraction_type          fa_biological_result.sample_fraction_type%type,
@@ -141,7 +141,11 @@ create or replace package xml_helpers as
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
                               taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type
                              )
-    return clob deterministic;
+      return clob deterministic;
+
+  function strip_bad( p_string in varchar2 )
+    return varchar2 deterministic;
+
 end xml_helpers;
 /
 
@@ -638,6 +642,12 @@ create or replace package body xml_helpers as
       from dual;
     return rtn;
   end biological_result;
+
+  function strip_bad( p_string in varchar2 )
+    return varchar2 deterministic is
+  begin
+    return regexp_replace(p_string, '[^a-z,_,A-Z,0-9,.,'']', '');
+  end strip_bad;
 
 end xml_helpers;
 /
