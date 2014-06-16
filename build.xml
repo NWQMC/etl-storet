@@ -34,7 +34,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e storet_dump.sh"
+            command="bash -e -x storet_dump.sh"
             outputproperty="pullResult"
         />
     </target>
