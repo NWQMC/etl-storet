@@ -68,4 +68,6 @@ echo "downloaded "$count" files"
 
 ) 2>&1 | tee storet_dump_$date_suffix.out
 
+echo "got here"
+
 exit 0 
