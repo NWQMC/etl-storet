@@ -43,7 +43,7 @@ for i  in `grep orabackup $explog` ; do
    while [ $tries -le 3 ] ; do
       date
       echo "downloading "$basename" ...file "$count"   attempt "$tries
-      curl --header 'accept encoding=gzip' --retry 3 $http_base/$basename > $basename 2> curlout.$count.$tries
+      wget $http_base/$basename
       status=$?
       echo "status: "$status
       if [ $status -eq 0 ] ; then
