@@ -36,6 +36,6 @@ fi
 
 files=`grep orabackup test.log | sed -e 's/^.*\//http:\/\/www.epa.gov\/storet\/download\/storetw\//'`
 echo $files
-echo $files | xargs -n 1 -P 8 wget
+echo $files | xargs -n 1 -P 8 wget -q
 
 ) 2>&1 | tee storet_dump_$date_suffix.out
