@@ -1,4 +1,11 @@
 #!/bin/bash
+if [[ "$#" -ne "1" ]]; then
+	echo "Invalid parameter count."
+	echo "Usage: `basename $0` expected_table_count"
+	exit 1;
+fi
+
+exp_table_count=$1
 
 export work=/u01/oradata/dbstage/pdc_temp
 export file_stub=stormodb_shire_storetw_Weekly
