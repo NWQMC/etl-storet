@@ -518,17 +518,22 @@ create or replace package body xml_helpers as
                               lab_certified                 fa_biological_result.lab_certified%type,
                               lab_accred_authority          fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
-                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type
+                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type,
+                              md_citation_title				md_citation.title%type,
+                              md_citation_author			md_citation.author%type,
+                              md_citation_vol_and_page		md_citation.vol_and_page%type,
+                              md_citation_pblshr_org_name	md_citation.pblshr_org_name%type,
+                              md_citation_publishing_year	md_citation.publishing_year%type
                              )
     return clob deterministic is
     rtn clob;
   begin
     select xmlserialize(content (xmlelement("Result",
                                             xmlelement("ResultDescription", /*
-                                                       xmlelement("DataLoggerLineName",), */
+                                                       xmlelement("DataLoggerLineName",), --N/A for bio */
                                                        xmlelement("ResultDetectionConditionText", result_value_text),
                                                        xmlelement("CharacteristicName", characteristic_name), /*
-                                                       xmlelement("MethodSpecificationName",),*/
+                                                       xmlelement("MethodSpecificationName",), --not mapped */
                                                        xmlelement("ResultSampleFractionText", sample_fraction_type),
                                                        xmlelement("ResultMeasure",
                                                                   xmlelement("ResultMeasureValue", result_value),
@@ -544,10 +549,10 @@ create or replace package body xml_helpers as
                                                        xmlelement("ResultParticleSizeBasisText", particle_size),
                                                        xmlelement("DataQuality",
                                                                   xmlelement("PrecisionValue", precision),
-                                                                  xmlelement("BiasValue", bias),/*
-                                                                  xmlelement("ConfidenceIntervalValue", ),*/
-                                                                  xmlelement("UpperConfidenceLimitValue", confidence_level),
-                                                                  xmlelement("LowerConfidenceLimitValue", confidence_level)
+                                                                  xmlelement("BiasValue", bias)/*
+                                                                  xmlelement("ConfidenceIntervalValue", ), --"not mapped"
+                                                                  xmlelement("UpperConfidenceLimitValue", confidence_level), --"Use 2nd part of ; separated values enclosed in ()" but no values found in data
+                                                                  xmlelement("LowerConfidenceLimitValue", confidence_level) --"Use 1st part of ; separated values enclosed in ()" but no values found in data */
                                                                  ),
                                                        xmlelement("ResultCommentText", result_comment),
                                                        xmlelement("ResultDepthHeightMeasure", 
@@ -555,7 +560,7 @@ create or replace package body xml_helpers as
                                                                   xmlelement("MeasureUnitCode", result_depth_meas_unit_code)
                                                                  ),
                                                        xmlelement("ResultDepthAltitudeReferencePointText", result_depth_alt_ref_pt_txt), /*
-                                                       xmlelement("USGSPCode", non_existent_column), */
+                                                       xmlelement("USGSPCode", non_existent_column), --not in spreadsheet */
                                                        xmlelement("ResultSamplingPointName", sampling_point_name)
                                                       ),
                                             xmlelement("BiologicalResultDescription",
@@ -565,8 +570,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("UnidentifiedSpeciesIdentifier", species_id),
                                                        xmlelement("SampleTissueAnatomyName", biopart_name),
                                                        xmlelement("GroupSummaryCountWeight",
-                                                                  xmlelement("MeasureValue", result_group_summary_ct_wt)/*,
-                                                                  xmlelement("MeasureUnitCode",)*/
+                                                                  xmlelement("MeasureValue", SUBSTR(result_group_summary_ct_wt,0,INSTR(result_group_summary_ct_wt, '~')-1)),
+                                                                  xmlelement("MeasureUnitCode", SUBSTR(result_group_summary_ct_wt,INSTR(result_group_summary_ct_wt, '~')+1))
                                                                  ),
                                                        xmlelement("TaxonomicDetails", /* characteritic_description */
                                                                   xmlelement("CellFormName", cell_form),
@@ -576,16 +581,16 @@ create or replace package body xml_helpers as
                                                                   xmlelement("TaxonomicPollutionTolerance", pollution_tolerance),
                                                                   xmlelement("TaxonomicPollutionToleranceScaleText", pollution_tolerance_scale),
                                                                   xmlelement("TrophicLevelName", trophic_level),
-                                                                  xmlelement("FunctionalFeedingGroupName", feeding_group)/*,
-                                                                  xmlelement("TaxonomicDetailsCitation",  taxon_detail_ciation_id 
-                                                                             xmlelement("ResourceTitleName",),
-                                                                             xmlelement("ResourceCreatorName",),
-                                                                             xmlelement("ResourceSubjectTitle",),
-                                                                             xmlelement("ResourcePublishername",),
-                                                                             xmlelement("ResourceDate",),
-                                                                             xmlelement("ResourceIdentfier",)
+                                                                  xmlelement("FunctionalFeedingGroupName", feeding_group),
+                                                                  xmlelement("TaxonomicDetailsCitation",   
+                                                                             xmlelement("ResourceTitleName", md_citation_title),
+                                                                             xmlelement("ResourceCreatorName", md_citation_author),
+                                                                             xmlelement("ResourceSubjectText", md_citation_vol_and_page),
+                                                                             xmlelement("ResourcePublishername", md_citation_pblshr_org_name),
+                                                                             xmlelement("ResourceDate", to_char(md_citation_publishing_year, 'yyyy-mm-dd'))/*,
+                                                                             xmlelement("ResourceIdentfier",)*/
                                                                             )
-                                                                 ),
+                                                                 )/*,
                                                        xmlelement("FrequenceyClassInformation",
                                                                   xmlelement("FrequencyClassDescriptorCode",),
                                                                   xmlelement("FrequencyClassDescriptorUnitCode",),
