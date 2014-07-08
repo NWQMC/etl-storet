@@ -639,13 +639,25 @@ create or replace package body xml_helpers as
                                                        xmlelement("TaxonomistAccreditationIndicator", taxonomist_accred_yn),
                                                        xmlelement("TaxonomistAccreditationAuthorityName", taxonomist_accred_authority)
                                                       ) /*,
-                                            xmlelement("LabSamplePreparation",
-                                                       xmlelement("LabSamplePreparationMethod",),
+                                            xmlelement("LabSamplePreparation", --not yet implemented
+                                                       xmlelement("LabSamplePreparationMethod",
+                                                                  xmlelement("MethodIdentifier", lab_samp_prp_method_id),
+                                                                  xmlelement("MethodIdentifierContext", lab_samp_prp_method_context),
+                                                                  xmlelement("MethodName", ),
+                                                                  xmlelement("MethodQualifierTypeName", ),
+                                                                  xmlelement("MethodDescriptionText", )
+                                                                 ),
                                                        xmlelement("PreparationStartDate", to_char(lab_samp_prp_start_date_time, 'yyyy-mm-dd')),
-                                                       xmlelement("PreparationStartTime",),
-                                                       xmlelement("PreparationEndDate",),
-                                                       xmlelement("PreparationEndTime",),
-                                                       xmlelement("SubstitutionDilutionFactorNumeric", substance_dilution_factor)
+                                                       xmlelement("PreparationStartTime",
+                                                                  xmlelement("Time", to_char(lab_samp_prp_start_date_time, 'hh24:mi:ss')),
+                                                                  xmlelement("TimeZoneCode", lab_samp_prp_start_tmzone)
+                                                                 ),
+                                                       xmlelement("PreparationEndDate", to_char(lab_samp_prp_end_date_time, 'yyyy-mm-dd')),
+                                                       xmlelement("PreparationEndTime",
+                                                                  xmlelement("Time", to_char(lab_samp_prp_end_date_time, 'hh24:mi:ss')),
+                                                                  xmlelement("TimeZoneCode", lab_samp_prp_end_tmzone)
+                                                                 ),
+                                                       xmlelement("SubstitutionDilutionFactorNumeric", lab_samp_prp_dilution_factor)
                                                       )*/
                                            )
                                 ) as clob no indent
