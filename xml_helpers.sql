@@ -518,12 +518,14 @@ create or replace package body xml_helpers as
                               lab_certified                 fa_biological_result.lab_certified%type,
                               lab_accred_authority          fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
-                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type,
+                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type/*,
+                              -- join on fa_biological_result.taxon_detail_citation_id = md_citation.citation_id
+                              -- there's no md_citation table and all taxon_detail_citation_id are null
                               md_citation_title				md_citation.title%type,
                               md_citation_author			md_citation.author%type,
                               md_citation_vol_and_page		md_citation.vol_and_page%type,
                               md_citation_pblshr_org_name	md_citation.pblshr_org_name%type,
-                              md_citation_publishing_year	md_citation.publishing_year%type
+                              md_citation_publishing_year	md_citation.publishing_year%type*/
                              )
     return clob deterministic is
     rtn clob;
@@ -581,22 +583,22 @@ create or replace package body xml_helpers as
                                                                   xmlelement("TaxonomicPollutionTolerance", pollution_tolerance),
                                                                   xmlelement("TaxonomicPollutionToleranceScaleText", pollution_tolerance_scale),
                                                                   xmlelement("TrophicLevelName", trophic_level),
-                                                                  xmlelement("FunctionalFeedingGroupName", feeding_group),
+                                                                  xmlelement("FunctionalFeedingGroupName", feeding_group)/*,
                                                                   xmlelement("TaxonomicDetailsCitation",   
                                                                              xmlelement("ResourceTitleName", md_citation_title),
                                                                              xmlelement("ResourceCreatorName", md_citation_author),
                                                                              xmlelement("ResourceSubjectText", md_citation_vol_and_page),
                                                                              xmlelement("ResourcePublishername", md_citation_pblshr_org_name),
-                                                                             xmlelement("ResourceDate", to_char(md_citation_publishing_year, 'yyyy-mm-dd'))/*,
-                                                                             xmlelement("ResourceIdentfier",)*/
+                                                                             xmlelement("ResourceDate", to_char(md_citation_publishing_year, 'yyyy-mm-dd')),
+                                                                             xmlelement("ResourceIdentfier",)
                                                                             )
-                                                                 )/*,
+                                                                 ),
                                                        xmlelement("FrequenceyClassInformation",
                                                                   xmlelement("FrequencyClassDescriptorCode",),
                                                                   xmlelement("FrequencyClassDescriptorUnitCode",),
                                                                   xmlelement("LowerClassBoundValue",),
-                                                                  xmlelement("UpperClassBoundValue",)
-                                                                 ) */
+                                                                  xmlelement("UpperClassBoundValue",)*/
+                                                                 )
                                                       ), /*
                                             xmlelement("AttachedBinaryObject",),*/
                                             xmlelement("ResultAnalyticalMethod",
