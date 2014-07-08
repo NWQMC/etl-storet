@@ -265,8 +265,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("LongitudeMeasure", activity_longitude),
                                                        xmlelement("SourceMapScaleNumeric", map_scale),
                                                        xmlelement("HorizontalAccuracyMeasure",
-                                                                  xmlelement("MeasureValue", regexp_substr(horizontal_accuracy_measure, '[^,]+', 1, 1)),
-                                                                  xmlelement("MeasureUnitCode", regexp_substr(horizontal_accuracy_measure, '[^,]+', 1, 2))
+                                                                  xmlelement("MeasureValue", regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 1)),
+                                                                  xmlelement("MeasureUnitCode", regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 2))
                                                                  ),
                                                        xmlelement("HorizontalCollectionMethodName", fk_act_mad_hmethod),
                                                        xmlelement("HorizontalCoordinateReferenceSystemDatumName", fk_act_mad_hdatum)
