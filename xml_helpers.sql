@@ -226,8 +226,7 @@ create or replace package body xml_helpers as
                                                                                         nvl2(replicate_number, '-' || replicate_number, null)
                                                                  ),
                                                        xmlelement("ActivityTypeCode", activity_type),
-                                                       xmlelement("ActivityMediaName", activity_medium),/*
-                                                       xmlelement("ActivityMediaSubdivisionName", ),*/
+                                                       xmlelement("ActivityMediaName", activity_medium),
                                                        xmlelement("ActivityStartDate", to_char(activity_start_date_time, 'yyyy-mm-dd')),
                                                        xmlelement("ActivityStartTime",
                                                                   xmlelement("Time", to_char(activity_start_date_time, 'hh24:mi:ss')),
