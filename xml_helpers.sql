@@ -275,8 +275,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("AssemblageSampledName", activity_community),
                                                        xmlelement("BiologicalHabitatCollectionInformation",
                                                                   xmlelement("CollectionDuration",
-                                                                             xmlelement("MeasureValue", sampling_duration) /*,
-                                                                             xmlelement("MeasureUnitCode", ) */
+                                                                             xmlelement("MeasureValue", regexp_substr(sampling_duration, '[^~ ]+', 1, 1)),
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(sampling_duration, '[^~ ]+', 1, 1))
                                                                             ),/*
                                                                   xmlelement("SamplingComponentName", ),*/
                                                                   xmlelement("SamplingComponentPlaceInSeriesNumeric", place_in_series),
