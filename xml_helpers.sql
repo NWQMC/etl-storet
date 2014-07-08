@@ -276,21 +276,21 @@ create or replace package body xml_helpers as
                                                        xmlelement("BiologicalHabitatCollectionInformation",
                                                                   xmlelement("CollectionDuration",
                                                                              xmlelement("MeasureValue", regexp_substr(sampling_duration, '[^~ ]+', 1, 1)),
-                                                                             xmlelement("MeasureUnitCode", regexp_substr(sampling_duration, '[^~ ]+', 1, 1))
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(sampling_duration, '[^~ ]+', 1, 2))
                                                                             ),/*
-                                                                  xmlelement("SamplingComponentName", ),*/
+                                                                  xmlelement("SamplingComponentName", sample_component_name), --not mapped */
                                                                   xmlelement("SamplingComponentPlaceInSeriesNumeric", place_in_series),
                                                                   xmlelement("ReachLengthMeasure",
-                                                                             xmlelement("MeasureValue", reach_length)/*,
-                                                                             xmlelement("MeasureUnitCode", )*/
+                                                                             xmlelement("MeasureValue", regexp_substr(reach_length, '[^~]+', 1, 1)),
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(reach_length, '[^~]+', 1, 2))
                                                                             ),
                                                                   xmlelement("ReachWidthMeasure",
-                                                                             xmlelement("MeasureValue", reach_width)/*,
-                                                                             xmlelement("MeasureUnitCode", )*/
+                                                                             xmlelement("MeasureValue", regexp_substr(reach_width, '[^~]+', 1, 1)),
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(reach_width, '[^~]+', 1, 2))
                                                                             ),
                                                                   xmlelement("PassCount", pass_count),
                                                                   xmlelement("NetInformation",
-                                                                             xmlelement("NetTypeName", trap_net_comment),/*non_tow_current_speed??????
+                                                                             xmlelement("NetTypeName", trap_net_comment),/*
                                                                              xmlelement("NetSurfaceAreaMeasure",
                                                                                         xmlelement("MeasureValue", non_tow_net_surface_area/tow_net_surface_area),??
                                                                                         xmlelement("MeasureUnitCode", )
