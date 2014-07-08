@@ -290,22 +290,22 @@ create or replace package body xml_helpers as
                                                                             ),
                                                                   xmlelement("PassCount", pass_count),
                                                                   xmlelement("NetInformation",
-                                                                             xmlelement("NetTypeName", trap_net_comment),/*
+                                                                             xmlelement("NetTypeName", trap_net_comment),
                                                                              xmlelement("NetSurfaceAreaMeasure",
-                                                                                        xmlelement("MeasureValue", non_tow_net_surface_area/tow_net_surface_area),??
-                                                                                        xmlelement("MeasureUnitCode", )
+                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 1), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 2), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 2)))
                                                                                        ),
                                                                              xmlelement("NetMeshSizeMeasure",
-                                                                                        xmlelement("MeasureValue", non_tow_net_mesh_size/tow_net_mesh_size),??
-                                                                                        xmlelement("MeasureUnitCode", )
-                                                                                       ),*/
+                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 1), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 2), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 2)))
+                                                                                       ),
                                                                              xmlelement("BoatSpeedMeasure",
-                                                                                        xmlelement("MeasureValue", boat_speed)/*,
-                                                                                        xmlelement("MeasureUnitCode", )*/
+                                                                                        xmlelement("MeasureValue", regexp_substr(boat_speed, '[^~]+', 1, 1)),
+                                                                                        xmlelement("MeasureUnitCode", regexp_substr(boat_speed, '[^~]+', 1, 2))
                                                                                        ),
                                                                              xmlelement("CurrentSpeedMeasure",
-                                                                                        xmlelement("MeasureValue", non_tow_current_speed)/*,
-                                                                                        xmlelement("MeasureUnitCode", )*/
+                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 1), regexp_substr(non_tow_current_speed, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 2), regexp_substr(non_tow_current_speed, '[^~]+', 1, 2)))
                                                                                        )
                                                                             )
                                                                  ),
