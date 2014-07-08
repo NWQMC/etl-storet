@@ -518,7 +518,8 @@ create or replace package body xml_helpers as
                               lab_certified                 fa_biological_result.lab_certified%type,
                               lab_accred_authority          fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
-                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type/*,
+                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type,
+                              frequency_class				fa_biological_result.frequency_class%type/*,
                               -- join on fa_biological_result.taxon_detail_citation_id = md_citation.citation_id
                               -- there's no md_citation table and all taxon_detail_citation_id are null
                               md_citation_title				md_citation.title%type,
@@ -591,13 +592,13 @@ create or replace package body xml_helpers as
                                                                              xmlelement("ResourcePublishername", md_citation_pblshr_org_name),
                                                                              xmlelement("ResourceDate", to_char(md_citation_publishing_year, 'yyyy-mm-dd')),
                                                                              xmlelement("ResourceIdentfier",)
-                                                                            )
+                                                                            )*/
                                                                  ),
                                                        xmlelement("FrequenceyClassInformation",
-                                                                  xmlelement("FrequencyClassDescriptorCode",),
-                                                                  xmlelement("FrequencyClassDescriptorUnitCode",),
-                                                                  xmlelement("LowerClassBoundValue",),
-                                                                  xmlelement("UpperClassBoundValue",)*/
+                                                                  xmlelement("FrequencyClassDescriptorCode", regexp_substr(frequency_class, '[^~]+', 1, 2)),
+                                                                  xmlelement("FrequencyClassDescriptorUnitCode", regexp_substr(frequency_class, '[^~]+', 1, 5)),
+                                                                  xmlelement("LowerClassBoundValue", regexp_substr(frequency_class, '[^~]+', 1, 3)),
+                                                                  xmlelement("UpperClassBoundValue", regexp_substr(frequency_class, '[^~]+', 1, 4))
                                                                  )
                                                       ), /*
                                             xmlelement("AttachedBinaryObject",),*/
