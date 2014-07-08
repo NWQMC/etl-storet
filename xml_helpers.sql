@@ -625,15 +625,15 @@ create or replace package body xml_helpers as
                                                                   xmlelement("Time", to_char(analysis_end_date_time, 'hh24:mi:ss')),
                                                                   xmlelement("TimeZoneCode", analysis_end_time_zone)
                                                                  ),
-                                                       xmlelement("ResultLaboratoryCommentCode", lab_remark) /*,
+                                                       xmlelement("ResultLaboratoryCommentCode", lab_remark), /*
                                                        xmlelement("ResultLaboratoryCommentText", ),
-                                                       xmlelement("ResultDetectionQuantitationLimit",???all_result_detection_limit;detection_limit
-                                                                  xmlelement("DetectionQuantitationLimitTypeName", myqldesc),detection_limit_description
-                                                                  xmlelement("DetectionQuantitationLimitMeasure",detection_limit_unit;lower_quanititation_limit;upper_quantitation_limit
+                                                       xmlelement("ResultDetectionQuantitationLimit", --data too messy and confusing
+                                                                  xmlelement("DetectionQuantitationLimitTypeName", myqldesc),
+                                                                  xmlelement("DetectionQuantitationLimitMeasure",lower_quantitation_limit;upper_quantitation_limit;ALL_RESULT_DETECTION_LIMIT
                                                                              xmlelement("MeasureValue", myql),
                                                                              xmlelement("MeasureUnitCode", myqlunits)
-                                                                            )*/
-                                                                 ),
+                                                                            )
+                                                                 ), */
                                                        xmlelement("LaboratoryAccreditationIndicator", lab_certified),
                                                        xmlelement("LaboratoryAccreditationAuthorityName", lab_accred_authority),
                                                        xmlelement("TaxonomistAccreditationIndicator", taxonomist_accred_yn),
