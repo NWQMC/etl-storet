@@ -256,17 +256,17 @@ create or replace package body xml_helpers as
                                                        xmlelement("ActivityConductingOrganizationText", activity_cond_org_text),
                                                        xmlelement("MonitoringLocationIdentifier", station_id),
                                                        xmlelement("ActivityCommentText", activity_comment) /*,
-                                                       xmlelement("SampleAquifer", ???),
-                                                       xmlelement("HydrologicCondition", ???),
-                                                       xmlelement("HydrologicEvent", ???) */
+                                                       xmlelement("SampleAquifer", ???), --not in spreadsheet
+                                                       xmlelement("HydrologicCondition", ???), --not in spreadsheet
+                                                       xmlelement("HydrologicEvent", ???) --not in spreadsheet */
                                                       ),
                                             xmlelement("ActivityLocation",
                                                        xmlelement("LatitudeMeasure", activity_latitude),
                                                        xmlelement("LongitudeMeasure", activity_longitude),
                                                        xmlelement("SourceMapScaleNumeric", map_scale),
                                                        xmlelement("HorizontalAccuracyMeasure",
-                                                                  xmlelement("MeasureValue", horizontal_accuracy_measure)/*,
-                                                                  xmlelement("MeasureUnitCode", )*/
+                                                                  xmlelement("MeasureValue", regexp_substr(horizontal_accuracy_measure, '[^,]+', 1, 1)),
+                                                                  xmlelement("MeasureUnitCode", regexp_substr(horizontal_accuracy_measure, '[^,]+', 1, 2))
                                                                  ),
                                                        xmlelement("HorizontalCollectionMethodName", fk_act_mad_hmethod),
                                                        xmlelement("HorizontalCoordinateReferenceSystemDatumName", fk_act_mad_hdatum)
