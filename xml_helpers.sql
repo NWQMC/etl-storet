@@ -213,7 +213,14 @@ create or replace package body xml_helpers as
                                 container_desc                 fa_biological_result.container_desc%type,
                                 presrv_strge_prcdr             fa_biological_result.presrv_strge_prcdr%type,
                                 temp_preservn_type             fa_biological_result.temp_preservn_type%type,
-                                smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type                                
+                                smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type
+                                /*
+                                FA.BIOLOGICAL_RESULT.FIELD_PROCEDURE_ID  - > MD_SAMPLE_PROC .PROCEDURE_ID
+                                FA.BIOLOGICAL_RESULT.FIELD_PREP_PROCEDURE_ID  - > MD_SAMPLE_PROC .PROCEDURE_ID
+                                md_sample_proc_procedure_name
+                                md_sample_proc_procedure_qual_type
+                                md_sample_proc_description
+                                 */
                                )
     return clob deterministic is
     rtn clob;
@@ -250,8 +257,8 @@ create or replace package body xml_helpers as
                                                                   xmlelement("MeasureValue", activity_lower_depth),
                                                                   xmlelement("MeasureUnitCode", nvl2(activity_lower_depth, upr_lwr_depth_unit, null))
                                                                  ),
-/*!!!!*/                                                       xmlelement("ActivityDepthAltitudeReferencePointText", activity_depth_ref_point),
-/*!!!!*/                                                       xmlelement("ActivityDepthAltitudeReferencePointText", nvl2(coalesce(activity_upper_depth, activity_lower_depth), activity_depth_ref_point, null)),
+                                                       xmlelement("ActivityDepthAltitudeReferencePointText", activity_depth_ref_point),
+                                                       xmlelement("ActivityDepthAltitudeReferencePointText", nvl2(coalesce(activity_upper_depth, activity_lower_depth), activity_depth_ref_point, null)),
                                                        xmlelement("ProjectIdentifier", project_id),
                                                        xmlelement("ActivityConductingOrganizationText", activity_cond_org_text),
                                                        xmlelement("MonitoringLocationIdentifier", station_id),
@@ -313,21 +320,21 @@ create or replace package body xml_helpers as
                                                       ),
                                             xmlelement("SampleDescription",
                                                        xmlelement("SampleCollectionMethod",
-                                                                  xmlelement("MethodIdentifier", field_procedure_id),/*???*/
-                                                                  xmlelement("MethodIdentifierContext", field_procedure_id),
-                                                                  xmlelement("MethodName", field_procedure_id)/*,
-                                                                  xmlelement("MethodQualifierTypeName", ),
-                                                                  xmlelement("MethodDescriptionText", )*/
+                                                                  xmlelement("MethodIdentifier", regexp_substr(field_procedure_id, '[^~]+', 1, 1)),
+                                                                  xmlelement("MethodIdentifierContext",  regexp_substr(field_procedure_id, '[^~]+', 1, 2))/*,
+                                                                  xmlelement("MethodName", md_sample_proc_procedure_name),
+                                                                  xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
+                                                                  xmlelement("MethodDescriptionText", md_sample_proc_description)*/
                                                                  ),
                                                        xmlelement("SampleCollectionEquipmentName", field_gear_id),/*
-                                                       xmlelement("SampleCollectionEquipmentCommentText", ),*/
+                                                       xmlelement("SampleCollectionEquipmentCommentText", --not mapped),*/
                                                        xmlelement("SamplePreparation",
-                                                                  xmlelement("SamplePreparationMethod",/*
-                                                                             xmlelement("MethodIdentifier",),*/
-                                                                             xmlelement("MethodIdentifierContext", field_prep_procedure_id),
-                                                                             xmlelement("MethodName", field_prep_procedure_id)/*,
-                                                                             xmlelement("MethodQualifierTypeName", ),
-                                                                             xmlelement("MethodDescriptionText", )*/
+                                                                  xmlelement("SamplePreparationMethod",
+                                                                             xmlelement("MethodIdentifier", regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2)),
+                                                                             xmlelement("MethodIdentifierContext", regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2))/*,
+                                                                             xmlelement("MethodName", md_sample_proc_procedure_name),
+                                                                             xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
+                                                                             xmlelement("MethodDescriptionText", md_sample_proc_description)*/
                                                                             ),
                                                                   xmlelement("SampleContainerTypeName", container_desc),
                                                                   xmlelement("SampleContainerColorName", container_desc),
