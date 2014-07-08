@@ -367,9 +367,9 @@ create or replace package body xml_helpers as
                                                        xmlelement("MetricCommentText", ),
                                                        xmlelement("IndexIdentifier", )
                                                       ),
-                                            xmlelement("AttachedBinaryObject",
-                                                       xmlelement("BinaryObjectFileName", ),
-                                                       xmlelement("BinaryObjectFileTypeCode", )
+                                            xmlelement("ActivityAttachedBinaryObject", -- fa_blob_blob_content
+                                                       xmlelement("BinaryObjectFileName", act_blob_title),
+                                                       xmlelement("BinaryObjectFileTypeCode", fa_blob_blob_type)
                                                       ),
                                             xmlelement("ResultCount", )*/
                                            )
