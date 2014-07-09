@@ -34,7 +34,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e storet_dump.sh"
+            command="bash -e -x storet_dump.sh ${expTableCnt}"
             outputproperty="pullResult"
         />
     </target>
@@ -42,7 +42,7 @@
     <target name="setStopRun">
         <echo>Check if we had changes and should continue</echo>
         <condition property="stopRun">
-            <contains string="${pullResult}" substring="quitting" />
+            <contains string="${pullResult}" substring="no differences" />
         </condition>
     </target>
         
@@ -104,5 +104,4 @@
             <arg value="@${basedir}/emptyCiDB.sql"/>
         </exec>
     </target>
-    
 </project>
