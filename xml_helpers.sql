@@ -201,6 +201,7 @@ create or replace package body xml_helpers as
                                 pass_count                     fa_biological_result.pass_count%type,
                                 trap_net_comment               fa_biological_result.trap_net_comment%type,
                                 non_tow_current_speed          fa_biological_result.non_tow_current_speed%type,
+                                tow_current_speed              fa_biological_result.tow_current_speed%type,
                                 non_tow_net_surface_area       fa_biological_result.non_tow_net_surface_area%type,
                                 tow_net_surface_area           fa_biological_result.tow_net_surface_area%type,
                                 non_tow_net_mesh_size          fa_biological_result.non_tow_net_mesh_size%type,
@@ -613,9 +614,9 @@ create or replace package body xml_helpers as
                                                       ), /*
                                             xmlelement("AttachedBinaryObject", --no data fa_blob.blob_content),*/
                                             xmlelement("ResultAnalyticalMethod",
-                                                       xmlelement("MethodIdentifier", analytical_procedure_id),/*???*/
-                                                       xmlelement("MethodIdentifierContext", analytical_procedure_source),/*???*/
-                                                       xmlelement("MethodName", analytical_method_list_agency)  /*,???
+                                                       xmlelement("MethodIdentifier", analytical_procedure_id),
+                                                       xmlelement("MethodIdentifierContext", analytical_procedure_source),
+                                                       xmlelement("MethodName", analytical_method_list_agency)  /*,
                                                        xmlelement("MethodQualifierTypeName", md_analytical_proc_qualifier_type),
                                                        xmlelement("MethodDescriptionText", md_analytical_proc_procedure_desc), */
                                                       ),
@@ -632,14 +633,14 @@ create or replace package body xml_helpers as
                                                                   xmlelement("TimeZoneCode", analysis_end_time_zone)
                                                                  ),
                                                        xmlelement("ResultLaboratoryCommentCode", lab_remark), /*
-                                                       xmlelement("ResultLaboratoryCommentText", ),
-                                                       xmlelement("ResultDetectionQuantitationLimit", --data too messy and confusing
-                                                                  xmlelement("DetectionQuantitationLimitTypeName", myqldesc),
-                                                                  xmlelement("DetectionQuantitationLimitMeasure",lower_quantitation_limit;upper_quantitation_limit;ALL_RESULT_DETECTION_LIMIT
-                                                                             xmlelement("MeasureValue", myql),
-                                                                             xmlelement("MeasureUnitCode", myqlunits)
+                                                       xmlelement("ResultLaboratoryCommentText", --not in spreadsheet), */
+                                                       xmlelement("ResultDetectionQuantitationLimit",
+                                                                  xmlelement("DetectionQuantitationLimitTypeName", regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 1)), '[^~]+', 1, 1)),
+                                                                  xmlelement("DetectionQuantitationLimitMeasure",
+                                                                             xmlelement("MeasureValue", coalesce(regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2)), '[^~]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2))),
+                                                                             xmlelement("MeasureUnitCode", coalesce(regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 3), regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 1)))
                                                                             )
-                                                                 ), */
+                                                                 ),
                                                        xmlelement("LaboratoryAccreditationIndicator", lab_certified),
                                                        xmlelement("LaboratoryAccreditationAuthorityName", lab_accred_authority),
                                                        xmlelement("TaxonomistAccreditationIndicator", taxonomist_accred_yn),
