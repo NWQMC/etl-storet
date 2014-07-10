@@ -280,6 +280,7 @@ create or replace package body create_storet_objects
                                                  xml_helpers.strip_bad(fa_biological_result.pass_count),
                                                  xml_helpers.strip_bad(fa_biological_result.trap_net_comment),
                                                  xml_helpers.strip_bad(fa_biological_result.non_tow_current_speed),
+                                                 xml_helpers.strip_bad(fa_biological_result.tow_current_speed),
                                                  xml_helpers.strip_bad(fa_biological_result.non_tow_net_surface_area),
                                                  xml_helpers.strip_bad(fa_biological_result.tow_net_surface_area),
                                                  xml_helpers.strip_bad(fa_biological_result.non_tow_net_mesh_size),

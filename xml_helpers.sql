@@ -38,6 +38,7 @@ create or replace package xml_helpers as
                                 pass_count                     fa_biological_result.pass_count%type,
                                 trap_net_comment               fa_biological_result.trap_net_comment%type,
                                 non_tow_current_speed          fa_biological_result.non_tow_current_speed%type,
+                                tow_current_speed              fa_biological_result.tow_current_speed%type,
                                 non_tow_net_surface_area       fa_biological_result.non_tow_net_surface_area%type,
                                 tow_net_surface_area           fa_biological_result.tow_net_surface_area%type,
                                 non_tow_net_mesh_size          fa_biological_result.non_tow_net_mesh_size%type,
