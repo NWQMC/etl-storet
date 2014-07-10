@@ -38,6 +38,7 @@ create or replace package xml_helpers as
                                 pass_count                     fa_biological_result.pass_count%type,
                                 trap_net_comment               fa_biological_result.trap_net_comment%type,
                                 non_tow_current_speed          fa_biological_result.non_tow_current_speed%type,
+                                tow_current_speed              fa_biological_result.tow_current_speed%type,
                                 non_tow_net_surface_area       fa_biological_result.non_tow_net_surface_area%type,
                                 tow_net_surface_area           fa_biological_result.tow_net_surface_area%type,
                                 non_tow_net_mesh_size          fa_biological_result.non_tow_net_mesh_size%type,
@@ -139,7 +140,8 @@ create or replace package xml_helpers as
                               lab_certified                 fa_biological_result.lab_certified%type,
                               lab_accred_authority          fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
-                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type
+                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type,
+                              frequency_class               fa_biological_result.frequency_class%type
                              )
       return clob deterministic;
 
@@ -201,6 +203,7 @@ create or replace package body xml_helpers as
                                 pass_count                     fa_biological_result.pass_count%type,
                                 trap_net_comment               fa_biological_result.trap_net_comment%type,
                                 non_tow_current_speed          fa_biological_result.non_tow_current_speed%type,
+                                tow_current_speed              fa_biological_result.tow_current_speed%type,
                                 non_tow_net_surface_area       fa_biological_result.non_tow_net_surface_area%type,
                                 tow_net_surface_area           fa_biological_result.tow_net_surface_area%type,
                                 non_tow_net_mesh_size          fa_biological_result.non_tow_net_mesh_size%type,
@@ -213,7 +216,14 @@ create or replace package body xml_helpers as
                                 container_desc                 fa_biological_result.container_desc%type,
                                 presrv_strge_prcdr             fa_biological_result.presrv_strge_prcdr%type,
                                 temp_preservn_type             fa_biological_result.temp_preservn_type%type,
-                                smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type                                
+                                smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type
+                                /*
+                                FA.BIOLOGICAL_RESULT.FIELD_PROCEDURE_ID  - > MD_SAMPLE_PROC .PROCEDURE_ID
+                                FA.BIOLOGICAL_RESULT.FIELD_PREP_PROCEDURE_ID  - > MD_SAMPLE_PROC .PROCEDURE_ID
+                                md_sample_proc_procedure_name
+                                md_sample_proc_procedure_qual_type
+                                md_sample_proc_description
+                                 */
                                )
     return clob deterministic is
     rtn clob;
@@ -226,8 +236,7 @@ create or replace package body xml_helpers as
                                                                                         nvl2(replicate_number, '-' || replicate_number, null)
                                                                  ),
                                                        xmlelement("ActivityTypeCode", activity_type),
-                                                       xmlelement("ActivityMediaName", activity_medium),/*
-                                                       xmlelement("ActivityMediaSubdivisionName", ),*/
+                                                       xmlelement("ActivityMediaName", activity_medium),
                                                        xmlelement("ActivityStartDate", to_char(activity_start_date_time, 'yyyy-mm-dd')),
                                                        xmlelement("ActivityStartTime",
                                                                   xmlelement("Time", to_char(activity_start_date_time, 'hh24:mi:ss')),
@@ -251,23 +260,23 @@ create or replace package body xml_helpers as
                                                                   xmlelement("MeasureValue", activity_lower_depth),
                                                                   xmlelement("MeasureUnitCode", nvl2(activity_lower_depth, upr_lwr_depth_unit, null))
                                                                  ),
-/*!!!!*/                                                       xmlelement("ActivityDepthAltitudeReferencePointText", activity_depth_ref_point),
-/*!!!!*/                                                       xmlelement("ActivityDepthAltitudeReferencePointText", nvl2(coalesce(activity_upper_depth, activity_lower_depth), activity_depth_ref_point, null)),
+                                                       xmlelement("ActivityDepthAltitudeReferencePointText", activity_depth_ref_point),
+                                                       xmlelement("ActivityDepthAltitudeReferencePointText", nvl2(coalesce(activity_upper_depth, activity_lower_depth), activity_depth_ref_point, null)),
                                                        xmlelement("ProjectIdentifier", project_id),
                                                        xmlelement("ActivityConductingOrganizationText", activity_cond_org_text),
                                                        xmlelement("MonitoringLocationIdentifier", station_id),
                                                        xmlelement("ActivityCommentText", activity_comment) /*,
-                                                       xmlelement("SampleAquifer", ???),
-                                                       xmlelement("HydrologicCondition", ???),
-                                                       xmlelement("HydrologicEvent", ???) */
+                                                       xmlelement("SampleAquifer", ???), --not in spreadsheet
+                                                       xmlelement("HydrologicCondition", ???), --not in spreadsheet
+                                                       xmlelement("HydrologicEvent", ???) --not in spreadsheet */
                                                       ),
                                             xmlelement("ActivityLocation",
                                                        xmlelement("LatitudeMeasure", activity_latitude),
                                                        xmlelement("LongitudeMeasure", activity_longitude),
                                                        xmlelement("SourceMapScaleNumeric", map_scale),
                                                        xmlelement("HorizontalAccuracyMeasure",
-                                                                  xmlelement("MeasureValue", horizontal_accuracy_measure)/*,
-                                                                  xmlelement("MeasureUnitCode", )*/
+                                                                  xmlelement("MeasureValue", regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 1)),
+                                                                  xmlelement("MeasureUnitCode", regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 2))
                                                                  ),
                                                        xmlelement("HorizontalCollectionMethodName", fk_act_mad_hmethod),
                                                        xmlelement("HorizontalCoordinateReferenceSystemDatumName", fk_act_mad_hdatum)
@@ -276,37 +285,37 @@ create or replace package body xml_helpers as
                                                        xmlelement("AssemblageSampledName", activity_community),
                                                        xmlelement("BiologicalHabitatCollectionInformation",
                                                                   xmlelement("CollectionDuration",
-                                                                             xmlelement("MeasureValue", sampling_duration) /*,
-                                                                             xmlelement("MeasureUnitCode", ) */
+                                                                             xmlelement("MeasureValue", regexp_substr(sampling_duration, '[^~ ]+', 1, 1)),
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(sampling_duration, '[^~ ]+', 1, 2))
                                                                             ),/*
-                                                                  xmlelement("SamplingComponentName", ),*/
+                                                                  xmlelement("SamplingComponentName", sample_component_name), --not mapped */
                                                                   xmlelement("SamplingComponentPlaceInSeriesNumeric", place_in_series),
                                                                   xmlelement("ReachLengthMeasure",
-                                                                             xmlelement("MeasureValue", reach_length)/*,
-                                                                             xmlelement("MeasureUnitCode", )*/
+                                                                             xmlelement("MeasureValue", regexp_substr(reach_length, '[^~]+', 1, 1)),
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(reach_length, '[^~]+', 1, 2))
                                                                             ),
                                                                   xmlelement("ReachWidthMeasure",
-                                                                             xmlelement("MeasureValue", reach_width)/*,
-                                                                             xmlelement("MeasureUnitCode", )*/
+                                                                             xmlelement("MeasureValue", regexp_substr(reach_width, '[^~]+', 1, 1)),
+                                                                             xmlelement("MeasureUnitCode", regexp_substr(reach_width, '[^~]+', 1, 2))
                                                                             ),
                                                                   xmlelement("PassCount", pass_count),
                                                                   xmlelement("NetInformation",
-                                                                             xmlelement("NetTypeName", trap_net_comment),/*non_tow_current_speed??????
+                                                                             xmlelement("NetTypeName", trap_net_comment),
                                                                              xmlelement("NetSurfaceAreaMeasure",
-                                                                                        xmlelement("MeasureValue", non_tow_net_surface_area/tow_net_surface_area),??
-                                                                                        xmlelement("MeasureUnitCode", )
+                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 1), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 2), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 2)))
                                                                                        ),
                                                                              xmlelement("NetMeshSizeMeasure",
-                                                                                        xmlelement("MeasureValue", non_tow_net_mesh_size/tow_net_mesh_size),??
-                                                                                        xmlelement("MeasureUnitCode", )
-                                                                                       ),*/
+                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 1), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 2), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 2)))
+                                                                                       ),
                                                                              xmlelement("BoatSpeedMeasure",
-                                                                                        xmlelement("MeasureValue", boat_speed)/*,
-                                                                                        xmlelement("MeasureUnitCode", )*/
+                                                                                        xmlelement("MeasureValue", regexp_substr(boat_speed, '[^~]+', 1, 1)),
+                                                                                        xmlelement("MeasureUnitCode", regexp_substr(boat_speed, '[^~]+', 1, 2))
                                                                                        ),
                                                                              xmlelement("CurrentSpeedMeasure",
-                                                                                        xmlelement("MeasureValue", non_tow_current_speed)/*,
-                                                                                        xmlelement("MeasureUnitCode", )*/
+                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 1), regexp_substr(non_tow_current_speed, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 2), regexp_substr(non_tow_current_speed, '[^~]+', 1, 2)))
                                                                                        )
                                                                             )
                                                                  ),
@@ -314,21 +323,21 @@ create or replace package body xml_helpers as
                                                       ),
                                             xmlelement("SampleDescription",
                                                        xmlelement("SampleCollectionMethod",
-                                                                  xmlelement("MethodIdentifier", field_procedure_id),/*???*/
-                                                                  xmlelement("MethodIdentifierContext", field_procedure_id),
-                                                                  xmlelement("MethodName", field_procedure_id)/*,
-                                                                  xmlelement("MethodQualifierTypeName", ),
-                                                                  xmlelement("MethodDescriptionText", )*/
+                                                                  xmlelement("MethodIdentifier", regexp_substr(field_procedure_id, '[^~]+', 1, 1)),
+                                                                  xmlelement("MethodIdentifierContext",  regexp_substr(field_procedure_id, '[^~]+', 1, 2))/*,
+                                                                  xmlelement("MethodName", md_sample_proc_procedure_name),
+                                                                  xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
+                                                                  xmlelement("MethodDescriptionText", md_sample_proc_description)*/
                                                                  ),
                                                        xmlelement("SampleCollectionEquipmentName", field_gear_id),/*
-                                                       xmlelement("SampleCollectionEquipmentCommentText", ),*/
+                                                       xmlelement("SampleCollectionEquipmentCommentText", --not mapped),*/
                                                        xmlelement("SamplePreparation",
-                                                                  xmlelement("SamplePreparationMethod",/*
-                                                                             xmlelement("MethodIdentifier",),*/
-                                                                             xmlelement("MethodIdentifierContext", field_prep_procedure_id),
-                                                                             xmlelement("MethodName", field_prep_procedure_id)/*,
-                                                                             xmlelement("MethodQualifierTypeName", ),
-                                                                             xmlelement("MethodDescriptionText", )*/
+                                                                  xmlelement("SamplePreparationMethod",
+                                                                             xmlelement("MethodIdentifier", regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2)),
+                                                                             xmlelement("MethodIdentifierContext", regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2))/*,
+                                                                             xmlelement("MethodName", md_sample_proc_procedure_name),
+                                                                             xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
+                                                                             xmlelement("MethodDescriptionText", md_sample_proc_description)*/
                                                                             ),
                                                                   xmlelement("SampleContainerTypeName", container_desc),
                                                                   xmlelement("SampleContainerColorName", container_desc),
@@ -361,9 +370,9 @@ create or replace package body xml_helpers as
                                                        xmlelement("MetricCommentText", ),
                                                        xmlelement("IndexIdentifier", )
                                                       ),
-                                            xmlelement("AttachedBinaryObject",
-                                                       xmlelement("BinaryObjectFileName", ),
-                                                       xmlelement("BinaryObjectFileTypeCode", )
+                                            xmlelement("ActivityAttachedBinaryObject", -- fa_blob_blob_content
+                                                       xmlelement("BinaryObjectFileName", act_blob_title),
+                                                       xmlelement("BinaryObjectFileTypeCode", fa_blob_blob_type)
                                                       ),
                                             xmlelement("ResultCount", )*/
                                            )
@@ -465,70 +474,82 @@ create or replace package body xml_helpers as
     return rtn;
   end regular_result;
 */  
-  function biological_result (result_value_text             fa_biological_result.result_value_text%type,
-                              characteristic_name           fa_biological_result.characteristic_name%type,
-                              sample_fraction_type          fa_biological_result.sample_fraction_type%type,
-                              result_value                  fa_biological_result.result_value%type,
-                              result_unit                   fa_biological_result.result_unit%type,
-                              result_meas_qual_code         fa_biological_result.result_meas_qual_code%type,
-                              result_value_status           fa_biological_result.result_value_status%type,
-                              statistic_type                fa_biological_result.statistic_type%type,
-                              result_value_type             fa_biological_result.result_value_type%type,
-                              weight_basis_type             fa_biological_result.weight_basis_type%type,
-                              duration_basis                fa_biological_result.duration_basis%type,
-                              temperature_basis_level       fa_biological_result.temperature_basis_level%type,
-                              particle_size                 fa_biological_result.particle_size%type,
-                              precision                     fa_biological_result.precision%type,
-                              bias                          fa_biological_result.bias%type,
-                              confidence_level              fa_biological_result.confidence_level%type,
-                              result_comment                fa_biological_result.result_comment%type,
-                              result_depth_meas_value       fa_biological_result.result_depth_meas_value%type,
-                              result_depth_meas_unit_code   fa_biological_result.result_depth_meas_unit_code%type,
-                              result_depth_alt_ref_pt_txt   fa_biological_result.result_depth_alt_ref_pt_txt%type,
-                              sampling_point_name           fa_biological_result.sampling_point_name%type,
-                              activity_intent               fa_biological_result.activity_intent%type,
-                              individual_number             fa_biological_result.individual_number%type,
-                              activity_subject_taxon        fa_biological_result.activity_subject_taxon%type,
-                              species_id                    fa_biological_result.species_id%type,
-                              biopart_name                  fa_biological_result.biopart_name%type,
-                              result_group_summary_ct_wt    fa_biological_result.result_group_summary_ct_wt%type,
-                              cell_form                     fa_biological_result.cell_form%type,
-                              cell_shape                    fa_biological_result.cell_shape%type,
-                              habit                         fa_biological_result.habit%type,
-                              voltinism                     fa_biological_result.voltinism%type,
-                              pollution_tolerance           fa_biological_result.pollution_tolerance%type,
-                              pollution_tolerance_scale     fa_biological_result.pollution_tolerance_scale%type,
-                              trophic_level                 fa_biological_result.trophic_level%type,
-                              feeding_group                 fa_biological_result.feeding_group%type,
-                              analytical_procedure_id       fa_biological_result.analytical_procedure_id%type,
-                              analytical_procedure_source   fa_biological_result.analytical_procedure_source%type,
-                              analytical_method_list_agency fa_biological_result.analytical_method_list_agency%type,
-                              lab_name                      fa_biological_result.lab_name%type,
-                              analysis_date_time            fa_biological_result.analysis_date_time%type,
-                              analysis_time_zone            fa_biological_result.analysis_time_zone%type,
-                              analysis_end_date_time        fa_biological_result.analysis_end_date_time%type,
-                              analysis_end_time_zone        fa_biological_result.analysis_end_time_zone%type,
-                              lab_remark                    fa_biological_result.lab_remark%type,
-                              all_result_detection_limit    fa_biological_result.all_result_detection_limit%type,
-                              detection_limit               fa_biological_result.detection_limit%type,
-                              detection_limit_description   fa_biological_result.detection_limit_description%type,
-                              detection_limit_unit          fa_biological_result.detection_limit_unit%type,
-                              lower_quantitation_limit      fa_biological_result.lower_quantitation_limit%type,
-                              upper_quantitation_limit      fa_biological_result.upper_quantitation_limit%type,
-                              lab_certified                 fa_biological_result.lab_certified%type,
-                              lab_accred_authority          fa_biological_result.lab_accred_authority%type,
-                              taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
-                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type
+  function biological_result (result_value_text                 fa_biological_result.result_value_text%type,
+                              characteristic_name               fa_biological_result.characteristic_name%type,
+                              sample_fraction_type              fa_biological_result.sample_fraction_type%type,
+                              result_value                      fa_biological_result.result_value%type,
+                              result_unit                       fa_biological_result.result_unit%type,
+                              result_meas_qual_code             fa_biological_result.result_meas_qual_code%type,
+                              result_value_status               fa_biological_result.result_value_status%type,
+                              statistic_type                    fa_biological_result.statistic_type%type,
+                              result_value_type                 fa_biological_result.result_value_type%type,
+                              weight_basis_type                 fa_biological_result.weight_basis_type%type,
+                              duration_basis                    fa_biological_result.duration_basis%type,
+                              temperature_basis_level           fa_biological_result.temperature_basis_level%type,
+                              particle_size                     fa_biological_result.particle_size%type,
+                              precision                         fa_biological_result.precision%type,
+                              bias                              fa_biological_result.bias%type,
+                              confidence_level                  fa_biological_result.confidence_level%type,
+                              result_comment                    fa_biological_result.result_comment%type,
+                              result_depth_meas_value           fa_biological_result.result_depth_meas_value%type,
+                              result_depth_meas_unit_code       fa_biological_result.result_depth_meas_unit_code%type,
+                              result_depth_alt_ref_pt_txt       fa_biological_result.result_depth_alt_ref_pt_txt%type,
+                              sampling_point_name               fa_biological_result.sampling_point_name%type,
+                              activity_intent                   fa_biological_result.activity_intent%type,
+                              individual_number                 fa_biological_result.individual_number%type,
+                              activity_subject_taxon            fa_biological_result.activity_subject_taxon%type,
+                              species_id                        fa_biological_result.species_id%type,
+                              biopart_name                      fa_biological_result.biopart_name%type,
+                              result_group_summary_ct_wt        fa_biological_result.result_group_summary_ct_wt%type,
+                              cell_form                         fa_biological_result.cell_form%type,
+                              cell_shape                        fa_biological_result.cell_shape%type,
+                              habit                             fa_biological_result.habit%type,
+                              voltinism                         fa_biological_result.voltinism%type,
+                              pollution_tolerance               fa_biological_result.pollution_tolerance%type,
+                              pollution_tolerance_scale         fa_biological_result.pollution_tolerance_scale%type,
+                              trophic_level                     fa_biological_result.trophic_level%type,
+                              feeding_group                     fa_biological_result.feeding_group%type,
+                              analytical_procedure_id           fa_biological_result.analytical_procedure_id%type,
+                              analytical_procedure_source       fa_biological_result.analytical_procedure_source%type,
+                              analytical_method_list_agency     fa_biological_result.analytical_method_list_agency%type,
+                              lab_name                          fa_biological_result.lab_name%type,
+                              analysis_date_time                fa_biological_result.analysis_date_time%type,
+                              analysis_time_zone                fa_biological_result.analysis_time_zone%type,
+                              analysis_end_date_time            fa_biological_result.analysis_end_date_time%type,
+                              analysis_end_time_zone            fa_biological_result.analysis_end_time_zone%type,
+                              lab_remark                        fa_biological_result.lab_remark%type,
+                              all_result_detection_limit        fa_biological_result.all_result_detection_limit%type,
+                              detection_limit                   fa_biological_result.detection_limit%type,
+                              detection_limit_description       fa_biological_result.detection_limit_description%type,
+                              detection_limit_unit              fa_biological_result.detection_limit_unit%type,
+                              lower_quantitation_limit          fa_biological_result.lower_quantitation_limit%type,
+                              upper_quantitation_limit          fa_biological_result.upper_quantitation_limit%type,
+                              lab_certified                     fa_biological_result.lab_certified%type,
+                              lab_accred_authority              fa_biological_result.lab_accred_authority%type,
+                              taxonomist_accred_yn              fa_biological_result.taxonomist_accred_yn%type,
+                              taxonomist_accred_authority       fa_biological_result.taxonomist_accred_authority%type,
+                              frequency_class                   fa_biological_result.frequency_class%type/*,
+                              -- join on fa_biological_result.taxon_detail_citation_id = md_citation.citation_id
+                              -- there's no md_citation table and all taxon_detail_citation_id are null
+                              md_citation_title                 md_citation.title%type,
+                              md_citation_author                md_citation.author%type,
+                              md_citation_vol_and_page          md_citation.vol_and_page%type,
+                              md_citation_pblshr_org_name       md_citation.pblshr_org_name%type,
+                              md_citation_publishing_year       md_citation.publishing_year%type,
+                              -- join on fa_biological_result.analytical_procedure_id = md_analytical_proc.procedure_id
+                              -- there's no md_analytical_proc table
+                              md_analytical_proc_qualifier_type	md_analytical_proc.qualifier_type%type,
+                              md_analytical_proc_procedure_desc	md_analytical_proc.procedure_desc%type */
                              )
     return clob deterministic is
     rtn clob;
   begin
     select xmlserialize(content (xmlelement("Result",
                                             xmlelement("ResultDescription", /*
-                                                       xmlelement("DataLoggerLineName",), */
+                                                       xmlelement("DataLoggerLineName",), --N/A for bio */
                                                        xmlelement("ResultDetectionConditionText", result_value_text),
                                                        xmlelement("CharacteristicName", characteristic_name), /*
-                                                       xmlelement("MethodSpecificationName",),*/
+                                                       xmlelement("MethodSpecificationName",), --not mapped */
                                                        xmlelement("ResultSampleFractionText", sample_fraction_type),
                                                        xmlelement("ResultMeasure",
                                                                   xmlelement("ResultMeasureValue", result_value),
@@ -544,10 +565,10 @@ create or replace package body xml_helpers as
                                                        xmlelement("ResultParticleSizeBasisText", particle_size),
                                                        xmlelement("DataQuality",
                                                                   xmlelement("PrecisionValue", precision),
-                                                                  xmlelement("BiasValue", bias),/*
-                                                                  xmlelement("ConfidenceIntervalValue", ),*/
-                                                                  xmlelement("UpperConfidenceLimitValue", confidence_level),
-                                                                  xmlelement("LowerConfidenceLimitValue", confidence_level)
+                                                                  xmlelement("BiasValue", bias)/*
+                                                                  xmlelement("ConfidenceIntervalValue", ), --"not mapped"
+                                                                  xmlelement("UpperConfidenceLimitValue", confidence_level), --"Use 2nd part of ; separated values enclosed in ()" but no values found in data
+                                                                  xmlelement("LowerConfidenceLimitValue", confidence_level) --"Use 1st part of ; separated values enclosed in ()" but no values found in data */
                                                                  ),
                                                        xmlelement("ResultCommentText", result_comment),
                                                        xmlelement("ResultDepthHeightMeasure", 
@@ -555,7 +576,7 @@ create or replace package body xml_helpers as
                                                                   xmlelement("MeasureUnitCode", result_depth_meas_unit_code)
                                                                  ),
                                                        xmlelement("ResultDepthAltitudeReferencePointText", result_depth_alt_ref_pt_txt), /*
-                                                       xmlelement("USGSPCode", non_existent_column), */
+                                                       xmlelement("USGSPCode", non_existent_column), --not in spreadsheet */
                                                        xmlelement("ResultSamplingPointName", sampling_point_name)
                                                       ),
                                             xmlelement("BiologicalResultDescription",
@@ -565,8 +586,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("UnidentifiedSpeciesIdentifier", species_id),
                                                        xmlelement("SampleTissueAnatomyName", biopart_name),
                                                        xmlelement("GroupSummaryCountWeight",
-                                                                  xmlelement("MeasureValue", result_group_summary_ct_wt)/*,
-                                                                  xmlelement("MeasureUnitCode",)*/
+                                                                  xmlelement("MeasureValue", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 1),
+                                                                  xmlelement("MeasureUnitCode", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 2))
                                                                  ),
                                                        xmlelement("TaxonomicDetails", /* characteritic_description */
                                                                   xmlelement("CellFormName", cell_form),
@@ -577,29 +598,29 @@ create or replace package body xml_helpers as
                                                                   xmlelement("TaxonomicPollutionToleranceScaleText", pollution_tolerance_scale),
                                                                   xmlelement("TrophicLevelName", trophic_level),
                                                                   xmlelement("FunctionalFeedingGroupName", feeding_group)/*,
-                                                                  xmlelement("TaxonomicDetailsCitation",  taxon_detail_ciation_id 
-                                                                             xmlelement("ResourceTitleName",),
-                                                                             xmlelement("ResourceCreatorName",),
-                                                                             xmlelement("ResourceSubjectTitle",),
-                                                                             xmlelement("ResourcePublishername",),
-                                                                             xmlelement("ResourceDate",),
+                                                                  xmlelement("TaxonomicDetailsCitation",   
+                                                                             xmlelement("ResourceTitleName", md_citation_title),
+                                                                             xmlelement("ResourceCreatorName", md_citation_author),
+                                                                             xmlelement("ResourceSubjectText", md_citation_vol_and_page),
+                                                                             xmlelement("ResourcePublishername", md_citation_pblshr_org_name),
+                                                                             xmlelement("ResourceDate", to_char(md_citation_publishing_year, 'yyyy-mm-dd')),
                                                                              xmlelement("ResourceIdentfier",)
-                                                                            )
+                                                                            )*/
                                                                  ),
                                                        xmlelement("FrequenceyClassInformation",
-                                                                  xmlelement("FrequencyClassDescriptorCode",),
-                                                                  xmlelement("FrequencyClassDescriptorUnitCode",),
-                                                                  xmlelement("LowerClassBoundValue",),
-                                                                  xmlelement("UpperClassBoundValue",)
-                                                                 ) */
+                                                                  xmlelement("FrequencyClassDescriptorCode", regexp_substr(frequency_class, '[^~]+', 1, 2)),
+                                                                  xmlelement("FrequencyClassDescriptorUnitCode", regexp_substr(frequency_class, '[^~]+', 1, 5)),
+                                                                  xmlelement("LowerClassBoundValue", regexp_substr(frequency_class, '[^~]+', 1, 3)),
+                                                                  xmlelement("UpperClassBoundValue", regexp_substr(frequency_class, '[^~]+', 1, 4))
+                                                                 )
                                                       ), /*
-                                            xmlelement("AttachedBinaryObject",),*/
+                                            xmlelement("AttachedBinaryObject", --no data fa_blob.blob_content),*/
                                             xmlelement("ResultAnalyticalMethod",
-                                                       xmlelement("MethodIdentifier", analytical_procedure_id),/*???*/
-                                                       xmlelement("MethodIdentifierContext", analytical_procedure_source),/*???*/
-                                                       xmlelement("MethodName", analytical_method_list_agency)  /*,???
-                                                       xmlelement("MethodQualifierTypeName",),
-                                                       xmlelement("MethodDescriptionText",), */
+                                                       xmlelement("MethodIdentifier", analytical_procedure_id),
+                                                       xmlelement("MethodIdentifierContext", analytical_procedure_source),
+                                                       xmlelement("MethodName", analytical_method_list_agency)  /*,
+                                                       xmlelement("MethodQualifierTypeName", md_analytical_proc_qualifier_type),
+                                                       xmlelement("MethodDescriptionText", md_analytical_proc_procedure_desc), */
                                                       ),
                                             xmlelement("ResultLabInformation",
                                                        xmlelement("LaboratoryName", lab_name),
@@ -613,27 +634,39 @@ create or replace package body xml_helpers as
                                                                   xmlelement("Time", to_char(analysis_end_date_time, 'hh24:mi:ss')),
                                                                   xmlelement("TimeZoneCode", analysis_end_time_zone)
                                                                  ),
-                                                       xmlelement("ResultLaboratoryCommentCode", lab_remark) /*,
-                                                       xmlelement("ResultLaboratoryCommentText", ),
-                                                       xmlelement("ResultDetectionQuantitationLimit",???all_result_detection_limit;detection_limit
-                                                                  xmlelement("DetectionQuantitationLimitTypeName", myqldesc),detection_limit_description
-                                                                  xmlelement("DetectionQuantitationLimitMeasure",detection_limit_unit;lower_quanititation_limit;upper_quantitation_limit
-                                                                             xmlelement("MeasureValue", myql),
-                                                                             xmlelement("MeasureUnitCode", myqlunits)
-                                                                            )*/
+                                                       xmlelement("ResultLaboratoryCommentCode", lab_remark), /*
+                                                       xmlelement("ResultLaboratoryCommentText", --not in spreadsheet), */
+                                                       xmlelement("ResultDetectionQuantitationLimit",
+                                                                  xmlelement("DetectionQuantitationLimitTypeName", regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 1)), '[^~]+', 1, 1)),
+                                                                  xmlelement("DetectionQuantitationLimitMeasure",
+                                                                             xmlelement("MeasureValue", coalesce(regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2)), '[^~]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2))),
+                                                                             xmlelement("MeasureUnitCode", coalesce(regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 3), regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 1)))
+                                                                            )
                                                                  ),
                                                        xmlelement("LaboratoryAccreditationIndicator", lab_certified),
                                                        xmlelement("LaboratoryAccreditationAuthorityName", lab_accred_authority),
                                                        xmlelement("TaxonomistAccreditationIndicator", taxonomist_accred_yn),
                                                        xmlelement("TaxonomistAccreditationAuthorityName", taxonomist_accred_authority)
                                                       ) /*,
-                                            xmlelement("LabSamplePreparation",
-                                                       xmlelement("LabSamplePreparationMethod",),
+                                            xmlelement("LabSamplePreparation", --not yet implemented
+                                                       xmlelement("LabSamplePreparationMethod",
+                                                                  xmlelement("MethodIdentifier", lab_samp_prp_method_id),
+                                                                  xmlelement("MethodIdentifierContext", lab_samp_prp_method_context),
+                                                                  xmlelement("MethodName", ),
+                                                                  xmlelement("MethodQualifierTypeName", ),
+                                                                  xmlelement("MethodDescriptionText", )
+                                                                 ),
                                                        xmlelement("PreparationStartDate", to_char(lab_samp_prp_start_date_time, 'yyyy-mm-dd')),
-                                                       xmlelement("PreparationStartTime",),
-                                                       xmlelement("PreparationEndDate",),
-                                                       xmlelement("PreparationEndTime",),
-                                                       xmlelement("SubstitutionDilutionFactorNumeric", substance_dilution_factor)
+                                                       xmlelement("PreparationStartTime",
+                                                                  xmlelement("Time", to_char(lab_samp_prp_start_date_time, 'hh24:mi:ss')),
+                                                                  xmlelement("TimeZoneCode", lab_samp_prp_start_tmzone)
+                                                                 ),
+                                                       xmlelement("PreparationEndDate", to_char(lab_samp_prp_end_date_time, 'yyyy-mm-dd')),
+                                                       xmlelement("PreparationEndTime",
+                                                                  xmlelement("Time", to_char(lab_samp_prp_end_date_time, 'hh24:mi:ss')),
+                                                                  xmlelement("TimeZoneCode", lab_samp_prp_end_tmzone)
+                                                                 ),
+                                                       xmlelement("SubstitutionDilutionFactorNumeric", lab_samp_prp_dilution_factor)
                                                       )*/
                                            )
                                 ) as clob no indent
