@@ -586,7 +586,7 @@ create or replace package body xml_helpers as
                                                        xmlelement("UnidentifiedSpeciesIdentifier", species_id),
                                                        xmlelement("SampleTissueAnatomyName", biopart_name),
                                                        xmlelement("GroupSummaryCountWeight",
-                                                                  xmlelement("MeasureValue", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 1),
+                                                                  xmlelement("MeasureValue", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 1)),
                                                                   xmlelement("MeasureUnitCode", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 2))
                                                                  ),
                                                        xmlelement("TaxonomicDetails", /* characteritic_description */
