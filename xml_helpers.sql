@@ -139,7 +139,8 @@ create or replace package xml_helpers as
                               lab_certified                 fa_biological_result.lab_certified%type,
                               lab_accred_authority          fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
-                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type
+                              taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type,
+                              frequency_class               fa_biological_result.frequency_class%type
                              )
       return clob deterministic;
 

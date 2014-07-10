@@ -347,7 +347,7 @@ create or replace package body create_storet_objects
                                                xml_helpers.strip_bad(fa_biological_result.lab_certified),
                                                xml_helpers.strip_bad(fa_biological_result.lab_accred_authority),
                                                xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_yn),
-                                               xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_authority)
+                                               xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_authority),
                                                xml_helpers.strip_bad(fa_biological_result.frequency_class)
                              ) result_clob
             from fa_biological_result
