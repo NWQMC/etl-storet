@@ -126,7 +126,7 @@ create or replace package body create_storet_objects
       select /*+ parallel (4) */ *
         from biological_result_temp@' || p_dblink;
 
-      cleanup(2) := 'drop table biological_result' || suffix || ' cascade constraints purge';
+      cleanup(3) := 'drop table biological_result' || suffix || ' cascade constraints purge';
    end create_biological_result;
 
   procedure create_summaries(p_dblink in varchar2)
@@ -140,7 +140,7 @@ create or replace package body create_storet_objects
          select /*+ parallel (4) */ *
            from storet_station_sum@' || p_dblink;
 
-      cleanup(3) := 'drop table STORET_STATION_SUM' || suffix || ' cascade constraints purge';
+      cleanup(4) := 'drop table STORET_STATION_SUM' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating storet_result_sum...');
 
@@ -177,7 +177,7 @@ create or replace package body create_storet_objects
          select /*+ parallel (4) */ *
            from storet_result_sum@' || p_dblink;
 
-      cleanup(4) := 'drop table storet_result_sum' || suffix || ' cascade constraints purge';
+      cleanup(5) := 'drop table storet_result_sum' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating storet_result_ct_sum...');
 
@@ -200,7 +200,7 @@ create or replace package body create_storet_objects
         as select /*+ parallel (4) */ *
          from storet_result_ct_sum@' || p_dblink;
 
-      cleanup(5) := 'drop table storet_result_ct_sum' || suffix || ' cascade constraints purge';
+      cleanup(6) := 'drop table storet_result_ct_sum' || suffix || ' cascade constraints purge';
 
       execute immediate
      'create table storetmodern.storet_result_nr_sum' || suffix || ' pctfree 0 cache compress nologging parallel 4
@@ -234,7 +234,7 @@ create or replace package body create_storet_objects
         as select /*+ parallel (4) */ *
             from storet_result_nr_sum@' || p_dblink;
 
-      cleanup(6) := 'drop table storet_result_nr_sum' || suffix || ' cascade constraints purge';
+      cleanup(7) := 'drop table storet_result_nr_sum' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating storet_lctn_loc...');
 
@@ -243,7 +243,7 @@ create or replace package body create_storet_objects
       select *
         from storet_lctn_loc@' || p_dblink;
 
-      cleanup(7) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
+      cleanup(8) := 'drop table storet_lctn_loc' || suffix || ' cascade constraints purge';
    end create_summaries;
 
    procedure create_lookups(p_dblink in varchar2)
@@ -255,147 +255,147 @@ create or replace package body create_storet_objects
      'create table di_activity_matrix' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_activity_matrix@' || p_dblink;
-      cleanup(8) := 'drop table di_activity_matrix' || suffix || ' cascade constraints purge';
+      cleanup(9) := 'drop table di_activity_matrix' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating di_activity_medium');
       execute immediate
      'create table di_activity_medium' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_activity_medium@' || p_dblink;
-      cleanup(9) := 'drop table di_activity_medium' || suffix || ' cascade constraints purge';
+      cleanup(10) := 'drop table di_activity_medium' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating di_characteristic');
       execute immediate
      'create table di_characteristic' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_characteristic@' || p_dblink;
-      cleanup(10) := 'drop table di_characteristic' || suffix || ' cascade constraints purge';
+      cleanup(11) := 'drop table di_characteristic' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating di_geo_county');
       execute immediate
      'create table di_geo_county' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_geo_county@' || p_dblink;
-      cleanup(11) := 'drop table di_geo_county' || suffix || ' cascade constraints purge';
+      cleanup(12) := 'drop table di_geo_county' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating di_geo_state');
       execute immediate
      'create table di_geo_state' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_geo_state@' || p_dblink;
-      cleanup(12) := 'drop table di_geo_state' || suffix || ' cascade constraints purge';
+      cleanup(13) := 'drop table di_geo_state' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating di_org');
       execute immediate
      'create table di_org' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_org@' || p_dblink;
-      cleanup(13) := 'drop table di_org' || suffix || ' cascade constraints purge';
+      cleanup(14) := 'drop table di_org' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating di_statn_types');
       execute immediate
      'create table di_statn_types' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from di_statn_types@' || p_dblink;
-      cleanup(14) := 'drop table di_statn_types' || suffix || ' cascade constraints purge';
+      cleanup(15) := 'drop table di_statn_types' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating lu_mad_hmethod');
       execute immediate
      'create table lu_mad_hmethod' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from lu_mad_hmethod@' || p_dblink;
-      cleanup(15) := 'drop table lu_mad_hmethod' || suffix || ' cascade constraints purge';
+      cleanup(16) := 'drop table lu_mad_hmethod' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating lu_mad_hdatum');
       execute immediate
      'create table lu_mad_hdatum' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from lu_mad_hdatum@' || p_dblink;
-      cleanup(16) := 'drop table lu_mad_hdatum' || suffix || ' cascade constraints purge';
+      cleanup(17) := 'drop table lu_mad_hdatum' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating lu_mad_vmethod');
       execute immediate
      'create table lu_mad_vmethod' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from lu_mad_vmethod@' || p_dblink;
-      cleanup(17) := 'drop table lu_mad_vmethod' || suffix || ' cascade constraints purge';
+      cleanup(18) := 'drop table lu_mad_vmethod' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating lu_mad_vdatum');
       execute immediate
      'create table lu_mad_vdatum' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from lu_mad_vdatum@' || p_dblink;
-      cleanup(18) := 'drop table lu_mad_vdatum' || suffix || ' cascade constraints purge';
+      cleanup(19) := 'drop table lu_mad_vdatum' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating mt_wh_config');
       execute immediate
      'create table mt_wh_config' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from mt_wh_config@' || p_dblink;
-      cleanup(19) := 'drop table mt_wh_config' || suffix || ' cascade constraints purge';
+      cleanup(20) := 'drop table mt_wh_config' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating storet_sum');
       execute immediate
      'create table storet_sum' || suffix || ' compress pctfree 0 nologging as
       select /*+ parallel (4) */ *
         from storet_sum@' || p_dblink;
-      cleanup(20) := 'drop table storet_sum' || suffix || ' cascade constraints purge';
+      cleanup(21) := 'drop table storet_sum' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating characteristicname');
       execute immediate
       'create table characteristicname' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from characteristicname@' || p_dblink;
-      cleanup(21) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
+      cleanup(22) := 'drop table characteristicname' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating characteristictype');
       execute immediate
       'create table characteristictype' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from characteristictype@' || p_dblink;
-      cleanup(22) := 'drop table characteristictype' || suffix || ' cascade constraints purge';
+      cleanup(23) := 'drop table characteristictype' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating country');
       execute immediate
       'create table country' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from country@' || p_dblink;
-      cleanup(23) := 'drop table country' || suffix || ' cascade constraints purge';
+      cleanup(24) := 'drop table country' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating county');
       execute immediate
       'create table county' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from county@' || p_dblink;
-      cleanup(24) := 'drop table county' || suffix || ' cascade constraints purge';
+      cleanup(25) := 'drop table county' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating organization');
       execute immediate
       'create table organization' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from organization@' || p_dblink;
-      cleanup(25) := 'drop table organization' || suffix || ' cascade constraints purge';
+      cleanup(26) := 'drop table organization' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating samplemedia');
       execute immediate
       'create table samplemedia' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from samplemedia@' || p_dblink;
-      cleanup(26) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
+      cleanup(27) := 'drop table samplemedia' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating sitetype');
       execute immediate
       'create table sitetype' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from sitetype@' || p_dblink;
-      cleanup(27) := 'drop table sitetype' || suffix || ' cascade constraints purge';
+      cleanup(28) := 'drop table sitetype' || suffix || ' cascade constraints purge';
 
       dbms_output.put_line(systimestamp || ' creating state');
       execute immediate
       'create table state' || suffix || ' compress pctfree 0 nologging as
        select /*+ parallel (4) */ *
          from state@' || p_dblink;
-      cleanup(28) := 'drop table state' || suffix || ' cascade constraints purge';
+      cleanup(29) := 'drop table state' || suffix || ' cascade constraints purge';
    end create_lookups;
 
    procedure create_index
@@ -753,57 +753,57 @@ create or replace package body create_storet_objects
 
       table_name := 'biological_result';
       stmt := 'create bitmap index bio_result_station' || suffix || ' on ' ||
-               table_name || ' (station_id) local nologging';
+               table_name || ' (station_id) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_country' || suffix || ' on ' ||
-               table_name || ' (country_cd) local nologging';
+               table_name || ' (country_cd) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_state' || suffix || ' on ' ||
-               table_name || ' (state_cd) local nologging';
+               table_name || ' (state_cd) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_county' || suffix || ' on ' ||
-               table_name || ' (county_cd) local nologging';
+               table_name || ' (county_cd) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_sitetype' || suffix || ' on ' ||
-               table_name || ' (site_type) local nologging';
+               table_name || ' (site_type) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_huc8' || suffix || ' on ' ||
-               table_name || ' (huc_8) local nologging';
+               table_name || ' (huc_8) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_org' || suffix || ' on ' ||
-               table_name || ' (organization_id) local nologging';
+               table_name || ' (organization_id) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_chartype' || suffix || ' on ' ||
-               table_name || ' (characteristic_type) local nologging';
+               table_name || ' (characteristic_type) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_charname' || suffix || ' on ' ||
-               table_name || ' (characteristic_name) local nologging';
+               table_name || ' (characteristic_name) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_media' || suffix || ' on ' ||
-               table_name || ' (sample_media) local nologging';
+               table_name || ' (sample_media) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_nemi' || suffix || ' on ' ||
-               table_name || ' (nemi_url) local nologging';
+               table_name || ' (nemi_url) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
