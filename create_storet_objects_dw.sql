@@ -751,59 +751,59 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      table_name := 'biological_result' || suffix;
+      table_name := 'biological_result';
       stmt := 'create bitmap index bio_result_station' || suffix || ' on ' ||
-               table_name || ' (station_id) nologging';
+               table_name || suffix || ' (station_id) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_country' || suffix || ' on ' ||
-               table_name || ' (country_cd) nologging';
+               table_name || suffix || ' (country_cd) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_state' || suffix || ' on ' ||
-               table_name || ' (state_cd) nologging';
+               table_name || suffix || ' (state_cd) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_county' || suffix || ' on ' ||
-               table_name || ' (county_cd) nologging';
+               table_name || suffix || ' (county_cd) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_sitetype' || suffix || ' on ' ||
-               table_name || ' (site_type) nologging';
+               table_name || suffix || ' (site_type) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_huc8' || suffix || ' on ' ||
-               table_name || ' (huc_8) nologging';
+               table_name || suffix || ' (huc_8) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_org' || suffix || ' on ' ||
-               table_name || ' (organization_id) nologging';
+               table_name || suffix || ' (organization_id) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_chartype' || suffix || ' on ' ||
-               table_name || ' (characteristic_type) nologging';
+               table_name || suffix || ' (characteristic_type) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_charname' || suffix || ' on ' ||
-               table_name || ' (characteristic_name) nologging';
+               table_name || suffix || ' (characteristic_name) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_media' || suffix || ' on ' ||
-               table_name || ' (sample_media) nologging';
+               table_name || suffix || ' (sample_media) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
       stmt := 'create bitmap index bio_result_nemi' || suffix || ' on ' ||
-               table_name || ' (nemi_url) nologging';
+               table_name || suffix || ' (nemi_url) nologging';
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
