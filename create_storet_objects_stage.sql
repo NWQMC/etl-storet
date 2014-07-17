@@ -753,6 +753,7 @@ create or replace package body create_storet_objects
 
       dbms_output.put_line(systimestamp || ' started storet table transformation.');
       create_regular_result;
+      create_biological_result_temp;
       create_station;
       create_lookups;
       create_summaries;

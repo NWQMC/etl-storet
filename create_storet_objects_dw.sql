@@ -202,6 +202,8 @@ create or replace package body create_storet_objects
 
       cleanup(6) := 'drop table storet_result_ct_sum' || suffix || ' cascade constraints purge';
 
+      dbms_output.put_line(systimestamp || ' creating storet_result_nr_sum...');
+
       execute immediate
      'create table storetmodern.storet_result_nr_sum' || suffix || ' pctfree 0 cache compress nologging parallel 4
          partition by range(activity_start_date_time)
