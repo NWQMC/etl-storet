@@ -275,8 +275,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("LongitudeMeasure", activity_longitude),
                                                        xmlelement("SourceMapScaleNumeric", map_scale),
                                                        xmlelement("HorizontalAccuracyMeasure",
-                                                                  xmlelement("MeasureValue", regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 1)),
-                                                                  xmlelement("MeasureUnitCode", regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 2))
+                                                                  xmlelement("MeasureValue", strip_bad(regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 1))),
+                                                                  xmlelement("MeasureUnitCode", strip_bad(regexp_substr(horizontal_accuracy_measure, '[^~]+', 1, 2)))
                                                                  ),
                                                        xmlelement("HorizontalCollectionMethodName", fk_act_mad_hmethod),
                                                        xmlelement("HorizontalCoordinateReferenceSystemDatumName", fk_act_mad_hdatum)
@@ -285,37 +285,37 @@ create or replace package body xml_helpers as
                                                        xmlelement("AssemblageSampledName", activity_community),
                                                        xmlelement("BiologicalHabitatCollectionInformation",
                                                                   xmlelement("CollectionDuration",
-                                                                             xmlelement("MeasureValue", regexp_substr(sampling_duration, '[^~ ]+', 1, 1)),
-                                                                             xmlelement("MeasureUnitCode", regexp_substr(sampling_duration, '[^~ ]+', 1, 2))
+                                                                             xmlelement("MeasureValue", strip_bad(regexp_substr(sampling_duration, '[^~ ]+', 1, 1))),
+                                                                             xmlelement("MeasureUnitCode", strip_bad(regexp_substr(sampling_duration, '[^~ ]+', 1, 2)))
                                                                             ),/*
                                                                   xmlelement("SamplingComponentName", sample_component_name), --not mapped */
                                                                   xmlelement("SamplingComponentPlaceInSeriesNumeric", place_in_series),
                                                                   xmlelement("ReachLengthMeasure",
-                                                                             xmlelement("MeasureValue", regexp_substr(reach_length, '[^~]+', 1, 1)),
-                                                                             xmlelement("MeasureUnitCode", regexp_substr(reach_length, '[^~]+', 1, 2))
+                                                                             xmlelement("MeasureValue", strip_bad(regexp_substr(reach_length, '[^~]+', 1, 1))),
+                                                                             xmlelement("MeasureUnitCode", strip_bad(regexp_substr(reach_length, '[^~]+', 1, 2)))
                                                                             ),
                                                                   xmlelement("ReachWidthMeasure",
-                                                                             xmlelement("MeasureValue", regexp_substr(reach_width, '[^~]+', 1, 1)),
-                                                                             xmlelement("MeasureUnitCode", regexp_substr(reach_width, '[^~]+', 1, 2))
+                                                                             xmlelement("MeasureValue", strip_bad(regexp_substr(reach_width, '[^~]+', 1, 1))),
+                                                                             xmlelement("MeasureUnitCode", strip_bad(regexp_substr(reach_width, '[^~]+', 1, 2)))
                                                                             ),
                                                                   xmlelement("PassCount", pass_count),
                                                                   xmlelement("NetInformation",
                                                                              xmlelement("NetTypeName", trap_net_comment),
                                                                              xmlelement("NetSurfaceAreaMeasure",
-                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 1), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 1))),
-                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 2), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 2)))
+                                                                                        xmlelement("MeasureValue", strip_bad(coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 1), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 1)))),
+                                                                                        xmlelement("MeasureUnitCode", strip_bad(coalesce(regexp_substr(tow_net_surface_area, '[^~]+', 1, 2), regexp_substr(non_tow_net_surface_area, '[^~]+', 1, 2))))
                                                                                        ),
                                                                              xmlelement("NetMeshSizeMeasure",
-                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 1), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 1))),
-                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 2), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 2)))
+                                                                                        xmlelement("MeasureValue", strip_bad(coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 1), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 1)))),
+                                                                                        xmlelement("MeasureUnitCode", strip_bad(coalesce(regexp_substr(tow_net_mesh_size, '[^~]+', 1, 2), regexp_substr(non_tow_net_mesh_size, '[^~]+', 1, 2))))
                                                                                        ),
                                                                              xmlelement("BoatSpeedMeasure",
-                                                                                        xmlelement("MeasureValue", regexp_substr(boat_speed, '[^~]+', 1, 1)),
-                                                                                        xmlelement("MeasureUnitCode", regexp_substr(boat_speed, '[^~]+', 1, 2))
+                                                                                        xmlelement("MeasureValue", strip_bad(regexp_substr(boat_speed, '[^~]+', 1, 1))),
+                                                                                        xmlelement("MeasureUnitCode", strip_bad(regexp_substr(boat_speed, '[^~]+', 1, 2)))
                                                                                        ),
                                                                              xmlelement("CurrentSpeedMeasure",
-                                                                                        xmlelement("MeasureValue", coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 1), regexp_substr(non_tow_current_speed, '[^~]+', 1, 1))),
-                                                                                        xmlelement("MeasureUnitCode", coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 2), regexp_substr(non_tow_current_speed, '[^~]+', 1, 2)))
+                                                                                        xmlelement("MeasureValue", strip_bad(coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 1), regexp_substr(non_tow_current_speed, '[^~]+', 1, 1)))),
+                                                                                        xmlelement("MeasureUnitCode", strip_bad(coalesce(regexp_substr(tow_current_speed, '[^~]+', 1, 2), regexp_substr(non_tow_current_speed, '[^~]+', 1, 2))))
                                                                                        )
                                                                             )
                                                                  ),
@@ -323,8 +323,8 @@ create or replace package body xml_helpers as
                                                       ),
                                             xmlelement("SampleDescription",
                                                        xmlelement("SampleCollectionMethod",
-                                                                  xmlelement("MethodIdentifier", regexp_substr(field_procedure_id, '[^~]+', 1, 1)),
-                                                                  xmlelement("MethodIdentifierContext",  regexp_substr(field_procedure_id, '[^~]+', 1, 2))/*,
+                                                                  xmlelement("MethodIdentifier", strip_bad(regexp_substr(field_procedure_id, '[^~]+', 1, 1))),
+                                                                  xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_procedure_id, '[^~]+', 1, 2)))/*,
                                                                   xmlelement("MethodName", md_sample_proc_procedure_name),
                                                                   xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
                                                                   xmlelement("MethodDescriptionText", md_sample_proc_description)*/
@@ -333,8 +333,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("SampleCollectionEquipmentCommentText", --not mapped),*/
                                                        xmlelement("SamplePreparation",
                                                                   xmlelement("SamplePreparationMethod",
-                                                                             xmlelement("MethodIdentifier", regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2)),
-                                                                             xmlelement("MethodIdentifierContext", regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2))/*,
+                                                                             xmlelement("MethodIdentifier", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 1))),
+                                                                             xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2)))/*,
                                                                              xmlelement("MethodName", md_sample_proc_procedure_name),
                                                                              xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
                                                                              xmlelement("MethodDescriptionText", md_sample_proc_description)*/
@@ -586,8 +586,8 @@ create or replace package body xml_helpers as
                                                        xmlelement("UnidentifiedSpeciesIdentifier", species_id),
                                                        xmlelement("SampleTissueAnatomyName", biopart_name),
                                                        xmlelement("GroupSummaryCountWeight",
-                                                                  xmlelement("MeasureValue", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 1)),
-                                                                  xmlelement("MeasureUnitCode", regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 2))
+                                                                  xmlelement("MeasureValue", strip_bad(regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 1))),
+                                                                  xmlelement("MeasureUnitCode", strip_bad(regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 2)))
                                                                  ),
                                                        xmlelement("TaxonomicDetails", /* characteritic_description */
                                                                   xmlelement("CellFormName", cell_form),
@@ -608,10 +608,10 @@ create or replace package body xml_helpers as
                                                                             )*/
                                                                  ),
                                                        xmlelement("FrequenceyClassInformation",
-                                                                  xmlelement("FrequencyClassDescriptorCode", regexp_substr(frequency_class, '[^~]+', 1, 2)),
-                                                                  xmlelement("FrequencyClassDescriptorUnitCode", regexp_substr(frequency_class, '[^~]+', 1, 5)),
-                                                                  xmlelement("LowerClassBoundValue", regexp_substr(frequency_class, '[^~]+', 1, 3)),
-                                                                  xmlelement("UpperClassBoundValue", regexp_substr(frequency_class, '[^~]+', 1, 4))
+                                                                  xmlelement("FrequencyClassDescriptorCode", strip_bad(regexp_substr(frequency_class, '[^~]+', 1, 2))),
+                                                                  xmlelement("FrequencyClassDescriptorUnitCode", strip_bad(regexp_substr(frequency_class, '[^~]+', 1, 5))),
+                                                                  xmlelement("LowerClassBoundValue", strip_bad(regexp_substr(frequency_class, '[^~]+', 1, 3))),
+                                                                  xmlelement("UpperClassBoundValue", strip_bad(regexp_substr(frequency_class, '[^~]+', 1, 4)))
                                                                  )
                                                       ), /*
                                             xmlelement("AttachedBinaryObject", --no data fa_blob.blob_content),*/
@@ -637,10 +637,10 @@ create or replace package body xml_helpers as
                                                        xmlelement("ResultLaboratoryCommentCode", lab_remark), /*
                                                        xmlelement("ResultLaboratoryCommentText", --not in spreadsheet), */
                                                        xmlelement("ResultDetectionQuantitationLimit",
-                                                                  xmlelement("DetectionQuantitationLimitTypeName", regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 1)), '[^~]+', 1, 1)),
+                                                                  xmlelement("DetectionQuantitationLimitTypeName", strip_bad(regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 1)), '[^~]+', 1, 1))),
                                                                   xmlelement("DetectionQuantitationLimitMeasure",
-                                                                             xmlelement("MeasureValue", coalesce(regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2)), '[^~]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2))),
-                                                                             xmlelement("MeasureUnitCode", coalesce(regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 3), regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 1)))
+                                                                             xmlelement("MeasureValue", strip_bad(coalesce(regexp_substr(coalesce(regexp_substr(all_result_detection_limit, '[^;]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2)), '[^~]+', 1, 2), regexp_substr(all_result_detection_limit, '[^~]+', 1, 2)))),
+                                                                             xmlelement("MeasureUnitCode", strip_bad(coalesce(regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 3), regexp_substr(regexp_substr(all_result_detection_limit, '[^;]+', 1, 1), '[^~]+', 1, 1))))
                                                                             )
                                                                  ),
                                                        xmlelement("LaboratoryAccreditationIndicator", lab_certified),
