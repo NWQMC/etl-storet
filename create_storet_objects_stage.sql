@@ -232,13 +232,13 @@ create or replace package body create_storet_objects
                  min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
                                        order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
                  fa_biological_result.fk_station station_pk,
-                 storetw_fa_station.organization_id || '-' || storetw_fa_station.station_id station_id,
-                 storetw_fa_station.fk_primary_type site_type,
+                 fa_station.organization_id || '-' || fa_station.station_id station_id,
+                 fa_station.fk_primary_type site_type,
                  di_geo_state.country_code country_cd,
                  rtrim(di_geo_state.fips_state_code) state_cd,
                  di_geo_county.fips_county_code county_cd,
-                 storetw_fa_station.generated_huc huc_8,
-                 storetw_fa_station.geom geom, 
+                 fa_station.generated_huc huc_8,
+                 fa_station.geom geom, 
                  fa_biological_result.activity_start_date_time activity_start_date,
                  di_characteristic.display_name characteristic_name,
                  di_characteristic.characteristic_group_type characteristic_type,
@@ -353,17 +353,17 @@ create or replace package body create_storet_objects
                              ) result_clob
             from fa_biological_result
                  left join storetw_fa_station
-                   on fa_biological_result.fk_station = storetw_fa_station.pk_isn
+                   on fa_biological_result.fk_station = fa_station.pk_isn
                  left join di_org
-                   on storetw_fa_station.organization_id = di_org.organization_id
+                   on fa_station.organization_id = di_org.organization_id
                  left join di_characteristic
                    on fa_biological_result.fk_char = di_characteristic.pk_isn
                  left join di_activity_medium
                    on fa_biological_result.fk_act_medium = di_activity_medium.pk_isn
                  left join di_geo_state
-                   on storetw_fa_station.fk_geo_state = di_geo_state.pk_isn
+                   on fa_station.fk_geo_state = di_geo_state.pk_isn
                  left join di_geo_county
-                   on storetw_fa_station.fk_geo_county = di_geo_county.pk_isn
+                   on fa_station.fk_geo_county = di_geo_county.pk_isn
               order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id, fa_biological_result.pk_isn;!';
  
       commit;
@@ -431,7 +431,8 @@ create or replace package body create_storet_objects
            left join lu_mad_vmethod
              on fk_mad_vmethod = lu_mad_vmethod.pk_isn
            left join lu_mad_vdatum
-             on fk_mad_vdatum = lu_mad_vdatum.pk_isn!';
+             on fk_mad_vdatum = lu_mad_vdatum.pk_isn
+      where storetw_fa_station.location_point_type = '*POINT OF RECORD'!';
 
        commit;
 
