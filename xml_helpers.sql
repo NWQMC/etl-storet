@@ -679,7 +679,7 @@ create or replace package body xml_helpers as
   function strip_bad( p_string in varchar2 )
     return varchar2 deterministic is
   begin
-    return regexp_replace(p_string, '[^a-z,_,A-Z,0-9,.,'']', '');
+    return regexp_replace(p_string, '[^a-zA-Z0-9 ]', '');
   end strip_bad;
 
 end xml_helpers;
