@@ -364,7 +364,7 @@ create or replace package body create_storet_objects
                    on fa_station.fk_geo_state = di_geo_state.pk_isn
                  left join di_geo_county
                    on fa_station.fk_geo_county = di_geo_county.pk_isn
-              order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id, fa_biological_result.pk_isn;!';
+              order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id, fa_biological_result.pk_isn!';
  
       commit;
 
