@@ -375,6 +375,7 @@ create or replace package body create_storet_objects
    begin
 
       dbms_output.put_line(systimestamp || ' creating station...');
+      dbms_output.put_line(systimestamp || ' ** unable to pull geom across a dblink so null for testing purposes');
 
       execute immediate 'truncate table fa_station';
       execute immediate q'!insert /*+ append nologging */ into fa_station
@@ -399,7 +400,8 @@ create or replace package body create_storet_objects
          storetw_fa_station.fk_org,
          storetw_fa_station.fk_primary_type,
          storetw_fa_station.source_system,
-         storetw_fa_station.geom,
+         null, -- unable to pull geom across a dblink so null for testing purposes
+--         storetw_fa_station.geom,
          storetw_fa_station.pk_isn,
          nvl2(storetw_fa_station.elevation, nvl(storetw_fa_station.elevation_unit, 'ft'), null) elevation_unit,
          storetw_fa_station.huctwelvedigitcode,
