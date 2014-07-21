@@ -352,7 +352,7 @@ create or replace package body create_storet_objects
                                                fa_biological_result.frequency_class
                              ) result_clob
             from fa_biological_result
-                 left join storetw_fa_station
+                 left join fa_station
                    on fa_biological_result.fk_station = fa_station.pk_isn
                  left join di_org
                    on fa_station.organization_id = di_org.organization_id
@@ -755,11 +755,11 @@ create or replace package body create_storet_objects
       dbms_output.enable(100000);
 
       dbms_output.put_line(systimestamp || ' started storet table transformation.');
-      create_station;
-      create_regular_result;
+--      create_station;
       create_biological_result_temp;
-      create_lookups;
-      create_summaries;
+--      create_regular_result;
+--      create_lookups;
+--      create_summaries;
 
       dbms_output.put_line(systimestamp || ' completed. (success)');
 
