@@ -6,6 +6,7 @@ whenever sqlerror exit failure rollback;
 whenever oserror exit failure rollback;
 select 'start time: ' || systimestamp from dual;
 
+grant select on fa_biological_result to storetmodern;
 grant select on fa_regular_result to storetmodern;
 grant select on fa_station to storetmodern;
 grant select on di_activity_matrix to storetmodern;
