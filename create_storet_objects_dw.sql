@@ -119,7 +119,7 @@ create or replace package body create_storet_objects
    is
    begin
 
-      dbms_output.put_line(systimestamp || ' creating station...');
+      dbms_output.put_line(systimestamp || ' creating biological result...');
 
       execute immediate
      'create table biological_result' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
