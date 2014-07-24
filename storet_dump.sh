@@ -24,8 +24,8 @@ egrep '^Export|successfully completed' $explog
 export table_count=`grep "exported " $explog | wc -l`
 export complete_count=`grep "successfully completed" $explog | wc -l`
 
-if [ $table_count -ne $exp_table_count -o $complete_count -ne 1 ] ; then
-   echo "table_count("$table_count") not $exp_table_count or complete_count("$complete_count") not 1. quitting."
+if [ $table_count -ge $exp_table_count -o $complete_count -ne 1 ] ; then
+   echo "table_count("$table_count") less than $exp_table_count or complete_count("$complete_count") not 1. quitting."
    exit 1
 fi
 
@@ -41,7 +41,7 @@ else
 fi
 
 
-files=`grep orabackup test.log | sed -e 's/^.*\//http:\/\/www.epa.gov\/storet\/download\/storetw\//'`
+files=`grep orabackup $explog | sed -e 's/^.*\//http:\/\/www.epa.gov\/storet\/download\/storetw\//'`
 echo $files
 echo $files | xargs -n 1 -P 8 wget -q
 
