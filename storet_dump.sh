@@ -40,7 +40,7 @@ if [ -f $expref ]; then
 	if [ ${diffs} -eq 0 ]; then
 		echo "Since no differences, we are done."
 		exit 1
-	elif [ ${diffs} -gt 1]; then
+	elif [ ${diffs} -gt 1 ]; then
 		echo "Error running [diff $explog $expref]."
 		exit ${diffs}
 	else
