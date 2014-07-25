@@ -31,11 +31,15 @@ if [ "$table_count" -lt "$exp_table_count" -o "$complete_count" -ne "1" ]; then
 fi
 
 if [ -f $expref ]; then
-	diffs=`diff $explog $expref | wc -l`
-	echo $diffs " differences found between log file and base ref"
-	if [ "$diffs" -eq "0" ]; then
+	diff $explog $expref > /dev/null 2>$1
+	if [ $? -eq 0 ]; then
 		echo "Since no differences, we are done."
 		exit 1
+	elif [ $? -gt 1]; then
+		echo "Error running [diff $explog $expref]."
+		exit $?
+	else
+		echo "Differences found."
 	fi
 else
 	echo "No reference for comparison."
