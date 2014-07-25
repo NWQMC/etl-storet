@@ -7,6 +7,11 @@ if [[ "$#" -ne "1" ]]; then
 	exit 1;
 fi
 
+function find_diffs () {
+	diff -q $1 $2 > /dev/null 2>&1
+	echo $?
+}
+
 exp_table_count=$1
 
 export work=/u01/oradata/dbstage/pdc_temp
@@ -31,13 +36,15 @@ if [ "$table_count" -lt "$exp_table_count" -o "$complete_count" -ne "1" ]; then
 fi
 
 if [ -f $expref ]; then
-	diff $explog $expref > /dev/null 2>$1 || echo "Differences found."
-	if [ $? -eq 0 ]; then
+	diffs=$(find_diffs $explog $expref)
+	if [ ${diffs} -eq 0 ]; then
 		echo "Since no differences, we are done."
 		exit 1
-	elif [ $? -gt 1]; then
+	elif [ ${diffs} -gt 1]; then
 		echo "Error running [diff $explog $expref]."
-		exit $?
+		exit ${diffs}
+	else
+		echo "Found diffs, continuing."
 	fi
 else
 	echo "No reference for comparison."
