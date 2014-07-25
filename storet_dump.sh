@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o pipefail
+
 if [[ "$#" -ne "1" ]]; then
 	echo "Invalid parameter count."
 	echo "Usage: `basename $0` expected_table_count"
@@ -24,7 +26,7 @@ egrep '^Export|successfully completed' $explog
 export table_count=`grep "exported " $explog | wc -l`
 export complete_count=`grep "successfully completed" $explog | wc -l`
 
-if [ $table_count -ge $exp_table_count -o $complete_count -ne 1 ] ; then
+if [ "$table_count" -lt "$exp_table_count" -o "$complete_count" -ne "1" ] ; then
    echo "table_count("$table_count") less than $exp_table_count or complete_count("$complete_count") not 1. quitting."
    exit 1
 fi
