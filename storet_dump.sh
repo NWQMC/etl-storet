@@ -19,29 +19,27 @@ export date_suffix=`date +%Y%m%d_%H%M`
 cd $work
 
 (
-
 curl $http_base/$explog > $explog 2> curlout.log.1
 
 egrep '^Export|successfully completed' $explog
 export table_count=`grep "exported " $explog | wc -l`
 export complete_count=`grep "successfully completed" $explog | wc -l`
 
-if [ "$table_count" -lt "$exp_table_count" -o "$complete_count" -ne "1" ] ; then
-   echo "table_count("$table_count") less than $exp_table_count or complete_count("$complete_count") not 1. quitting."
-   exit 1
+if [ "$table_count" -lt "$exp_table_count" -o "$complete_count" -ne "1" ]; then
+	echo "table_count("$table_count") less than $exp_table_count or complete_count("$complete_count") not 1. quitting."
+	exit 1
 fi
 
-if [ -f $expref ] ; then
-   diffs=`diff $explog $expref | wc -l`
-   echo $diffs " differences found between log file and base ref"
-   if [ $diffs -eq 0 ] ; then
-      echo "Since no differences, we are done."
-      exit 1
-   fi
+if [ -f $expref ]; then
+	diffs=`diff $explog $expref | wc -l`
+	echo $diffs " differences found between log file and base ref"
+	if [ "$diffs" -eq "0" ]; then
+		echo "Since no differences, we are done."
+		exit 1
+	fi
 else
-   echo "No reference for comparison."
+	echo "No reference for comparison."
 fi
-
 
 files=`grep orabackup $explog | sed -e 's/^.*\//http:\/\/www.epa.gov\/storet\/download\/storetw\//'`
 echo $files
