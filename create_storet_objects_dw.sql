@@ -954,7 +954,7 @@ create or replace package body create_storet_objects
       fetch c into new_rows;
       close c;
 
-      if new_rows > 590000 and new_rows > old_rows - 20000 then
+      if new_rows > 590000 and new_rows > old_rows - 50000 then
          pass_fail := 'PASS';
       else
          pass_fail := 'FAIL';
