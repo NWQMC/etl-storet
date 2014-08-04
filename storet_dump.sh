@@ -14,7 +14,7 @@ function find_diffs () {
 
 exp_table_count=$1
 
-export work=/u01/oradata/dbstage/pdc_temp
+export work=/pdc/temp
 export file_stub=stormodb_shire_storetw_Weekly
 export explog=${file_stub}_expdp.log
 export expref=${file_stub}_expdp.ref
@@ -50,8 +50,10 @@ else
 	echo "No reference for comparison."
 fi
 
-files=`grep orabackup $explog | sed -e 's/^.*\//http:\/\/www.epa.gov\/storet\/download\/storetw\//'`
-echo $files
-echo $files | xargs -n 1 -P 8 wget -q
+echo "Removing extra dump files..."
+comm -13 <(grep -o stormodb_shire_storetw_Weekly_...cdmp $explog) <(ls | grep stormodb_shire_storetw_Weekly_...cdmp) | xargs rm -f
+
+echo "Downloading dump files..."
+grep -o stormodb_shire_storetw_Weekly_...cdmp $explog | sed -e 's/^/http:\/\/www.epa.gov\/storet\/download\/storetw\//' | xargs -n 1 -P 12 wget -Nq
 
 ) 2>&1 | tee storet_dump_$date_suffix.out
