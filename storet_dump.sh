@@ -1,59 +1,82 @@
 #!/bin/bash
-set -o pipefail
+DATE_SUFFIX=`date +%Y%m%d_%H%M`
+HTTP_BASE=http://www.epa.gov/storet/download/storetw
+WORK_DIR=/pdc/temp
 
-if [[ "$#" -ne "1" ]]; then
-	echo "Invalid parameter count."
-	echo "Usage: `basename $0` expected_table_count"
-	exit 1;
-fi
-
-function find_diffs () {
-	diff -q $1 $2 > /dev/null 2>&1
-	echo $?
+# display usage message
+function usage() {
+	cat <<-EndUsageText
+		Usage: `basename $0` OPTIONS
+		
+		This script retrieves weekly or monthly storet data exports from the EPA.
+		It pulls down the appropriate log file and checks the export was successfully completed.
+		It checks the previous 
+		
+		OPTIONS:
+		-m download the monthly exports
+		
+		-w download the weekly exports
+		
+	EndUsageText
 }
 
-exp_table_count=$1
-
-export work=/pdc/temp
-export file_stub=stormodb_shire_storetw_Weekly
-export explog=${file_stub}_expdp.log
-export expref=${file_stub}_expdp.ref
-export http_base=http://www.epa.gov/storet/download/storetw
-export date_suffix=`date +%Y%m%d_%H%M`
-
-cd $work
-
-(
-curl $http_base/$explog > $explog 2> curlout.log.1
-
-egrep '^Export|successfully completed' $explog
-export table_count=`grep "exported " $explog | wc -l`
-export complete_count=`grep "successfully completed" $explog | wc -l`
-
-if [ "$table_count" -lt "$exp_table_count" -o "$complete_count" -ne "1" ]; then
-	echo "table_count("$table_count") less than $exp_table_count or complete_count("$complete_count") not 1. quitting."
+# output of this script is parsed and looks for this text to raise errors
+function stop_bad() {
+	echo "Script generated an error, quitting."
 	exit 1
-fi
+}
 
-if [ -f $expref ]; then
-	diffs=$(find_diffs $explog $expref)
-	if [ ${diffs} -eq 0 ]; then
-		echo "Since no differences, we are done."
-		exit 1
-	elif [ ${diffs} -gt 1 ]; then
-		echo "Error running [diff $explog $expref]."
-		exit ${diffs}
-	else
-		echo "Found diffs, continuing."
-	fi
-else
-	echo "No reference for comparison."
-fi
+# output of this script is parsed and looks for this text to not run other steps
+function stop_ok() {
+	echo "No new export to process."
+	exit 0
+}
 
-echo "Removing extra dump files..."
-comm -13 <(grep -o stormodb_shire_storetw_Weekly_...cdmp $explog) <(ls | grep stormodb_shire_storetw_Weekly_...cdmp) | xargs rm -f
+# set so if any command in a piped sequence returns a non-zero error code, the script fails
+set -o pipefail
 
-echo "Downloading dump files..."
-grep -o stormodb_shire_storetw_Weekly_...cdmp $explog | sed -e 's/^/http:\/\/www.epa.gov\/storet\/download\/storetw\//' | xargs -n 1 -P 12 wget -Nq
+# if not a single parameter, display usage and quit
+[ "$#" -ne 1 ] && usage && stop_bad
 
-) 2>&1 | tee storet_dump_$date_suffix.out
+# check options for -m [monthly] or -w [weekly], first one it finds is the one it uses
+while getopts ":mw" opt
+do
+	case $opt in
+		m)
+			EXPORT_LOG="stormodb_shire_storetw_Monthly_expdp.log"
+			EXPORT_REF="stormodb_shire_storetw_Monthly_expdp.ref"
+			DUMP_FILE_GREP="stormodb_shire_storetw_Monthly_...cdmp"
+			break
+			;;
+		w)
+			EXPORT_LOG="stormodb_shire_storetw_Weekly_expdp.log"
+			EXPORT_REF="stormodb_shire_storetw_Weekly_expdp.ref"
+			DUMP_FILE_GREP="stormodb_shire_storetw_Weekly_...cdmp"
+			break
+			;;
+	esac
+done
+
+# if any required variables are null or empty, display usage and quit
+([ ! -n "${EXPORT_LOG}" ] || [ ! -n "${EXPORT_REF}" ] || [ ! -n "${DUMP_FILE_GREP}" ]) && usage && stop_bad
+
+starting_dir=`pwd`
+
+cd ${WORK_DIR}
+
+# quietly pull the export log, using timestamping to only pull if remote file is newer than local
+wget -Nq ${HTTP_BASE}/${EXPORT_LOG}
+
+# check export log for the phrase 'successfully completed'; if not found, quit
+grep -q "successfully completed" ${EXPORT_LOG} || (echo "${EXPORT_LOG} does not contain 'successfully completed'." && stop_bad)
+
+# if a reference file exists and the log isn't newer than the reference file, we don't need to do more
+([ -f ${EXPORT_REF} ] && [ ! ${EXPORT_LOG} -nt ${EXPORT_REF} ]) && stop_ok
+
+# remove any dump files found locally but not in the export log
+comm -13 <(grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG}) <(ls | grep ${DUMP_FILE_GREP}) | xargs rm -f
+
+# download any dump files newer on remote than they are on local
+grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG} | sed -e 's/^/http:\/\/www.epa.gov\/storet\/download\/storetw\//' | xargs -n 1 -P 12 wget -Nq
+
+cd ${starting_dir}

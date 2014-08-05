@@ -4,4 +4,4 @@ error /.Warning: Package Body created with compilation errors./
 error /.Usage 1: sqlplus -H | -V/
 error /.sqlplus: error/
 error /.Permission denied/
-error /.quitting/
+error /.Script generated an error, quitting./
