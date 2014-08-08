@@ -753,7 +753,7 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      table_name := 'biological_result';
+      table_name := 'BIOLOGICAL_RESULT';
       stmt := 'create bitmap index bio_result_station' || suffix || ' on ' ||
                table_name || suffix || ' (station_id) nologging';
       dbms_output.put_line(stmt);
