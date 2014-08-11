@@ -19,7 +19,7 @@ create or replace package body create_storet_objects
         -----------------------------------------------------------------------------------*/
    as
 
-   procedure create_regular_result_no_source
+   procedure create_regular_result_no_src
    is
    begin
 
@@ -33,7 +33,7 @@ create or replace package body create_storet_objects
 
      commit;
      
-   end create_regular_result_no_source;
+   end create_regular_result_no_src;
 
    procedure create_regular_result
    is
@@ -250,7 +250,7 @@ create or replace package body create_storet_objects
 			from fa_biological_result!';
 		
 		commit;
-	end biological_activity_join
+	end biological_activity_join;
 
 	
    procedure create_biological_result_temp is
