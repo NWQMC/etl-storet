@@ -1,5 +1,7 @@
 <project name="QwStoretEtl" default="defaultEros">
     <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
+	
+	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, runMonthlyETL, mvMonthlyLogToRef" />
 
 	<target name="dev" depends="buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
 
@@ -20,7 +22,7 @@
             <arg value="@${basedir}/create_storet_objects_stage.sql"/>
         </exec>
     </target>
-	
+
     <target name="scpScriptStage">
         <echo>Copy the script to ${storet_host}</echo>
         <scp file="storet_dump.sh" todir="storet_user:${storet_password}@${storet_host}:/home/storet_user" trust="true"/>
@@ -62,6 +64,22 @@
         </exec>
     </target>
     
+	<target name="monthlyImportViaDataPump" depends="setStopRun" unless="stopRun">
+	    <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
+	    <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
+	        <arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
+	        <arg value="parfile=monthly_impdp.par"/>
+	    </exec>
+	</target>
+    
+    <target name="runMonthlyETL" depends="setStopRun" unless="stopRun">
+        <echo>Run the monthly ETL on ${stagingInstance}</echo>
+        <exec executable="sqlplus" failonerror="true">
+            <arg value="storetw/${storetw_password}@${stagingInstance}"/>
+            <arg value="@${basedir}/storetw_grants.sql"/>
+        </exec>
+    </target>
+    
     <target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
         <echo>Grant select on the imported tables in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
@@ -93,6 +111,17 @@
             <arg value="@${basedir}/runPackage.sql"/>
             <arg value="${dblink}"/>
         </exec>
+    </target>
+	
+    <target name="mvMonthlyLogToRef" depends="setStopRun" unless="stopRun">
+        <echo>Move the monthly export log file to the export ref file at ${storet_host}</echo>
+        <sshexec host="${storet_host}"
+            trust="true"
+            failonerror="true"
+            username="storet_user"
+            password="${storet_password}"
+            command="mv /pdc/temp/stormodb_shire_storetw_Monthly_expdp.log /pdc/temp/stormodb_shire_storetw_Monthly_expdp.ref"
+        />
     </target>
 	
     <target name="mvLogToRef" depends="setStopRun" unless="stopRun">

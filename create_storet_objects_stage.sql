@@ -19,6 +19,22 @@ create or replace package body create_storet_objects
         -----------------------------------------------------------------------------------*/
    as
 
+   procedure create_regular_result_no_source
+   is
+   begin
+
+      dbms_output.put_line(systimestamp || ' creating regular_result_no_source...');
+
+      execute immediate 'truncate table fa_regular_result_no_source'; 
+      execute immediate q'!insert /*+ append nologging */ into fa_regular_result_no_source
+      select /*+ parallel (4) */ *
+      from fa_regular_result
+      where source_system <> 'WQX'!';
+
+     commit;
+     
+   end create_regular_result_no_source;
+
    procedure create_regular_result
    is
    begin
@@ -218,7 +234,25 @@ create or replace package body create_storet_objects
          
       commit;
    end create_regular_result;
+   
+   procedure biological_activity_join is
+   begin
+	   dbms_output.put_line(systimestamp || ' creating biological_activity_join...');
+	   
+	   execute immediate 'truncate table biological_activity_join';
+	   execute immediate q'!insert into biological_activity_join (activity_pk, fk_station, activity_start_date_time, activity_id)
+			select
+				min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
+								  order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
+				fa_biological_result.fk_station,
+				fa_biological_result.activity_start_date_time,
+				fa_biological_result.activity_id
+			from fa_biological_result!';
+		
+		commit;
+	end biological_activity_join
 
+	
    procedure create_biological_result_temp is
    begin
 	  dbms_output.put_line(systimestamp || ' creating biological_result_temp...');
@@ -229,8 +263,7 @@ create or replace package body create_storet_objects
                                                                                        organization_clob, activity_clob, result_clob) 
           select /*+ parallel (4) */
                  fa_biological_result.pk_isn result_pk,
-                 min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
-                                       order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
+                 biological_activity_join.activity_pk,
                  fa_biological_result.fk_station station_pk,
                  fa_station.organization_id || '-' || fa_station.station_id station_id,
                  fa_station.fk_primary_type site_type,
@@ -364,7 +397,11 @@ create or replace package body create_storet_objects
                    on fa_station.fk_geo_state = di_geo_state.pk_isn
                  left join di_geo_county
                    on fa_station.fk_geo_county = di_geo_county.pk_isn
-              order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id, fa_biological_result.pk_isn!';
+				 left join biological_activity_join
+					on fa_biological_result.fk_station = biological_activity_join.fk_station
+					and fa_biological_result.activity_start_date_time = biological_activity_join.activity_start_date_time
+					and fa_biological_result.activity_id = biological_activity_join.activity_id
+              order by biological_activity_join.activity_pk, fa_biological_result.pk_isn!';
  
       commit;
 
