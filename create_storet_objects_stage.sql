@@ -326,7 +326,13 @@ create or replace package body create_storet_objects
                                                  xml_helpers.strip_bad(fa_biological_result.container_desc),
                                                  xml_helpers.strip_bad(fa_biological_result.presrv_strge_prcdr),
                                                  xml_helpers.strip_bad(fa_biological_result.temp_preservn_type),
-                                                 xml_helpers.strip_bad(fa_biological_result.smprp_transport_storage_desc)      
+                                                 xml_helpers.strip_bad(fa_biological_result.smprp_transport_storage_desc),
+                                				xml_helpers.strip_bad(md_sample_proc.procedure_name),
+				                                xml_helpers.strip_bad(md_sample_proc.procedure_qual_type),
+				                                xml_helpers.strip_bad(md_sample_proc.description),
+				                                xml_helpers.strip_bad(md_sample_proc_prep.procedure_name),
+				                                xml_helpers.strip_bad(md_sample_proc_prep.procedure_qual_type),
+				                                xml_helpers.strip_bad(md_sample_proc_prep.description)
                                      ) activity_clob,
                  xml_helpers.biological_result(xml_helpers.strip_bad(fa_biological_result.result_value_text),
                                                xml_helpers.strip_bad(fa_biological_result.characteristic_name),
@@ -382,7 +388,13 @@ create or replace package body create_storet_objects
                                                xml_helpers.strip_bad(fa_biological_result.lab_accred_authority),
                                                xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_yn),
                                                xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_authority),
-                                               fa_biological_result.frequency_class
+                                               fa_biological_result.frequency_class,
+				                               xml_helpers.strip_bad(md_citation.title),
+												xml_helpers.strip_bad(md_citation.author),
+												xml_helpers.strip_bad(md_citation.vol_and_page),
+                              					xml_helpers.strip_bad(md_citation.pblshr_org_name),
+                              					md_citation.publishing_year,
+												xml_helpers.strip_bad(fa_biological_result.taxon_detail_citation_id)
                              ) result_clob
             from fa_biological_result
                  left join fa_station
@@ -397,6 +409,12 @@ create or replace package body create_storet_objects
                    on fa_station.fk_geo_state = di_geo_state.pk_isn
                  left join di_geo_county
                    on fa_station.fk_geo_county = di_geo_county.pk_isn
+     			 left join md_citation
+					on fa_biological_result.taxon_detail_citation_id = md_citation.citation_id
+				left join md_sample_proc md_sample_proc
+					on fa_biological_result.field_procedure_id = md_sample_proc.procedure_id
+				left join md_sample_proc md_sample_proc_prep
+					on fa_biological_result.field_prep_procedure_id = md_sample_proc.procedure_id
 				 left join biological_activity_join
 					on fa_biological_result.fk_station = biological_activity_join.fk_station
 					and fa_biological_result.activity_start_date_time = biological_activity_join.activity_start_date_time

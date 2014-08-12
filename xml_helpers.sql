@@ -52,6 +52,12 @@ create or replace package xml_helpers as
                                 presrv_strge_prcdr             fa_biological_result.presrv_strge_prcdr%type,
                                 temp_preservn_type             fa_biological_result.temp_preservn_type%type,
                                 smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type                                
+                                md_sample_proc_procedure_name            md_sample_proc.procedure_name%type,
+                                md_sample_proc_procedure_qual_type       md_sample_proc.procedure_qual_type%type,
+                                md_sample_proc_description               md_sample_proc.description%type,
+                                md_sample_proc_prep_procedure_name       md_sample_proc.procedure_name%type,
+                                md_sample_proc_prep_procedure_qual_type  md_sample_proc.procedure_qual_type%type,
+                                md_sample_proc_prep_description          md_sample_proc.description%type
                                )
     return clob deterministic;
 
@@ -141,8 +147,14 @@ create or replace package xml_helpers as
                               lab_accred_authority          fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn          fa_biological_result.taxonomist_accred_yn%type,
                               taxonomist_accred_authority   fa_biological_result.taxonomist_accred_authority%type,
-                              frequency_class               fa_biological_result.frequency_class%type
-                             )
+                              frequency_class               fa_biological_result.frequency_class%type,
+                              md_citation_title                 md_citation.title%type,
+                              md_citation_author                md_citation.author%type,
+                              md_citation_vol_and_page          md_citation.vol_and_page%type,
+                              md_citation_pblshr_org_name       md_citation.pblshr_org_name%type,
+                              md_citation_publishing_year       md_citation.publishing_year%type,
+                              taxon_detail_citation_id          fa_biological_result.taxon_detail_citation_id%type
+                              )
       return clob deterministic;
 
   function strip_bad( p_string in varchar2 )
@@ -216,14 +228,13 @@ create or replace package body xml_helpers as
                                 container_desc                 fa_biological_result.container_desc%type,
                                 presrv_strge_prcdr             fa_biological_result.presrv_strge_prcdr%type,
                                 temp_preservn_type             fa_biological_result.temp_preservn_type%type,
-                                smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type
-                                /*
-                                FA.BIOLOGICAL_RESULT.FIELD_PROCEDURE_ID  - > MD_SAMPLE_PROC .PROCEDURE_ID
-                                FA.BIOLOGICAL_RESULT.FIELD_PREP_PROCEDURE_ID  - > MD_SAMPLE_PROC .PROCEDURE_ID
-                                md_sample_proc_procedure_name
-                                md_sample_proc_procedure_qual_type
-                                md_sample_proc_description
-                                 */
+                                smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type,
+                                md_sample_proc_procedure_name            md_sample_proc.procedure_name%type,
+                                md_sample_proc_procedure_qual_type       md_sample_proc.procedure_qual_type%type,
+                                md_sample_proc_description               md_sample_proc.description%type,
+                                md_sample_proc_prep_procedure_name       md_sample_proc.procedure_name%type,
+                                md_sample_proc_prep_procedure_qual_type  md_sample_proc.procedure_qual_type%type,
+                                md_sample_proc_prep_description          md_sample_proc.description%type
                                )
     return clob deterministic is
     rtn clob;
@@ -265,7 +276,7 @@ create or replace package body xml_helpers as
                                                        xmlelement("ProjectIdentifier", project_id),
                                                        xmlelement("ActivityConductingOrganizationText", activity_cond_org_text),
                                                        xmlelement("MonitoringLocationIdentifier", station_id),
-                                                       xmlelement("ActivityCommentText", activity_comment) /*,
+                                                       xmlelement("ActivityCommentText", activity_comment)/*,
                                                        xmlelement("SampleAquifer", ???), --not in spreadsheet
                                                        xmlelement("HydrologicCondition", ???), --not in spreadsheet
                                                        xmlelement("HydrologicEvent", ???) --not in spreadsheet */
@@ -324,20 +335,20 @@ create or replace package body xml_helpers as
                                             xmlelement("SampleDescription",
                                                        xmlelement("SampleCollectionMethod",
                                                                   xmlelement("MethodIdentifier", strip_bad(regexp_substr(field_procedure_id, '[^~]+', 1, 1))),
-                                                                  xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_procedure_id, '[^~]+', 1, 2)))/*,
+                                                                  xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_procedure_id, '[^~]+', 1, 2))),
                                                                   xmlelement("MethodName", md_sample_proc_procedure_name),
                                                                   xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
-                                                                  xmlelement("MethodDescriptionText", md_sample_proc_description)*/
+                                                                  xmlelement("MethodDescriptionText", md_sample_proc_description)
                                                                  ),
                                                        xmlelement("SampleCollectionEquipmentName", field_gear_id),/*
                                                        xmlelement("SampleCollectionEquipmentCommentText", --not mapped),*/
                                                        xmlelement("SamplePreparation",
                                                                   xmlelement("SamplePreparationMethod",
                                                                              xmlelement("MethodIdentifier", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 1))),
-                                                                             xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2)))/*,
-                                                                             xmlelement("MethodName", md_sample_proc_procedure_name),
-                                                                             xmlelement("MethodQualifierTypeName", md_sample_proc_procedure_qual_type),
-                                                                             xmlelement("MethodDescriptionText", md_sample_proc_description)*/
+                                                                             xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2))),
+                                                                             xmlelement("MethodName", md_sample_proc_prep_procedure_name),
+                                                                             xmlelement("MethodQualifierTypeName", md_sample_proc_prep_procedure_qual_type),
+                                                                             xmlelement("MethodDescriptionText", md_sample_proc_prep_description)
                                                                             ),
                                                                   xmlelement("SampleContainerTypeName", container_desc),
                                                                   xmlelement("SampleContainerColorName", container_desc),
@@ -528,18 +539,16 @@ create or replace package body xml_helpers as
                               lab_accred_authority              fa_biological_result.lab_accred_authority%type,
                               taxonomist_accred_yn              fa_biological_result.taxonomist_accred_yn%type,
                               taxonomist_accred_authority       fa_biological_result.taxonomist_accred_authority%type,
-                              frequency_class                   fa_biological_result.frequency_class%type/*,
-                              -- join on fa_biological_result.taxon_detail_citation_id = md_citation.citation_id
-                              -- there's no md_citation table and all taxon_detail_citation_id are null
+                              frequency_class                   fa_biological_result.frequency_class%type,
                               md_citation_title                 md_citation.title%type,
                               md_citation_author                md_citation.author%type,
                               md_citation_vol_and_page          md_citation.vol_and_page%type,
                               md_citation_pblshr_org_name       md_citation.pblshr_org_name%type,
                               md_citation_publishing_year       md_citation.publishing_year%type,
+                              taxon_detail_citation_id          fa_biological_result.taxon_detail_citation_id%type/*,
                               -- join on fa_biological_result.analytical_procedure_id = md_analytical_proc.procedure_id
-                              -- there's no md_analytical_proc table
                               md_analytical_proc_qualifier_type	md_analytical_proc.qualifier_type%type,
-                              md_analytical_proc_procedure_desc	md_analytical_proc.procedure_desc%type */
+                              md_analytical_proc_procedure_desc	md_analytical_proc.procedure_desc%type*/
                              )
     return clob deterministic is
     rtn clob;
@@ -589,7 +598,7 @@ create or replace package body xml_helpers as
                                                                   xmlelement("MeasureValue", strip_bad(regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 1))),
                                                                   xmlelement("MeasureUnitCode", strip_bad(regexp_substr(result_group_summary_ct_wt, '[^~]+', 1, 2)))
                                                                  ),
-                                                       xmlelement("TaxonomicDetails", /* characteritic_description */
+                                                       xmlelement("TaxonomicDetails",
                                                                   xmlelement("CellFormName", cell_form),
                                                                   xmlelement("CellShapeName", cell_shape),
                                                                   xmlelement("HabitName", habit),
@@ -597,15 +606,15 @@ create or replace package body xml_helpers as
                                                                   xmlelement("TaxonomicPollutionTolerance", pollution_tolerance),
                                                                   xmlelement("TaxonomicPollutionToleranceScaleText", pollution_tolerance_scale),
                                                                   xmlelement("TrophicLevelName", trophic_level),
-                                                                  xmlelement("FunctionalFeedingGroupName", feeding_group)/*,
+                                                                  xmlelement("FunctionalFeedingGroupName", feeding_group),
                                                                   xmlelement("TaxonomicDetailsCitation",   
                                                                              xmlelement("ResourceTitleName", md_citation_title),
                                                                              xmlelement("ResourceCreatorName", md_citation_author),
                                                                              xmlelement("ResourceSubjectText", md_citation_vol_and_page),
                                                                              xmlelement("ResourcePublishername", md_citation_pblshr_org_name),
-                                                                             xmlelement("ResourceDate", to_char(md_citation_publishing_year, 'yyyy-mm-dd')),
-                                                                             xmlelement("ResourceIdentfier",)
-                                                                            )*/
+                                                                             xmlelement("ResourceDate", strip_bad(to_char(md_citation_publishing_year, 'yyyy-mm-dd'))),
+                                                                             xmlelement("ResourceIdentfier", taxon_detail_citation_id)
+                                                                            )
                                                                  ),
                                                        xmlelement("FrequenceyClassInformation",
                                                                   xmlelement("FrequencyClassDescriptorCode", strip_bad(regexp_substr(frequency_class, '[^~]+', 1, 2))),
