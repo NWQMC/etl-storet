@@ -115,19 +115,19 @@ create or replace package body create_storet_objects
       cleanup(2) := 'drop table fa_station' || suffix || ' cascade constraints purge';
    end create_station;
 
-   procedure create_biological_result(p_dblink in varchar2)
-   is
-   begin
-
-      dbms_output.put_line(systimestamp || ' creating biological result...');
-
-      execute immediate
-     'create table biological_result' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
-      select /*+ parallel (4) */ *
-        from biological_result_temp@' || p_dblink;
-
-      cleanup(3) := 'drop table biological_result' || suffix || ' cascade constraints purge';
-   end create_biological_result;
+--   procedure create_biological_result(p_dblink in varchar2)
+--   is
+--   begin
+--
+--      dbms_output.put_line(systimestamp || ' creating biological result...');
+--
+--      execute immediate
+--     'create table biological_result' || suffix || ' compress pctfree 0 nologging parallel 4 cache as
+--      select /*+ parallel (4) */ *
+--        from biological_result_temp@' || p_dblink;
+--
+--      cleanup(3) := 'drop table biological_result' || suffix || ' cascade constraints purge';
+--   end create_biological_result;
 
   procedure create_summaries(p_dblink in varchar2)
    is
@@ -753,78 +753,78 @@ create or replace package body create_storet_objects
       dbms_output.put_line(stmt);
       execute immediate stmt;
 
-      table_name := 'BIOLOGICAL_RESULT';
-      stmt := 'create bitmap index bio_result_station' || suffix || ' on ' ||
-               table_name || suffix || ' (station_id) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_country' || suffix || ' on ' ||
-               table_name || suffix || ' (country_cd) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_state' || suffix || ' on ' ||
-               table_name || suffix || ' (state_cd) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_county' || suffix || ' on ' ||
-               table_name || suffix || ' (county_cd) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_sitetype' || suffix || ' on ' ||
-               table_name || suffix || ' (site_type) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_huc8' || suffix || ' on ' ||
-               table_name || suffix || ' (huc_8) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_org' || suffix || ' on ' ||
-               table_name || suffix || ' (organization_id) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_chartype' || suffix || ' on ' ||
-               table_name || suffix || ' (characteristic_type) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_charname' || suffix || ' on ' ||
-               table_name || suffix || ' (characteristic_name) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_media' || suffix || ' on ' ||
-               table_name || suffix || ' (sample_media) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      stmt := 'create bitmap index bio_result_nemi' || suffix || ' on ' ||
-               table_name || suffix || ' (nemi_url) nologging';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
-
-      delete from user_sdo_geom_metadata where table_name = table_name || suffix;
-      insert INTO USER_SDO_GEOM_METADATA VALUES(table_name || suffix, 'GEOM',
-                  MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', -180, 180, 0.005), MDSYS.SDO_DIM_ELEMENT('Y', -90, 90, 0.005)), 8307);
-      commit;
-
-      stmt := 'create index bio_result_geom' || suffix || ' on ' ||
-              table_name || suffix || ' (GEOM) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
-      dbms_output.put_line(stmt);
-      execute immediate stmt;
+--      table_name := 'BIOLOGICAL_RESULT';
+--      stmt := 'create bitmap index bio_result_station' || suffix || ' on ' ||
+--               table_name || suffix || ' (station_id) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_country' || suffix || ' on ' ||
+--               table_name || suffix || ' (country_cd) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_state' || suffix || ' on ' ||
+--               table_name || suffix || ' (state_cd) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_county' || suffix || ' on ' ||
+--               table_name || suffix || ' (county_cd) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_sitetype' || suffix || ' on ' ||
+--               table_name || suffix || ' (site_type) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_huc8' || suffix || ' on ' ||
+--               table_name || suffix || ' (huc_8) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_org' || suffix || ' on ' ||
+--               table_name || suffix || ' (organization_id) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_chartype' || suffix || ' on ' ||
+--               table_name || suffix || ' (characteristic_type) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_charname' || suffix || ' on ' ||
+--               table_name || suffix || ' (characteristic_name) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_media' || suffix || ' on ' ||
+--               table_name || suffix || ' (sample_media) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      stmt := 'create bitmap index bio_result_nemi' || suffix || ' on ' ||
+--               table_name || suffix || ' (nemi_url) nologging';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
+--
+--      delete from user_sdo_geom_metadata where table_name = table_name || suffix;
+--      insert INTO USER_SDO_GEOM_METADATA VALUES(table_name || suffix, 'GEOM',
+--                  MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', -180, 180, 0.005), MDSYS.SDO_DIM_ELEMENT('Y', -90, 90, 0.005)), 8307);
+--      commit;
+--
+--      stmt := 'create index bio_result_geom' || suffix || ' on ' ||
+--              table_name || suffix || ' (GEOM) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS (''SDO_INDX_DIMS=2 LAYER_GTYPE="POINT"'')';
+--      dbms_output.put_line(stmt);
+--      execute immediate stmt;
 
 
 
       dbms_output.put_line(systimestamp || ' grants...');
       execute immediate 'grant select on fa_station'           || suffix || ' to storetuser';
       execute immediate 'grant select on fa_regular_result'    || suffix || ' to storetuser, wqp_user';
-      execute immediate 'grant select on biological_result'    || suffix || ' to storetuser';
+--      execute immediate 'grant select on biological_result'    || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_matrix'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_activity_medium'   || suffix || ' to storetuser';
       execute immediate 'grant select on di_characteristic'    || suffix || ' to storetuser';
@@ -856,8 +856,8 @@ create or replace package body create_storet_objects
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_STATION'          || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       dbms_output.put_line(systimestamp || ' analyze fa_regular_result...');  /* takes about 50 minutes */
       dbms_stats.gather_table_stats('STORETMODERN', 'FA_REGULAR_RESULT'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
-      dbms_output.put_line(systimestamp || ' analyze biological_result...');
-      dbms_stats.gather_table_stats('STORETMODERN', 'BIOLOGICAL_RESULT'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
+--      dbms_output.put_line(systimestamp || ' analyze biological_result...');
+--      dbms_stats.gather_table_stats('STORETMODERN', 'BIOLOGICAL_RESULT'   || suffix, null,  10, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       dbms_output.put_line(systimestamp || ' analyze di_activity_medium...');
       dbms_stats.gather_table_stats('STORETMODERN', 'DI_ACTIVITY_MEDIUM'  || suffix, null, 100, false, 'FOR ALL COLUMNS SIZE AUTO', 1, 'ALL', true);
       dbms_output.put_line(systimestamp || ' analyze di_characteristic...');
@@ -1273,7 +1273,7 @@ create or replace package body create_storet_objects
 
       execute immediate 'create or replace synonym fa_station           for fa_station'           || suffix;
       execute immediate 'create or replace synonym fa_regular_result    for fa_regular_result'    || suffix;
-      execute immediate 'create or replace synonym biological_result    for biological_result'    || suffix;
+--      execute immediate 'create or replace synonym biological_result    for biological_result'    || suffix;
       execute immediate 'create or replace synonym di_activity_matrix   for di_activity_matrix'   || suffix;
       execute immediate 'create or replace synonym di_activity_medium   for di_activity_medium'   || suffix;
       execute immediate 'create or replace synonym di_characteristic    for di_characteristic'    || suffix;
@@ -1363,7 +1363,7 @@ create or replace package body create_storet_objects
       determine_suffix;
       create_regular_result(p_dblink);
       create_station(p_dblink);
-      create_biological_result(p_dblink);
+--      create_biological_result(p_dblink);
       create_lookups(p_dblink);
       create_summaries(p_dblink);
       create_index;

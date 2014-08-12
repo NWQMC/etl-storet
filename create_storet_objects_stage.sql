@@ -219,156 +219,156 @@ create or replace package body create_storet_objects
       commit;
    end create_regular_result;
 
-   procedure create_biological_result_temp is
-   begin
-	  dbms_output.put_line(systimestamp || ' creating biological_result_temp...');
-
-      execute immediate 'truncate table biological_result_temp'; 
-      execute immediate q'!insert /*+ append nologging */ into biological_result_temp (result_pk, activity_pk, station_pk, station_id, site_type, country_cd, state_cd, county_cd, huc_8, geom, 
-                                                                                       activity_start_date, characteristic_name, characteristic_type, sample_media, organization_id,
-                                                                                       organization_clob, activity_clob, result_clob) 
-          select /*+ parallel (4) */
-                 fa_biological_result.pk_isn result_pk,
-                 min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
-                                       order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
-                 fa_biological_result.fk_station station_pk,
-                 fa_station.organization_id || '-' || fa_station.station_id station_id,
-                 fa_station.fk_primary_type site_type,
-                 di_geo_state.country_code country_cd,
-                 rtrim(di_geo_state.fips_state_code) state_cd,
-                 di_geo_county.fips_county_code county_cd,
-                 fa_station.generated_huc huc_8,
-                 fa_station.geom geom, 
-                 fa_biological_result.activity_start_date_time activity_start_date,
-                 di_characteristic.display_name characteristic_name,
-                 di_characteristic.characteristic_group_type characteristic_type,
-                 di_activity_medium.activity_medium sample_media,
-                 fa_biological_result.organization_id,
-                 xml_helpers.organization(xml_helpers.strip_bad(fa_biological_result.organization_id), xml_helpers.strip_bad(di_org.organization_name)) organization_clob,
-                 xml_helpers.biological_activity(xml_helpers.strip_bad(fa_biological_result.organization_id),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_id),
-                                                 xml_helpers.strip_bad(fa_biological_result.trip_id),
-                                                 xml_helpers.strip_bad(fa_biological_result.replicate_number),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_type),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_medium),
-                                                 fa_biological_result.activity_start_date_time,
-                                                 xml_helpers.strip_bad(fa_biological_result.act_start_time_zone),
-                                                 fa_biological_result.activity_stop_date_time,
-                                                 xml_helpers.strip_bad(fa_biological_result.act_stop_time_zone),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_rel_depth),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_depth),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_depth_unit),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_upper_depth),
-                                                 xml_helpers.strip_bad(fa_biological_result.upr_lwr_depth_unit),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_lower_depth),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_depth_ref_point),
-                                                 xml_helpers.strip_bad(fa_biological_result.project_id),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_cond_org_text),
-                                                 xml_helpers.strip_bad(fa_biological_result.station_id),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_comment),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_latitude),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_longitude),
-                                                 xml_helpers.strip_bad(fa_biological_result.map_scale),
-                                                 fa_biological_result.horizontal_accuracy_measure, 
-                                                 xml_helpers.strip_bad(fa_biological_result.fk_act_mad_hmethod),
-                                                 xml_helpers.strip_bad(fa_biological_result.fk_act_mad_hdatum),
-                                                 xml_helpers.strip_bad(fa_biological_result.activity_community),
-                                                 fa_biological_result.sampling_duration,
-                                                 xml_helpers.strip_bad(fa_biological_result.place_in_series),
-                                                 fa_biological_result.reach_length,
-                                                 fa_biological_result.reach_width,
-                                                 xml_helpers.strip_bad(fa_biological_result.pass_count),
-                                                 xml_helpers.strip_bad(fa_biological_result.trap_net_comment),
-                                                 fa_biological_result.non_tow_current_speed,
-                                                 fa_biological_result.tow_current_speed,
-                                                 fa_biological_result.non_tow_net_surface_area,
-                                                 fa_biological_result.tow_net_surface_area,
-                                                 fa_biological_result.non_tow_net_mesh_size,
-                                                 fa_biological_result.tow_net_mesh_size,
-                                                 xml_helpers.strip_bad(fa_biological_result.boat_speed),
-                                                 xml_helpers.strip_bad(fa_biological_result.toxicity_test_type),
-                                                 fa_biological_result.field_procedure_id,
-                                                 xml_helpers.strip_bad(fa_biological_result.field_gear_id),
-                                                 fa_biological_result.field_prep_procedure_id,
-                                                 xml_helpers.strip_bad(fa_biological_result.container_desc),
-                                                 xml_helpers.strip_bad(fa_biological_result.presrv_strge_prcdr),
-                                                 xml_helpers.strip_bad(fa_biological_result.temp_preservn_type),
-                                                 xml_helpers.strip_bad(fa_biological_result.smprp_transport_storage_desc)      
-                                     ) activity_clob,
-                 xml_helpers.biological_result(xml_helpers.strip_bad(fa_biological_result.result_value_text),
-                                               xml_helpers.strip_bad(fa_biological_result.characteristic_name),
-                                               xml_helpers.strip_bad(fa_biological_result.sample_fraction_type),
-                                               xml_helpers.strip_bad(fa_biological_result.result_value),
-                                               xml_helpers.strip_bad(fa_biological_result.result_unit),
-                                               xml_helpers.strip_bad(fa_biological_result.result_meas_qual_code),
-                                               xml_helpers.strip_bad(fa_biological_result.result_value_status),
-                                               xml_helpers.strip_bad(fa_biological_result.statistic_type),
-                                               xml_helpers.strip_bad(fa_biological_result.result_value_type),
-                                               xml_helpers.strip_bad(fa_biological_result.weight_basis_type),
-                                               xml_helpers.strip_bad(fa_biological_result.duration_basis),
-                                               xml_helpers.strip_bad(fa_biological_result.temperature_basis_level),
-                                               xml_helpers.strip_bad(fa_biological_result.particle_size),
-                                               xml_helpers.strip_bad(fa_biological_result.precision),
-                                               xml_helpers.strip_bad(fa_biological_result.bias),
-                                               xml_helpers.strip_bad(fa_biological_result.confidence_level),
-                                               xml_helpers.strip_bad(fa_biological_result.result_comment),
-                                               xml_helpers.strip_bad(fa_biological_result.result_depth_meas_value),
-                                               xml_helpers.strip_bad(fa_biological_result.result_depth_meas_unit_code),
-                                               xml_helpers.strip_bad(fa_biological_result.result_depth_alt_ref_pt_txt),
-                                               xml_helpers.strip_bad(fa_biological_result.sampling_point_name),
-                                               xml_helpers.strip_bad(fa_biological_result.activity_intent),
-                                               xml_helpers.strip_bad(fa_biological_result.individual_number),
-                                               xml_helpers.strip_bad(fa_biological_result.activity_subject_taxon),
-                                               xml_helpers.strip_bad(fa_biological_result.species_id),
-                                               xml_helpers.strip_bad(fa_biological_result.biopart_name),
-                                               fa_biological_result.result_group_summary_ct_wt,
-                                               xml_helpers.strip_bad(fa_biological_result.cell_form),
-                                               xml_helpers.strip_bad(fa_biological_result.cell_shape),
-                                               xml_helpers.strip_bad(fa_biological_result.habit),
-                                               xml_helpers.strip_bad(fa_biological_result.voltinism),
-                                               xml_helpers.strip_bad(fa_biological_result.pollution_tolerance),
-                                               xml_helpers.strip_bad(fa_biological_result.pollution_tolerance_scale),
-                                               xml_helpers.strip_bad(fa_biological_result.trophic_level),
-                                               xml_helpers.strip_bad(fa_biological_result.feeding_group),
-                                               xml_helpers.strip_bad(fa_biological_result.analytical_procedure_id),
-                                               xml_helpers.strip_bad(fa_biological_result.analytical_procedure_source),
-                                               xml_helpers.strip_bad(fa_biological_result.analytical_method_list_agency),
-                                               xml_helpers.strip_bad(fa_biological_result.lab_name),
-                                               fa_biological_result.analysis_date_time,
-                                               xml_helpers.strip_bad(fa_biological_result.analysis_time_zone),
-                                               fa_biological_result.analysis_end_date_time,
-                                               xml_helpers.strip_bad(fa_biological_result.analysis_end_time_zone),
-                                               xml_helpers.strip_bad(fa_biological_result.lab_remark),
-                                               fa_biological_result.all_result_detection_limit,
-                                               xml_helpers.strip_bad(fa_biological_result.detection_limit),
-                                               xml_helpers.strip_bad(fa_biological_result.detection_limit_description),
-                                               xml_helpers.strip_bad(fa_biological_result.detection_limit_unit),
-                                               xml_helpers.strip_bad(fa_biological_result.lower_quantitation_limit),
-                                               xml_helpers.strip_bad(fa_biological_result.upper_quantitation_limit),
-                                               xml_helpers.strip_bad(fa_biological_result.lab_certified),
-                                               xml_helpers.strip_bad(fa_biological_result.lab_accred_authority),
-                                               xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_yn),
-                                               xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_authority),
-                                               fa_biological_result.frequency_class
-                             ) result_clob
-            from fa_biological_result
-                 left join fa_station
-                   on fa_biological_result.fk_station = fa_station.pk_isn
-                 left join di_org
-                   on fa_station.organization_id = di_org.organization_id
-                 left join di_characteristic
-                   on fa_biological_result.fk_char = di_characteristic.pk_isn
-                 left join di_activity_medium
-                   on fa_biological_result.fk_act_medium = di_activity_medium.pk_isn
-                 left join di_geo_state
-                   on fa_station.fk_geo_state = di_geo_state.pk_isn
-                 left join di_geo_county
-                   on fa_station.fk_geo_county = di_geo_county.pk_isn
-              order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id, fa_biological_result.pk_isn!';
- 
-      commit;
-
-   end create_biological_result_temp;
+--   procedure create_biological_result_temp is
+--   begin
+--	  dbms_output.put_line(systimestamp || ' creating biological_result_temp...');
+--
+--      execute immediate 'truncate table biological_result_temp'; 
+--      execute immediate q'!insert /*+ append nologging */ into biological_result_temp (result_pk, activity_pk, station_pk, station_id, site_type, country_cd, state_cd, county_cd, huc_8, geom, 
+--                                                                                       activity_start_date, characteristic_name, characteristic_type, sample_media, organization_id,
+--                                                                                       organization_clob, activity_clob, result_clob) 
+--          select /*+ parallel (4) */
+--                 fa_biological_result.pk_isn result_pk,
+--                 min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
+--                                       order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
+--                 fa_biological_result.fk_station station_pk,
+--                 fa_station.organization_id || '-' || fa_station.station_id station_id,
+--                 fa_station.fk_primary_type site_type,
+--                 di_geo_state.country_code country_cd,
+--                 rtrim(di_geo_state.fips_state_code) state_cd,
+--                 di_geo_county.fips_county_code county_cd,
+--                 fa_station.generated_huc huc_8,
+--                 fa_station.geom geom, 
+--                 fa_biological_result.activity_start_date_time activity_start_date,
+--                 di_characteristic.display_name characteristic_name,
+--                 di_characteristic.characteristic_group_type characteristic_type,
+--                 di_activity_medium.activity_medium sample_media,
+--                 fa_biological_result.organization_id,
+--                 xml_helpers.organization(xml_helpers.strip_bad(fa_biological_result.organization_id), xml_helpers.strip_bad(di_org.organization_name)) organization_clob,
+--                 xml_helpers.biological_activity(xml_helpers.strip_bad(fa_biological_result.organization_id),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_id),
+--                                                 xml_helpers.strip_bad(fa_biological_result.trip_id),
+--                                                 xml_helpers.strip_bad(fa_biological_result.replicate_number),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_type),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_medium),
+--                                                 fa_biological_result.activity_start_date_time,
+--                                                 xml_helpers.strip_bad(fa_biological_result.act_start_time_zone),
+--                                                 fa_biological_result.activity_stop_date_time,
+--                                                 xml_helpers.strip_bad(fa_biological_result.act_stop_time_zone),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_rel_depth),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_depth),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_depth_unit),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_upper_depth),
+--                                                 xml_helpers.strip_bad(fa_biological_result.upr_lwr_depth_unit),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_lower_depth),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_depth_ref_point),
+--                                                 xml_helpers.strip_bad(fa_biological_result.project_id),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_cond_org_text),
+--                                                 xml_helpers.strip_bad(fa_biological_result.station_id),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_comment),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_latitude),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_longitude),
+--                                                 xml_helpers.strip_bad(fa_biological_result.map_scale),
+--                                                 fa_biological_result.horizontal_accuracy_measure, 
+--                                                 xml_helpers.strip_bad(fa_biological_result.fk_act_mad_hmethod),
+--                                                 xml_helpers.strip_bad(fa_biological_result.fk_act_mad_hdatum),
+--                                                 xml_helpers.strip_bad(fa_biological_result.activity_community),
+--                                                 fa_biological_result.sampling_duration,
+--                                                 xml_helpers.strip_bad(fa_biological_result.place_in_series),
+--                                                 fa_biological_result.reach_length,
+--                                                 fa_biological_result.reach_width,
+--                                                 xml_helpers.strip_bad(fa_biological_result.pass_count),
+--                                                 xml_helpers.strip_bad(fa_biological_result.trap_net_comment),
+--                                                 fa_biological_result.non_tow_current_speed,
+--                                                 fa_biological_result.tow_current_speed,
+--                                                 fa_biological_result.non_tow_net_surface_area,
+--                                                 fa_biological_result.tow_net_surface_area,
+--                                                 fa_biological_result.non_tow_net_mesh_size,
+--                                                 fa_biological_result.tow_net_mesh_size,
+--                                                 xml_helpers.strip_bad(fa_biological_result.boat_speed),
+--                                                 xml_helpers.strip_bad(fa_biological_result.toxicity_test_type),
+--                                                 fa_biological_result.field_procedure_id,
+--                                                 xml_helpers.strip_bad(fa_biological_result.field_gear_id),
+--                                                 fa_biological_result.field_prep_procedure_id,
+--                                                 xml_helpers.strip_bad(fa_biological_result.container_desc),
+--                                                 xml_helpers.strip_bad(fa_biological_result.presrv_strge_prcdr),
+--                                                 xml_helpers.strip_bad(fa_biological_result.temp_preservn_type),
+--                                                 xml_helpers.strip_bad(fa_biological_result.smprp_transport_storage_desc)      
+--                                     ) activity_clob,
+--                 xml_helpers.biological_result(xml_helpers.strip_bad(fa_biological_result.result_value_text),
+--                                               xml_helpers.strip_bad(fa_biological_result.characteristic_name),
+--                                               xml_helpers.strip_bad(fa_biological_result.sample_fraction_type),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_value),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_unit),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_meas_qual_code),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_value_status),
+--                                               xml_helpers.strip_bad(fa_biological_result.statistic_type),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_value_type),
+--                                               xml_helpers.strip_bad(fa_biological_result.weight_basis_type),
+--                                               xml_helpers.strip_bad(fa_biological_result.duration_basis),
+--                                               xml_helpers.strip_bad(fa_biological_result.temperature_basis_level),
+--                                               xml_helpers.strip_bad(fa_biological_result.particle_size),
+--                                               xml_helpers.strip_bad(fa_biological_result.precision),
+--                                               xml_helpers.strip_bad(fa_biological_result.bias),
+--                                               xml_helpers.strip_bad(fa_biological_result.confidence_level),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_comment),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_depth_meas_value),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_depth_meas_unit_code),
+--                                               xml_helpers.strip_bad(fa_biological_result.result_depth_alt_ref_pt_txt),
+--                                               xml_helpers.strip_bad(fa_biological_result.sampling_point_name),
+--                                               xml_helpers.strip_bad(fa_biological_result.activity_intent),
+--                                               xml_helpers.strip_bad(fa_biological_result.individual_number),
+--                                               xml_helpers.strip_bad(fa_biological_result.activity_subject_taxon),
+--                                               xml_helpers.strip_bad(fa_biological_result.species_id),
+--                                               xml_helpers.strip_bad(fa_biological_result.biopart_name),
+--                                               fa_biological_result.result_group_summary_ct_wt,
+--                                               xml_helpers.strip_bad(fa_biological_result.cell_form),
+--                                               xml_helpers.strip_bad(fa_biological_result.cell_shape),
+--                                               xml_helpers.strip_bad(fa_biological_result.habit),
+--                                               xml_helpers.strip_bad(fa_biological_result.voltinism),
+--                                               xml_helpers.strip_bad(fa_biological_result.pollution_tolerance),
+--                                               xml_helpers.strip_bad(fa_biological_result.pollution_tolerance_scale),
+--                                               xml_helpers.strip_bad(fa_biological_result.trophic_level),
+--                                               xml_helpers.strip_bad(fa_biological_result.feeding_group),
+--                                               xml_helpers.strip_bad(fa_biological_result.analytical_procedure_id),
+--                                               xml_helpers.strip_bad(fa_biological_result.analytical_procedure_source),
+--                                               xml_helpers.strip_bad(fa_biological_result.analytical_method_list_agency),
+--                                               xml_helpers.strip_bad(fa_biological_result.lab_name),
+--                                               fa_biological_result.analysis_date_time,
+--                                               xml_helpers.strip_bad(fa_biological_result.analysis_time_zone),
+--                                               fa_biological_result.analysis_end_date_time,
+--                                               xml_helpers.strip_bad(fa_biological_result.analysis_end_time_zone),
+--                                               xml_helpers.strip_bad(fa_biological_result.lab_remark),
+--                                               fa_biological_result.all_result_detection_limit,
+--                                               xml_helpers.strip_bad(fa_biological_result.detection_limit),
+--                                               xml_helpers.strip_bad(fa_biological_result.detection_limit_description),
+--                                               xml_helpers.strip_bad(fa_biological_result.detection_limit_unit),
+--                                               xml_helpers.strip_bad(fa_biological_result.lower_quantitation_limit),
+--                                               xml_helpers.strip_bad(fa_biological_result.upper_quantitation_limit),
+--                                               xml_helpers.strip_bad(fa_biological_result.lab_certified),
+--                                               xml_helpers.strip_bad(fa_biological_result.lab_accred_authority),
+--                                               xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_yn),
+--                                               xml_helpers.strip_bad(fa_biological_result.taxonomist_accred_authority),
+--                                               fa_biological_result.frequency_class
+--                             ) result_clob
+--            from fa_biological_result
+--                 left join fa_station
+--                   on fa_biological_result.fk_station = fa_station.pk_isn
+--                 left join di_org
+--                   on fa_station.organization_id = di_org.organization_id
+--                 left join di_characteristic
+--                   on fa_biological_result.fk_char = di_characteristic.pk_isn
+--                 left join di_activity_medium
+--                   on fa_biological_result.fk_act_medium = di_activity_medium.pk_isn
+--                 left join di_geo_state
+--                   on fa_station.fk_geo_state = di_geo_state.pk_isn
+--                 left join di_geo_county
+--                   on fa_station.fk_geo_county = di_geo_county.pk_isn
+--              order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id, fa_biological_result.pk_isn!';
+-- 
+--      commit;
+--
+--   end create_biological_result_temp;
    
    procedure create_station
    is
@@ -754,7 +754,7 @@ create or replace package body create_storet_objects
 
       dbms_output.put_line(systimestamp || ' started storet table transformation.');
       create_station;
-      create_biological_result_temp;
+--      create_biological_result_temp;
       create_regular_result;
       create_lookups;
       create_summaries;
