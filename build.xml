@@ -1,7 +1,7 @@
 <project name="QwStoretEtl" default="defaultEros">
     <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
 	
-	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, runMonthlyETL, mvMonthlyLogToRef" />
+	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, runMonthlyETL, mvLogToRef" />
 
 	<target name="dev" depends="buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
 
@@ -44,7 +44,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e -x storet_dump.sh ${weekly_monthly}"
+            command="bash -e -x storet_dump.sh ${export_type} ${target_env}"
             outputproperty="pullResult"
         />
     </target>
@@ -113,17 +113,6 @@
         </exec>
     </target>
 	
-    <target name="mvMonthlyLogToRef" depends="setStopRun" unless="stopRun">
-        <echo>Move the monthly export log file to the export ref file at ${storet_host}</echo>
-        <sshexec host="${storet_host}"
-            trust="true"
-            failonerror="true"
-            username="storet_user"
-            password="${storet_password}"
-            command="mv /pdc/temp/stormodb_shire_storetw_Monthly_expdp.log /pdc/temp/stormodb_shire_storetw_Monthly_expdp.ref"
-        />
-    </target>
-	
     <target name="mvLogToRef" depends="setStopRun" unless="stopRun">
         <echo>Move the export log file to the export ref file at ${storet_host}</echo>
         <sshexec host="${storet_host}"
@@ -131,7 +120,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="mv /pdc/temp/stormodb_shire_storetw_Weekly_expdp.log /pdc/temp/stormodb_shire_storetw_Weekly_expdp.ref"
+            command="mv /pdc/temp/stormodb_shire_storetw_${export_type}_expdp.log /pdc/temp/storet_${export_type}_${target_env}.ref"
         />
     </target>
     
