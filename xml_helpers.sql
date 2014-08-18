@@ -1,7 +1,7 @@
 create or replace package xml_helpers
 as
-	function organization(	organization_id				   di_org.organization_id%type, 
-							organization_name			   di_org.organization_name%type) 
+	function organization(	organization_id				   di_org.organization_id%type,
+							organization_name			   di_org.organization_name%type)
 		return clob deterministic;
 		
 	function biological_activity(	organization_id				   fa_biological_result.organization_id%type,
@@ -28,7 +28,7 @@ as
 									activity_latitude			   fa_biological_result.activity_latitude%type,
 									activity_longitude			   fa_biological_result.activity_longitude%type,
 									map_scale					   fa_biological_result.map_scale%type,
-									horizontal_accuracy_measure	   fa_biological_result.horizontal_accuracy_measure%type, 
+									horizontal_accuracy_measure	   fa_biological_result.horizontal_accuracy_measure%type,
 									fk_act_mad_hmethod			   fa_biological_result.fk_act_mad_hmethod%type,
 									fk_act_mad_hdatum			   fa_biological_result.fk_act_mad_hdatum%type,
 									activity_community			   fa_biological_result.activity_community%type,
@@ -52,7 +52,7 @@ as
 									container_desc				   fa_biological_result.container_desc%type,
 									presrv_strge_prcdr			   fa_biological_result.presrv_strge_prcdr%type,
 									temp_preservn_type			   fa_biological_result.temp_preservn_type%type,
-									smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type 
+									smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type,
 									md_smp_proc_proc_name		   md_sample_proc.procedure_name%type,
 									md_smp_proc_proc_qual_type	   md_sample_proc.procedure_qual_type%type,
 									md_smp_proc_description		   md_sample_proc.description%type,
@@ -132,8 +132,8 @@ end xml_helpers;
 
 create or replace package body xml_helpers
 as
-	function organization(	organization_id				   di_org.organization_id%type, 
-							organization_name			   di_org.organization_name%type) 
+	function organization(	organization_id				   di_org.organization_id%type,
+							organization_name			   di_org.organization_name%type)
 		return clob deterministic
 	is
 		rtn clob;
@@ -181,7 +181,7 @@ as
 									activity_latitude			   fa_biological_result.activity_latitude%type,
 									activity_longitude			   fa_biological_result.activity_longitude%type,
 									map_scale					   fa_biological_result.map_scale%type,
-									horizontal_accuracy_measure	   fa_biological_result.horizontal_accuracy_measure%type, 
+									horizontal_accuracy_measure	   fa_biological_result.horizontal_accuracy_measure%type,
 									fk_act_mad_hmethod			   fa_biological_result.fk_act_mad_hmethod%type,
 									fk_act_mad_hdatum			   fa_biological_result.fk_act_mad_hdatum%type,
 									activity_community			   fa_biological_result.activity_community%type,
@@ -205,7 +205,7 @@ as
 									container_desc				   fa_biological_result.container_desc%type,
 									presrv_strge_prcdr			   fa_biological_result.presrv_strge_prcdr%type,
 									temp_preservn_type			   fa_biological_result.temp_preservn_type%type,
-									smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type 
+									smprp_transport_storage_desc   fa_biological_result.smprp_transport_storage_desc%type,
 									md_smp_proc_proc_name		   md_sample_proc.procedure_name%type,
 									md_smp_proc_proc_qual_type	   md_sample_proc.procedure_qual_type%type,
 									md_smp_proc_description		   md_sample_proc.description%type,
