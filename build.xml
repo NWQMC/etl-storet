@@ -1,7 +1,7 @@
 <project name="QwStoretEtl" default="defaultEros">
     <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
 	
-	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, runMonthlyETL, mvLogToRef" />
+	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, runMonthlyPackageStage, mvLogToRef" />
 
 	<target name="dev" depends="buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
 
@@ -71,16 +71,8 @@
 	        <arg value="parfile=monthly_impdp.par"/>
 	    </exec>
 	</target>
-    
-    <target name="runMonthlyETL" depends="setStopRun" unless="stopRun">
-        <echo>Run the monthly ETL on ${stagingInstance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="storetw/${storetw_password}@${stagingInstance}"/>
-            <arg value="@${basedir}/storetw_grants.sql"/>
-        </exec>
-    </target>
-    
-    <target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
+
+	<target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
         <echo>Grant select on the imported tables in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="storetw/${storetw_password}@${stagingInstance}"/>
@@ -95,7 +87,15 @@
             <arg value="@${basedir}/runPackageStage.sql"/>
         </exec>
     </target>
-
+    
+    <target name="runMonthlyPackageStage" depends="setStopRun" unless="stopRun">
+        <echo>Running the monthly ETL Package in ${stagingInstance}</echo>
+        <exec executable="sqlplus" failonerror="true">
+            <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
+            <arg value="@${basedir}/runMonthlyPackageStage.sql"/>
+        </exec>
+    </target>
+    
     <target name="buildPackageDw" depends="setStopRun" unless="stopRun">
         <echo>Rebuiling the etl database package and body in ${instance}</echo>
         <exec executable="sqlplus" failonerror="true">

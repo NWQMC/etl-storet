@@ -231,12 +231,12 @@ as
 		commit;
 	end create_regular_result;
 	
-	procedure biological_activity_join
+	procedure create_biological_activity_tmp
 	is
 	begin
-		dbms_output.put_line(systimestamp || ' creating biological_activity_join...');
-		execute immediate 'truncate table biological_activity_join';
-		execute immediate q'!insert /*+ append nologging */ into biological_activity_join (activity_pk, fk_station, activity_start_date_time, activity_id)
+		dbms_output.put_line(systimestamp || ' creating biological_activity_tmp...');
+		execute immediate 'truncate table biological_activity_tmp';
+		execute immediate q'!insert /*+ append nologging */ into biological_activity_tmp (activity_pk, fk_station, activity_start_date_time, activity_id)
 			select /*+ parallel (4) */
 				min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
 									order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
@@ -247,7 +247,7 @@ as
 				fa_biological_result!';
 		
 		commit;
-	end biological_activity_join;
+	end create_biological_activity_tmp;
 	
 	procedure create_biological_result_temp
 	is
@@ -271,7 +271,7 @@ as
 					characteristic_type, sample_media, organization_id, organization_clob, activity_clob, result_clob)
 				select /*+ parallel (4) */
 					fa_biological_result.pk_isn result_pk,
-					biological_activity_join.activity_pk,
+					biological_activity_tmp.activity_pk,
 					fa_biological_result.fk_station station_pk,
 					fa_station.organization_id || '-' || fa_station.station_id station_id,
 					fa_station.fk_primary_type site_type,
@@ -426,10 +426,10 @@ as
 						on fa_biological_result.field_procedure_id = md_sample_proc.procedure_id
 					left join md_sample_proc md_sample_proc_prep
 						on fa_biological_result.field_prep_procedure_id = md_sample_proc.procedure_id
-					left join biological_activity_join
-						on fa_biological_result.fk_station = biological_activity_join.fk_station
-						and fa_biological_result.activity_start_date_time = biological_activity_join.activity_start_date_time
-						and fa_biological_result.activity_id = biological_activity_join.activity_id
+					left join biological_activity_tmp
+						on fa_biological_result.fk_station = biological_activity_tmp.fk_station
+						and fa_biological_result.activity_start_date_time = biological_activity_tmp.activity_start_date_time
+						and fa_biological_result.activity_id = biological_activity_tmp.activity_id
 				where
 					fa_biological_result.pk_isn between low_pk_isn and high_pk_isn!';
 			
@@ -881,11 +881,21 @@ as
 		dbms_output.enable(100000);
 		dbms_output.put_line(systimestamp || ' started storet table transformation.');
 		create_station;
+		create_biological_activity_tmp;
 		create_biological_result_temp;
 		create_regular_result;
 		create_lookups;
 		create_summaries;
 		dbms_output.put_line(systimestamp || ' completed. (success)');
 	end main;
+	
+	procedure monthly
+	is
+	begin
+		dbms_output.enable(100000);
+		dbms_output.put_line(systimestamp || ' started storet table transformation.');
+		create_regular_result_no_src;
+		dbms_output.put_line(systimestamp || ' completed. (success)');
+	end
 end create_storet_objects;
 /
