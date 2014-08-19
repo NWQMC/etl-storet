@@ -437,7 +437,7 @@ as
 		
 			low_pk_isn := low_pk_isn + chunk_size;
 			high_pk_isn := high_pk_isn + chunk_size;
-		end loop
+		end loop;
 		
 	end create_biological_result_temp;
 	
@@ -896,6 +896,6 @@ as
 		dbms_output.put_line(systimestamp || ' started storet table transformation.');
 		create_regular_result_no_src;
 		dbms_output.put_line(systimestamp || ' completed. (success)');
-	end
+	end monthly;
 end create_storet_objects;
 /
