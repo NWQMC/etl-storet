@@ -2,6 +2,7 @@ create or replace package create_storet_objects
 	authid definer
 as
 	procedure main;
+	procedure monthly;
 end create_storet_objects;
 /
 
