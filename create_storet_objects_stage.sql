@@ -26,7 +26,7 @@ as
 			select /*+ parallel (4) */
 				*
 			from
-				fa_regular_result
+				storetw_fa_regular_result
 			where
 				source_system <> 'WQX'!';
 		
