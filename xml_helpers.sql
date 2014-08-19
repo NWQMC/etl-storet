@@ -322,7 +322,7 @@ as
 									xmlelement("MethodIdentifier", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 1))),
 									xmlelement("MethodIdentifierContext", strip_bad(regexp_substr(field_prep_procedure_id, '[^~]+', 1, 2))),
 									xmlelement("MethodName", md_smp_proc_prep_proc_name),
-									xmlelement("MethodQualifierTypeName", md_smp_proc_prep_proc_qual_type),
+									xmlelement("MethodQualifierTypeName", md_smp_proc_prep_proc_qual_typ),
 									xmlelement("MethodDescriptionText", md_smp_proc_prep_description)
 								),
 								xmlelement("SampleContainerTypeName", container_desc),
