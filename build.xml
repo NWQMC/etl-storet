@@ -46,7 +46,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e -x storet_dump.sh ${export_type} ${target_env}"
+            command="bash -e -x /pdc/temp/storet_dump.sh ${export_type} ${target_env}"
             outputproperty="pullResult"
         />
     </target>
