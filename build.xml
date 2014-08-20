@@ -34,7 +34,9 @@
             trust="true"
             username="storet_user"
             password="${storet_password}"
-            command="dos2unix storet_dump.sh"/>
+            command="dos2unix storet_dump.sh"
+        	verbose="${verbose}"
+        />
     </target>
     
     <target name="pullStoretWData">
