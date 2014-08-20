@@ -152,7 +152,8 @@ as
 			from
 				storetw_fa_regular_result
 			where
-				source_system <> 'WQX'!';
+				source_system != 'WQX'
+				or source_system is null!';
 		
 		commit;
 	end create_regular_result_no_src;

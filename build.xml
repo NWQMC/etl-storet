@@ -1,9 +1,7 @@
 <project name="QwStoretEtl" default="defaultEros">
     <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
 	
-	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, runMonthlyPackageStage, mvLogToRef" />
-
-	<target name="dev" depends="buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
+	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, mvLogToRef" />
 
 	<target name="ci" depends="buildPackageStage, runPackageStage, buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
 
