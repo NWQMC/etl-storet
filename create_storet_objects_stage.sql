@@ -362,14 +362,22 @@ as
 		dbms_output.put_line(systimestamp || ' creating biological_activity_tmp...');
 		execute immediate 'truncate table biological_activity_tmp';
 		execute immediate q'!insert /*+ append nologging */ into biological_activity_tmp (activity_pk, fk_station, activity_start_date_time, activity_id)
-			select /*+ parallel (4) */
-				min(rownum) over (partition by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id
-									order by fa_biological_result.fk_station, fa_biological_result.activity_start_date_time, fa_biological_result.activity_id) activity_pk,
-				fa_biological_result.fk_station,
-				fa_biological_result.activity_start_date_time,
-				fa_biological_result.activity_id
+	        select
+				rownum,
+				fk_station,
+				activity_start_date_time,
+				activity_id
 			from
-				fa_biological_result!';
+				(select /*+ parallel (4) */
+					distinct fa_biological_result.fk_station,
+					fa_biological_result.activity_start_date_time,
+					fa_biological_result.activity_id
+				from
+					fa_biological_result
+				order by
+					fa_biological_result.fk_station,
+					fa_biological_result.activity_start_date_time,
+					fa_biological_result.activity_id)!';
 		
 		commit;
 	end create_biological_activity_tmp;
