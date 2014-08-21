@@ -567,7 +567,7 @@ as
 						and fa_biological_result.activity_id = biological_activity_tmp.activity_id
 				where
 					fa_biological_result.pk_isn between low_pk_isn and high_pk_isn
-				log errors into BIOLOGICAL_RESULT_TEMP_ERRLOG ("chunky") reject limit unlimited;
+				log errors into BIOLOGICAL_RESULT_TEMP_ERRLOG reject limit unlimited;
 			
 			commit;
 		
