@@ -384,22 +384,23 @@ as
 	
 	procedure create_biological_result_temp
 	is
-		chunk_size	number := 50000;
+		chunk_size	number := 100000;
 		low_pk_isn	number;
 		high_pk_isn	number;
 		max_pk_isn	number;
 	begin
 		dbms_output.put_line(systimestamp || ' creating biological_result_temp...');
 		execute immediate 'truncate table biological_result_temp';
-		execute immediate 'select max(pk_isn) into max_pk_isn from fa_biological_result';
+		
+		select max(pk_isn) into max_pk_isn from fa_biological_result;
 		
 		low_pk_isn := 1;
 		high_pk_isn := chunk_size;
 		
 		while low_pk_isn < max_pk_isn
 		loop
-		
-			execute immediate q'!insert /*+ append nologging */ into biological_result_temp
+			dbms_output.put_line(systimestamp || ' inserting rows with pk_isn between ' || low_pk_isn || ' and ' || high_pk_isn);
+			insert /*+ append nologging */ into biological_result_temp
 					(result_pk, activity_pk, station_pk, station_id, site_type, country_cd, state_cd, county_cd, huc_8, geom, activity_start_date, characteristic_name, 
 					characteristic_type, sample_media, organization_id, organization_clob, activity_clob, result_clob)
 				select /*+ parallel (4) */
@@ -558,13 +559,13 @@ as
 					left join md_sample_proc md_sample_proc
 						on fa_biological_result.field_procedure_id = md_sample_proc.procedure_id
 					left join md_sample_proc md_sample_proc_prep
-						on fa_biological_result.field_prep_procedure_id = md_sample_proc.procedure_id
+						on fa_biological_result.field_prep_procedure_id = md_sample_proc_prep.procedure_id
 					left join biological_activity_tmp
 						on fa_biological_result.fk_station = biological_activity_tmp.fk_station
 						and fa_biological_result.activity_start_date_time = biological_activity_tmp.activity_start_date_time
 						and fa_biological_result.activity_id = biological_activity_tmp.activity_id
 				where
-					fa_biological_result.pk_isn between low_pk_isn and high_pk_isn!';
+					fa_biological_result.pk_isn between low_pk_isn and high_pk_isn;
 			
 			commit;
 		
