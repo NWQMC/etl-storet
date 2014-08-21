@@ -471,12 +471,18 @@ as
 						xml_helpers.strip_bad(fa_biological_result.presrv_strge_prcdr),
 						xml_helpers.strip_bad(fa_biological_result.temp_preservn_type),
 						xml_helpers.strip_bad(fa_biological_result.smprp_transport_storage_desc),
-						xml_helpers.strip_bad(md_sample_proc.procedure_name),
-						xml_helpers.strip_bad(md_sample_proc.procedure_qual_type),
-						xml_helpers.strip_bad(md_sample_proc.description),
-						xml_helpers.strip_bad(md_sample_proc_prep.procedure_name),
-						xml_helpers.strip_bad(md_sample_proc_prep.procedure_qual_type),
-						xml_helpers.strip_bad(md_sample_proc_prep.description)
+						xml_helpers.strip_bad(null),
+						xml_helpers.strip_bad(null),
+						xml_helpers.strip_bad(null),
+						xml_helpers.strip_bad(null),
+						xml_helpers.strip_bad(null),
+						xml_helpers.strip_bad(null)
+--						xml_helpers.strip_bad(md_sample_proc.procedure_name),
+--						xml_helpers.strip_bad(md_sample_proc.procedure_qual_type),
+--						xml_helpers.strip_bad(md_sample_proc.description),
+--						xml_helpers.strip_bad(md_sample_proc_prep.procedure_name),
+--						xml_helpers.strip_bad(md_sample_proc_prep.procedure_qual_type),
+--						xml_helpers.strip_bad(md_sample_proc_prep.description)
 					) activity_clob,
 					xml_helpers.biological_result(
 						xml_helpers.strip_bad(fa_biological_result.result_value_text),
@@ -557,10 +563,10 @@ as
 						on fa_station.fk_geo_county = di_geo_county.pk_isn
 					left join md_citation
 						on fa_biological_result.taxon_detail_citation_id = md_citation.citation_id
-					left join md_sample_proc md_sample_proc
-						on fa_biological_result.field_procedure_id = md_sample_proc.procedure_id
-					left join md_sample_proc md_sample_proc_prep
-						on fa_biological_result.field_prep_procedure_id = md_sample_proc_prep.procedure_id
+--					left join md_sample_proc md_sample_proc
+--						on fa_biological_result.field_procedure_id = md_sample_proc.procedure_id
+--					left join md_sample_proc md_sample_proc_prep
+--						on fa_biological_result.field_prep_procedure_id = md_sample_proc_prep.procedure_id
 					left join biological_activity_tmp
 						on fa_biological_result.fk_station = biological_activity_tmp.fk_station
 						and fa_biological_result.activity_start_date_time = biological_activity_tmp.activity_start_date_time
