@@ -1,0 +1,7 @@
+directory=pdc_temp
+dumpfile=stormodb_shire_storetw_Monthly_%u.cdmp
+logfile=stormodb_shire_storetw_Monthly_impdp.log
+tables=(FA_REGULAR_RESULT)
+table_exists_action=replace
+EXCLUDE=constraint,index,grant
+remap_tablespace=STORETARCHDATA:STORETDATA

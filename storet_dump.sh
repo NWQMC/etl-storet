@@ -5,19 +5,28 @@ WORK_DIR=/pdc/temp
 
 # display usage message
 function usage() {
-	cat <<-EndUsageText
-		Usage: `basename $0` OPTIONS
+	cat <<EndUsageText
+
+Usage: `basename $0` EXPORT_TYPE TARGET_ENV
+
+	This script pulls storet data exports from the EPA.
 		
-		This script retrieves weekly or monthly storet data exports from the EPA.
-		It pulls down the appropriate log file and checks the export was successfully completed.
-		It checks the previous 
+EXPORT_TYPE
+	One of these must be specified. If more than one is set, the last one parsed will win.
+			
+	Monthly  download the monthly export
+	Weekly   download the weekly export
+			
+TARGET_ENV
+	Tells the script which reference file to look for to see if the download needs to run.
+	One of these must be specified. If more than one is set, the last one parsed will win.
+
+	ci       continuous integration
+	dev      development
+	qa       QA
+	prod     production
 		
-		OPTIONS:
-		-m download the monthly exports
-		
-		-w download the weekly exports
-		
-	EndUsageText
+EndUsageText
 }
 
 # output of this script is parsed and looks for this text to raise errors
@@ -35,30 +44,40 @@ function stop_ok() {
 # set so if any command in a piped sequence returns a non-zero error code, the script fails
 set -o pipefail
 
-# if not a single parameter, display usage and quit
-[ "$#" -ne 1 ] && usage && stop_bad
+# if not exactly two parameters, display usage and quit
+[ "$#" -ne 2 ] && usage && stop_bad
 
-# check options for -m [monthly] or -w [weekly], first one it finds is the one it uses
-while getopts ":mw" opt
+# parse arguments
+for arg in "$@"
 do
-	case $opt in
-		m)
-			EXPORT_LOG="stormodb_shire_storetw_Monthly_expdp.log"
-			EXPORT_REF="stormodb_shire_storetw_Monthly_expdp.ref"
-			DUMP_FILE_GREP="stormodb_shire_storetw_Monthly_...cdmp"
-			break
+	case $arg in
+		Monthly)
+			EXPORT_TYPE=$arg
 			;;
-		w)
-			EXPORT_LOG="stormodb_shire_storetw_Weekly_expdp.log"
-			EXPORT_REF="stormodb_shire_storetw_Weekly_expdp.ref"
-			DUMP_FILE_GREP="stormodb_shire_storetw_Weekly_...cdmp"
-			break
+		Weekly)
+			EXPORT_TYPE=$arg
+			;;
+		ci)
+			TARGET_ENV=$arg
+			;;
+		dev)
+			TARGET_ENV=$arg
+			;;
+		qa)
+			TARGET_ENV=$arg
+			;;
+		prod)
+			TARGET_ENV=$arg
 			;;
 	esac
 done
 
 # if any required variables are null or empty, display usage and quit
-([ ! -n "${EXPORT_LOG}" ] || [ ! -n "${EXPORT_REF}" ] || [ ! -n "${DUMP_FILE_GREP}" ]) && usage && stop_bad
+([ ! -n "${EXPORT_TYPE}" ] || [ ! -n "${TARGET_ENV}" ]) && usage && stop_bad
+
+EXPORT_REF="storet_${EXPORT_TYPE}_${TARGET_ENV}.ref"
+EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
+DUMP_FILE_GREP="stormodb_shire_storetw_${EXPORT_TYPE}_...cdmp"
 
 starting_dir=`pwd`
 

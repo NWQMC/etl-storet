@@ -21,5 +21,7 @@ grant select on lu_mad_hdatum to storetmodern;
 grant select on lu_mad_vmethod to storetmodern;
 grant select on lu_mad_vdatum to storetmodern;
 grant select on mt_wh_config to storetmodern;
+grant select on md_citation to storetmodern;
+grant select on md_sample_proc to storetmodern;
 
 select 'end time: ' || systimestamp from dual;
