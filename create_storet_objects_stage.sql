@@ -384,7 +384,7 @@ as
 	
 	procedure create_biological_result_temp
 	is
-		chunk_size	number := 100000;
+		chunk_size	number := 500000;
 		low_pk_isn	number;
 		high_pk_isn	number;
 		max_pk_isn	number;
