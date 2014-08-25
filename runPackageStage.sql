@@ -5,7 +5,7 @@ whenever oserror exit failure rollback;
 set timing on;
 set serveroutput on;
 set linesize 160
-exec dbms_output.enable(100000);
+exec dbms_output.enable(1000000);
 select 'start time: ' || systimestamp from dual;
 
 begin
