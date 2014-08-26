@@ -1,8 +1,6 @@
 <project name="QwStoretEtl" default="defaultEros">
-    <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, mvLogToRef"/>
-	
-	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, mvLogToRef" />
-
+    <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL"/>
+	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
 	<target name="ci" depends="buildPackageStage, runPackageStage, buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
 
     <target name="buildXMLHelpersPackage">
@@ -23,7 +21,12 @@
 
     <target name="scpScriptStage">
         <echo>Copy the script to ${storet_host}</echo>
-        <scp file="storet_dump.sh" todir="storet_user:${storet_password}@${storet_host}:/pdc/temp" trust="true"/>
+        <scp todir="storet_user:${storet_password}@${storet_host}:/pdc/temp" trust="true">
+        	<fileset dir=".">
+        		<include name="storet_dump.sh" />
+        		<include name="storet_finish.sh" />
+        	</fileset>
+        </scp>
     </target>
 
     <target name="dos2unixStage">
@@ -32,7 +35,7 @@
             trust="true"
             username="storet_user"
             password="${storet_password}"
-            command="dos2unix /pdc/temp/storet_dump.sh"
+            command="dos2unix /pdc/temp/storet_dump.sh /pdc/temp/storet_finish.sh"
         	verbose="${verbose}"
         />
     </target>
@@ -112,18 +115,18 @@
             <arg value="${dblink}"/>
         </exec>
     </target>
-	
-    <target name="mvLogToRef" depends="setStopRun" unless="stopRun">
-        <echo>Move the export log file to the export ref file at ${storet_host}</echo>
+    
+    <target name="finishETL" depends="setStopRun" unless="stopRun">
+        <echo>Runs the finishing script at ${storet_host}</echo>
         <sshexec host="${storet_host}"
             trust="true"
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="mv /pdc/temp/stormodb_shire_storetw_${export_type}_expdp.log /pdc/temp/storet_${export_type}_${target_env}.ref"
+            command="bash -e -x /pdc/temp/storet_finish.sh ${export_type} ${target_env}"
         />
     </target>
-    
+	
     <target name="compilePackageEmptyCiDB">
         <echo>Rebuiling the etl database package and body in ${instance}</echo>
         <exec executable="sqlplus" failonerror="true">
