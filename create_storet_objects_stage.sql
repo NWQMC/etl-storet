@@ -851,9 +851,16 @@ as
 				rownum sort_order
 			from
 				(select /*+ parallel (4) */
-					distinct characteristic_name code_value
+					characteristic_name code_value
 				from
 					fa_regular_result
+				where
+					characteristic_name is not null
+				union
+				select /*+ parallel (4) */
+					characteristic_name code_value
+				from
+					biological_result_temp
 				where
 					characteristic_name is not null
 				order by
@@ -870,11 +877,18 @@ as
 				rownum sort_order
 			from
 				(select /*+ parallel (4) */
-					distinct characteristic_group_type code_value
+					characteristic_group_type code_value
 				from
 					fa_regular_result
 				where
 					characteristic_group_type is not null
+				union
+				select /*+ parallel (4) */
+					characteristic_type code_value
+				from
+					biological_result_temp
+				where
+					characteristic_type is not null
 				order by
 					1)';
 		
@@ -966,8 +980,15 @@ as
 					fa_regular_result
 				where
 					activity_medium is not null
+				union
+				select /*+ parallel (4) */
+					sample_media as code_value
+				from
+					biological_result_temp
+				where
+					sample_media is not null
 				order by
-					activity_medium)';
+					1)';
 		
 		commit;
 		
