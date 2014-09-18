@@ -246,7 +246,6 @@ as
 								xmlelement("MeasureValue", activity_lower_depth),
 								xmlelement("MeasureUnitCode", nvl2(activity_lower_depth, upr_lwr_depth_unit, null))
 							),
-							xmlelement("ActivityDepthAltitudeReferencePointText", activity_depth_ref_point),
 							xmlelement("ActivityDepthAltitudeReferencePointText", nvl2(coalesce(activity_upper_depth, activity_lower_depth), activity_depth_ref_point, null)),
 							xmlelement("ProjectIdentifier", project_id),
 							xmlelement("ActivityConductingOrganizationText", activity_cond_org_text),
