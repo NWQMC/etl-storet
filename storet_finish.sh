@@ -1,5 +1,5 @@
 #!/bin/bash
-WORK_DIR=/pdc/temp
+WORK_DIR=/pdc/WQP
 
 # display usage message
 function usage() {
@@ -16,7 +16,7 @@ EXPORT_TYPE
 	Weekly   download the weekly export
 			
 TARGET_ENV
-	Tells the script which reference file to look for to see if the download needs to run.
+	Tells the script which environment to clear the WQP cache for.
 	One of these must be specified. If more than one is set, the last one parsed will win.
 
 	ci       continuous integration
@@ -49,23 +49,20 @@ do
 			;;
 		dev)
 			CLEAR_CACHE_URL="http://cida-eros-wqpdev.er.usgs.gov:8080/wmsproxy/rest/clearcache/wqp_sites"
-			TARGET_ENV=$arg
 			;;
 		qa)
 			CLEAR_CACHE_URL="http://cida-eros-wqpqa.er.usgs.gov:8080/wmsproxy/rest/clearcache/wqp_sites"
-			TARGET_ENV=$arg
 			;;
 		prod)
 			CLEAR_CACHE_URL="http://www.waterqualitydata.us/ogcservices/rest/clearcache/wqp_sites"
-			TARGET_ENV=$arg
 			;;
 	esac
 done
 
 # if any required variables are null or empty, display usage and quit
-([ ! -n "${EXPORT_TYPE}" ] || [ ! -n "${TARGET_ENV}" ] || [ ! -n "${CLEAR_CACHE_URL}" ]) && usage && stop_bad
+([ ! -n "${EXPORT_TYPE}" ] || [ ! -n "${CLEAR_CACHE_URL}" ]) && usage && stop_bad
 
-EXPORT_REF="storet_${EXPORT_TYPE}_${TARGET_ENV}.ref"
+EXPORT_REF="storet_${EXPORT_TYPE}.ref"
 EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
 
 starting_dir=`pwd`

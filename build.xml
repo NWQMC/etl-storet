@@ -1,7 +1,17 @@
-<project name="QwStoretEtl" default="defaultEros">
-    <target name="defaultEros" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL"/>
+<project name="QwStoretEtl" default="weeklyETL">
+	<property name="work.dir" value="/pdc/WQP" />
+	
+    <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL" />
 	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
-	<target name="ci" depends="buildPackageStage, runPackageStage, buildPackageDw, compilePackageEmptyCiDB, runPackageDw"/>
+	<target name="ci" depends="buildPackageStage, runPackageStage, buildPackageDw, compilePackageEmptyCiDB, runPackageDw" />
+
+	<target name="devqaWeeklyETL" depends="weeklyETL">
+		<antcall target="setStopRun" />
+	</target>
+	
+	<target name="devqaMonthlyETL" depends="monthlyETL">
+		<antcall target="setStopRun" />
+	</target>
 
     <target name="buildXMLHelpersPackage">
         <echo>Rebuiling the xml_helpers database package and body in ${stagingInstance}</echo>
@@ -21,7 +31,7 @@
 
     <target name="scpScriptStage">
         <echo>Copy the script to ${storet_host}</echo>
-        <scp todir="storet_user:${storet_password}@${storet_host}:/pdc/temp" trust="true">
+        <scp todir="storet_user:${storet_password}@${storet_host}:${work.dir}" trust="true">
         	<fileset dir=".">
         		<include name="storet_dump.sh" />
         		<include name="storet_finish.sh" />
@@ -35,7 +45,7 @@
             trust="true"
             username="storet_user"
             password="${storet_password}"
-            command="dos2unix /pdc/temp/storet_dump.sh /pdc/temp/storet_finish.sh"
+            command="dos2unix ${work.dir}/storet_dump.sh ${work.dir}/storet_finish.sh"
         	verbose="${verbose}"
         />
     </target>
@@ -47,7 +57,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e -x /pdc/temp/storet_dump.sh ${export_type} ${target_env}"
+            command="bash -e -x ${work.dir}/storet_dump.sh ${export_type}"
             outputproperty="pullResult"
         />
     </target>
@@ -123,7 +133,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e -x /pdc/temp/storet_finish.sh ${export_type} ${target_env}"
+            command="bash -e -x ${work.dir}/storet_finish.sh ${export_type} ${target_env}"
         />
     </target>
 	
