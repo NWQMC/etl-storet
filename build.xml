@@ -1,5 +1,5 @@
 <project name="QwStoretEtl" default="weeklyETL">
-	<property name="work.dir" value="/pdc/WQP" />
+	<property name="work.dir" value="/pdc/wqp_data" />
 	
     <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL" />
 	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />

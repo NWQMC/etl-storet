@@ -1,5 +1,5 @@
 #!/bin/bash
-WORK_DIR=/pdc/WQP
+WORK_DIR=/pdc/wqp_data
 
 # display usage message
 function usage() {

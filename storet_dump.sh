@@ -1,7 +1,7 @@
 #!/bin/bash
 DATE_SUFFIX=`date +%Y%m%d_%H%M`
 HTTP_BASE=http://www.epa.gov/storet/download/storetw
-WORK_DIR=/pdc/WQP
+WORK_DIR=/pdc/wqp_data
 
 # display usage message
 function usage() {
