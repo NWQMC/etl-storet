@@ -58,8 +58,6 @@ EXPORT_REF="storet_${EXPORT_TYPE}.ref"
 EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
 DUMP_FILE_GREP="stormodb_shire_storetw_${EXPORT_TYPE}_...cdmp"
 
-starting_dir=`pwd`
-
 cd ${WORK_DIR}
 
 # quietly pull the export log, using timestamping to only pull if remote file is newer than local
@@ -76,5 +74,3 @@ comm -13 <(grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG}) <(ls | grep ${DUMP_FILE_GREP
 
 # download any dump files newer on remote than they are on local
 grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG} | sed -e 's/^/http:\/\/www.epa.gov\/storet\/download\/storetw\//' | xargs -n 1 -P 12 wget -Nq
-
-cd ${starting_dir}
