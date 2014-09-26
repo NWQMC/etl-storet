@@ -1,13 +1,13 @@
 #!/bin/bash
 DATE_SUFFIX=`date +%Y%m%d_%H%M`
 HTTP_BASE=http://www.epa.gov/storet/download/storetw
-WORK_DIR=/pdc/temp
+WORK_DIR=/pdc/wqp_data
 
 # display usage message
 function usage() {
 	cat <<EndUsageText
 
-Usage: `basename $0` EXPORT_TYPE TARGET_ENV
+Usage: `basename $0` EXPORT_TYPE
 
 	This script pulls storet data exports from the EPA.
 		
@@ -16,15 +16,6 @@ EXPORT_TYPE
 			
 	Monthly  download the monthly export
 	Weekly   download the weekly export
-			
-TARGET_ENV
-	Tells the script which reference file to look for to see if the download needs to run.
-	One of these must be specified. If more than one is set, the last one parsed will win.
-
-	ci       continuous integration
-	dev      development
-	qa       QA
-	prod     production
 		
 EndUsageText
 }
@@ -44,8 +35,8 @@ function stop_ok() {
 # set so if any command in a piped sequence returns a non-zero error code, the script fails
 set -o pipefail
 
-# if not exactly two parameters, display usage and quit
-[ "$#" -ne 2 ] && usage && stop_bad
+# if not exactly one parameter, display usage and quit
+[ "$#" -ne 1 ] && usage && stop_bad
 
 # parse arguments
 for arg in "$@"
@@ -57,29 +48,15 @@ do
 		Weekly)
 			EXPORT_TYPE=$arg
 			;;
-		ci)
-			TARGET_ENV=$arg
-			;;
-		dev)
-			TARGET_ENV=$arg
-			;;
-		qa)
-			TARGET_ENV=$arg
-			;;
-		prod)
-			TARGET_ENV=$arg
-			;;
 	esac
 done
 
 # if any required variables are null or empty, display usage and quit
-([ ! -n "${EXPORT_TYPE}" ] || [ ! -n "${TARGET_ENV}" ]) && usage && stop_bad
+[ ! -n "${EXPORT_TYPE}" ] && usage && stop_bad
 
-EXPORT_REF="storet_${EXPORT_TYPE}_${TARGET_ENV}.ref"
+EXPORT_REF="storet_${EXPORT_TYPE}.ref"
 EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
 DUMP_FILE_GREP="stormodb_shire_storetw_${EXPORT_TYPE}_...cdmp"
-
-starting_dir=`pwd`
 
 cd ${WORK_DIR}
 
@@ -97,5 +74,3 @@ comm -13 <(grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG}) <(ls | grep ${DUMP_FILE_GREP
 
 # download any dump files newer on remote than they are on local
 grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG} | sed -e 's/^/http:\/\/www.epa.gov\/storet\/download\/storetw\//' | xargs -n 1 -P 12 wget -Nq
-
-cd ${starting_dir}

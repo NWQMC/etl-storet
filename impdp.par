@@ -1,4 +1,4 @@
-directory=pdc_temp
+directory=WQP
 dumpfile=stormodb_shire_storetw_Weekly_%u.cdmp
 logfile=stormod_shire_storetw_impdp.log
 tables=(
