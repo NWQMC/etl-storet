@@ -62,7 +62,7 @@ done
 # if any required variables are null or empty, display usage and quit
 ([ ! -n "${EXPORT_TYPE}" ] || [ ! -n "${CLEAR_CACHE_URL}" ]) && usage && stop_bad
 
-EXPORT_REF="storet_${EXPORT_TYPE}.ref"
+EXPORT_REF="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.ref"
 EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
 
 starting_dir=`pwd`
