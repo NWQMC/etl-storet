@@ -54,7 +54,7 @@ done
 # if any required variables are null or empty, display usage and quit
 [ ! -n "${EXPORT_TYPE}" ] && usage && stop_bad
 
-EXPORT_REF="storet_${EXPORT_TYPE}.ref"
+EXPORT_REF="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.ref"
 EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
 DUMP_FILE_GREP="stormodb_shire_storetw_${EXPORT_TYPE}_...cdmp"
 
