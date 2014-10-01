@@ -48,10 +48,10 @@ do
 			CLEAR_CACHE_URL="Does CI have any related deployed code environment?"
 			;;
 		dev)
-			CLEAR_CACHE_URL="http://cida-eros-wqpdev.er.usgs.gov:8080/wmsproxy/rest/clearcache/wqp_sites"
+			CLEAR_CACHE_URL="http://cida-eros-wqpdev.er.usgs.gov:8080/ogcproxy/rest/clearcache/wqp_sites"
 			;;
 		qa)
-			CLEAR_CACHE_URL="http://cida-eros-wqpqa.er.usgs.gov:8080/wmsproxy/rest/clearcache/wqp_sites"
+			CLEAR_CACHE_URL="http://cida-eros-wqpqa.er.usgs.gov:8080/ogcproxy/rest/clearcache/wqp_sites"
 			;;
 		prod)
 			CLEAR_CACHE_URL="http://www.waterqualitydata.us/ogcservices/rest/clearcache/wqp_sites"
