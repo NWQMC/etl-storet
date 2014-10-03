@@ -133,7 +133,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_password}"
-            command="bash -e -x ${work.dir}/storet_finish.sh ${export_type} ${target_env}"
+            command="bash -e -x ${work.dir}/storet_finish.sh ${export_type}"
         />
     </target>
 	
