@@ -408,7 +408,7 @@ as
 					fa_biological_result.pk_isn result_pk,
 					biological_activity_tmp.activity_pk,
 					fa_biological_result.fk_station station_pk,
-					fa_station.organization_id || '-' || fa_station.station_id station_id,
+					fa_station.station_id station_id,
 					fa_station.fk_primary_type site_type,
 					di_geo_state.country_code country_cd,
 					rtrim(di_geo_state.fips_state_code) state_cd,
