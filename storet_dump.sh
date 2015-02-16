@@ -57,6 +57,7 @@ done
 EXPORT_REF="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.ref"
 EXPORT_LOG="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.log"
 DUMP_FILE_GREP="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_...cdmp"
+CLEAN_UP_GREP=".*_${EXPORT_TYPE}_...cdmp"
 
 cd ${WORK_DIR}
 
@@ -69,8 +70,8 @@ grep -q "successfully completed" ${EXPORT_LOG} || (echo "${EXPORT_LOG} does not 
 # if a reference file exists and the log isn't newer than the reference file, we don't need to do more
 ([ -f ${EXPORT_REF} ] && [ ! ${EXPORT_LOG} -nt ${EXPORT_REF} ]) && stop_ok
 
-# remove any dump files found locally but not in the export log
-comm -13 <(grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG}) <(ls | grep ${DUMP_FILE_GREP}) | xargs rm -f
+# remove any dump files of the same export type found locally but not in the export log
+comm -13 <(grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG}) <(ls | grep ${CLEAN_UP_GREP}) | xargs rm -f
 
 # download any dump files newer on remote than they are on local
 grep -o ${DUMP_FILE_GREP} ${EXPORT_LOG} | sed -e 's/^/http:\/\/www.epa.gov\/storet\/download\/storetw\//' | xargs -n 1 -P 12 wget -Nq
