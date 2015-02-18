@@ -40,8 +40,8 @@ done
 # if any required variables are null or empty, display usage and quit
 [ ! -n "${EXPORT_TYPE}" ] && usage && stop_bad
 
-EXPORT_REF="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.ref"
-EXPORT_LOG="stormodb_shire_storetw_${EXPORT_TYPE}_expdp.log"
+EXPORT_REF="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.ref"
+EXPORT_LOG="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.log"
 
 starting_dir=`pwd`
 
