@@ -1,6 +1,6 @@
 directory=WQPSTAGE
-dumpfile=stormodb_shire_storetw_Weekly_%u.cdmp
-logfile=stormodb_shire_storetw_Weekly_impdp.log
+dumpfile=owpubdw_vmwaters1_storetw_Weekly_%u.cdmp
+logfile=owpubdw_vmwaters1_storetw_Weekly_impdp.log
 tables=(
 	FA_REGULAR_RESULT,
 	FA_STATION,
