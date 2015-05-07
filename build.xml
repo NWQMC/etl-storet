@@ -1,5 +1,5 @@
 <project name="QwStoretEtl" default="weeklyETL">
-	<property name="work.dir" value="/pdc/wqp_data" />
+	<property name="work.dir" value="/mnt/wqp_data/${instance}" />
 	
     <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL" />
 	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
@@ -69,14 +69,6 @@
         </condition>
     </target>
         
-    <target name="importViaDataPump" depends="setStopRun" unless="stopRun">
-        <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
-        <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
-            <arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
-            <arg value="parfile=impdp.par"/>
-        </exec>
-    </target>
-    
 	<target name="monthlyImportViaDataPump" depends="setStopRun" unless="stopRun">
 	    <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
 	    <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
@@ -93,36 +85,11 @@
         </exec>
     </target>
     
-    <target name="runPackageStage" depends="setStopRun" unless="stopRun">
-        <echo>Running the main ETL Package in ${stagingInstance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
-            <arg value="@${basedir}/runPackageStage.sql"/>
-        </exec>
-    </target>
-    
     <target name="runMonthlyPackageStage" depends="setStopRun" unless="stopRun">
         <echo>Running the monthly ETL Package in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
             <arg value="@${basedir}/runMonthlyPackageStage.sql"/>
-        </exec>
-    </target>
-    
-    <target name="buildPackageDw" depends="setStopRun" unless="stopRun">
-        <echo>Rebuiling the etl database package and body in ${instance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-            <arg value="@${basedir}/create_storet_objects_dw.sql"/>
-        </exec>
-    </target>
-    
-    <target name="runPackageDw" depends="setStopRun" unless="stopRun">
-        <echo>Running the main ETL Package in ${instance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-            <arg value="@${basedir}/runPackage.sql"/>
-            <arg value="${dblink}"/>
         </exec>
     </target>
     
@@ -137,11 +104,4 @@
         />
     </target>
 	
-    <target name="compilePackageEmptyCiDB">
-        <echo>Rebuiling the etl database package and body in ${instance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-            <arg value="@${basedir}/emptyCiDB.sql"/>
-        </exec>
-    </target>
 </project>
