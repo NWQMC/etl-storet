@@ -1,14 +1,8 @@
-<project name="QwStoretEtl" default="weeklyETL">
+<project name="QwStoretEtl" default="monthlyETL">
 	<property name="work.dir" value="/mnt/wqp_data/${instance}" />
 	
-    <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL" />
 	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
-	<target name="ci" depends="buildPackageStage, runPackageStage, buildPackageDw, compilePackageEmptyCiDB, runPackageDw" />
 
-	<target name="devqaWeeklyETL" depends="weeklyETL">
-		<antcall target="setStopRun" />
-	</target>
-	
 	<target name="devqaMonthlyETL" depends="monthlyETL">
 		<antcall target="setStopRun" />
 	</target>
