@@ -25,7 +25,7 @@
 
     <target name="scpScriptStage">
         <echo>Copy the script to ${storet_host}</echo>
-        <scp todir="storet_user:${storet_password}@${storet_host}:${work.dir}" trust="true">
+        <scp todir="storet_user:${storet_user_password}@${storet_host}:${work.dir}" trust="true">
         	<fileset dir=".">
         		<include name="storet_dump.sh" />
         		<include name="storet_finish.sh" />
@@ -38,7 +38,7 @@
         <sshexec host="${storet_host}"
             trust="true"
             username="storet_user"
-            password="${storet_password}"
+            password="${storet_user_password}"
             command="dos2unix ${work.dir}/storet_dump.sh ${work.dir}/storet_finish.sh"
         	verbose="${verbose}"
         />
@@ -50,7 +50,7 @@
             trust="true"
             failonerror="true"
             username="storet_user"
-            password="${storet_password}"
+            password="${storet_user_password}"
             command="bash -e -x ${work.dir}/storet_dump.sh ${export_type}"
             outputproperty="pullResult"
         />
@@ -93,7 +93,7 @@
             trust="true"
             failonerror="true"
             username="storet_user"
-            password="${storet_password}"
+            password="${storet_user_password}"
             command="bash -e -x ${work.dir}/storet_finish.sh ${export_type}"
         />
     </target>
