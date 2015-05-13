@@ -24,5 +24,7 @@ tables=(
 	MD_CITATION,
 	MD_SAMPLE_PROC)
 table_exists_action=replace
-EXCLUDE=constraint,index,grant
+EXCLUDE=constraint,index,grant,view
 remap_tablespace=STORETARCHDATA:STORETDATA
+remap_tablespace=STORETARCHDATA_STORMODP:STORETDATA
+remap_tablespace=STORETDATA_STORMODP:STORETDATA
