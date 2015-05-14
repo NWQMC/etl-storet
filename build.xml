@@ -43,7 +43,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_user_password}"
-            command="bash -e -x ${work.dir}/storet_dump.sh ${export_type}"
+            command="bash -e -x ${work.dir}/storet_dump.sh ${work.dir}"
             outputproperty="pullResult"
         />
     </target>
@@ -86,7 +86,7 @@
             failonerror="true"
             username="storet_user"
             password="${storet_user_password}"
-            command="bash -e -x ${work.dir}/storet_finish.sh ${export_type}"
+            command="bash -e -x ${work.dir}/storet_finish.sh ${work.dir}"
         />
     </target>
     
