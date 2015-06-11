@@ -80,9 +80,9 @@ as
 					on fk_mad_vdatum = lu_mad_vdatum.pk_isn
 			where storetw.fa_station.location_point_type = '*POINT OF RECORD'!';
 
-		dbms_output.put_line(systimestamp || ' creating pc_result_no_source...');
-		execute immediate 'truncate table pc_result_no_source';
-		execute immediate q'!insert /*+ append */ into pc_result_no_source
+		dbms_output.put_line(systimestamp || ' creating result_no_source...');
+		execute immediate 'truncate table result_no_source';
+		execute immediate q'!insert /*+ append */ into result_no_source
       (data_source_id,
        data_source,
        station_id,
