@@ -1,21 +1,15 @@
 #!/bin/bash
 DATE_SUFFIX=`date +%Y%m%d_%H%M`
 HTTP_BASE=http://www.epa.gov/storet/download/storetw
-WORK_DIR=/pdc/wqp_data
+WORK_DIR=$1
 
 # display usage message
 function usage() {
 	cat <<EndUsageText
 
-Usage: `basename $0` EXPORT_TYPE
+Usage: `basename $0` working_directory
 
 	This script pulls storet data exports from the EPA.
-		
-EXPORT_TYPE
-	One of these must be specified. If more than one is set, the last one parsed will win.
-			
-	Monthly  download the monthly export
-	Weekly   download the weekly export
 		
 EndUsageText
 }
@@ -38,26 +32,10 @@ set -o pipefail
 # if not exactly one parameter, display usage and quit
 [ "$#" -ne 1 ] && usage && stop_bad
 
-# parse arguments
-for arg in "$@"
-do
-	case $arg in
-		Monthly)
-			EXPORT_TYPE=$arg
-			;;
-		Weekly)
-			EXPORT_TYPE=$arg
-			;;
-	esac
-done
-
-# if any required variables are null or empty, display usage and quit
-[ ! -n "${EXPORT_TYPE}" ] && usage && stop_bad
-
-EXPORT_REF="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.ref"
-EXPORT_LOG="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.log"
-DUMP_FILE_GREP="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_...cdmp"
-CLEAN_UP_GREP=".*_${EXPORT_TYPE}_...cdmp"
+EXPORT_REF="owpubdw_vmwaters1_storetw_Monthly_expdp.ref"
+EXPORT_LOG="owpubdw_vmwaters1_storetw_Monthly_expdp.log"
+DUMP_FILE_GREP="owpubdw_vmwaters1_storetw_Monthly_...cdmp"
+CLEAN_UP_GREP=".*_Monthly_...cdmp"
 
 cd ${WORK_DIR}
 

@@ -1,20 +1,14 @@
 #!/bin/bash
-WORK_DIR=/pdc/wqp_data
+WORK_DIR=$1
 
 # display usage message
 function usage() {
 	cat <<EndUsageText
 
-Usage: `basename $0` EXPORT_TYPE
+Usage: `basename $0` working_directory
 
 	This script pulls completes the storet data ETL by moving the export log to a reference file and clearing the WQP service cache.
 		
-EXPORT_TYPE
-	One of these must be specified. If more than one is set, the last one parsed will win.
-			
-	Monthly  download the monthly export
-	Weekly   download the weekly export
-			
 EndUsageText
 }
 
@@ -24,24 +18,8 @@ function stop_bad() {
 	exit 1
 }
 
-# parse arguments
-for arg in "$@"
-do
-	case $arg in
-		Monthly)
-			EXPORT_TYPE=$arg
-			;;
-		Weekly)
-			EXPORT_TYPE=$arg
-			;;
-	esac
-done
-
-# if any required variables are null or empty, display usage and quit
-[ ! -n "${EXPORT_TYPE}" ] && usage && stop_bad
-
-EXPORT_REF="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.ref"
-EXPORT_LOG="owpubdw_vmwaters1_storetw_${EXPORT_TYPE}_expdp.log"
+EXPORT_REF="owpubdw_vmwaters1_storetw_Monthly_expdp.ref"
+EXPORT_LOG="owpubdw_vmwaters1_storetw_Monthly_expdp.log"
 
 starting_dir=`pwd`
 

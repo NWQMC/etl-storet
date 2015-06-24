@@ -1,28 +1,14 @@
-<project name="QwStoretEtl" default="weeklyETL">
-	<property name="work.dir" value="/pdc/wqp_data" />
-	
-    <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, importViaDataPump, grantsOnStoretWTables, runPackageStage, buildPackageDw, runPackageDw, finishETL" />
-	<target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
-	<target name="ci" depends="buildPackageStage, runPackageStage, buildPackageDw, compilePackageEmptyCiDB, runPackageDw" />
+<project name="QwStoretEtl" default="monthlyETL">
+    <property name="work.dir" value="/mnt/wqp_data/${instance}" />
+    
+    <target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
 
-	<target name="devqaWeeklyETL" depends="weeklyETL">
-		<antcall target="setStopRun" />
-	</target>
-	
-	<target name="devqaMonthlyETL" depends="monthlyETL">
-		<antcall target="setStopRun" />
-	</target>
-
-    <target name="buildXMLHelpersPackage">
-        <echo>Rebuiling the xml_helpers database package and body in ${stagingInstance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
-            <arg value="@${basedir}/xml_helpers.sql"/>
-        </exec>
+    <target name="devqaMonthlyETL" depends="monthlyETL">
+        <antcall target="setStopRun" />
     </target>
 
-    <target name="buildPackageStage" depends="buildXMLHelpersPackage">
-        <echo>Rebuiling the etl database package and body in ${stagingInstance}</echo>
+    <target name="buildPackageStage">
+        <echo>Rebuilding the ETL database package and body in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
             <arg value="@${basedir}/create_storet_objects_stage.sql"/>
@@ -31,11 +17,11 @@
 
     <target name="scpScriptStage">
         <echo>Copy the script to ${storet_host}</echo>
-        <scp todir="storet_user:${storet_password}@${storet_host}:${work.dir}" trust="true">
-        	<fileset dir=".">
-        		<include name="storet_dump.sh" />
-        		<include name="storet_finish.sh" />
-        	</fileset>
+        <scp todir="storet_user:${storet_user_password}@${storet_host}:${work.dir}" trust="true">
+            <fileset dir=".">
+                <include name="storet_dump.sh" />
+                <include name="storet_finish.sh" />
+            </fileset>
         </scp>
     </target>
 
@@ -44,9 +30,9 @@
         <sshexec host="${storet_host}"
             trust="true"
             username="storet_user"
-            password="${storet_password}"
+            password="${storet_user_password}"
             command="dos2unix ${work.dir}/storet_dump.sh ${work.dir}/storet_finish.sh"
-        	verbose="${verbose}"
+            verbose="${verbose}"
         />
     </target>
     
@@ -56,8 +42,8 @@
             trust="true"
             failonerror="true"
             username="storet_user"
-            password="${storet_password}"
-            command="bash -e -x ${work.dir}/storet_dump.sh ${export_type}"
+            password="${storet_user_password}"
+            command="bash -e -x ${work.dir}/storet_dump.sh ${work.dir}"
             outputproperty="pullResult"
         />
     </target>
@@ -69,35 +55,19 @@
         </condition>
     </target>
         
-    <target name="importViaDataPump" depends="setStopRun" unless="stopRun">
+    <target name="monthlyImportViaDataPump" depends="setStopRun" unless="stopRun">
         <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
         <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
             <arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
-            <arg value="parfile=impdp.par"/>
+            <arg value="parfile=monthly_impdp.par"/>
         </exec>
     </target>
-    
-	<target name="monthlyImportViaDataPump" depends="setStopRun" unless="stopRun">
-	    <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
-	    <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
-	        <arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
-	        <arg value="parfile=monthly_impdp.par"/>
-	    </exec>
-	</target>
 
-	<target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
+    <target name="grantsOnStoretWTables" depends="setStopRun" unless="stopRun">
         <echo>Grant select on the imported tables in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="storetw/${storetw_password}@${stagingInstance}"/>
             <arg value="@${basedir}/storetw_grants.sql"/>
-        </exec>
-    </target>
-    
-    <target name="runPackageStage" depends="setStopRun" unless="stopRun">
-        <echo>Running the main ETL Package in ${stagingInstance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
-            <arg value="@${basedir}/runPackageStage.sql"/>
         </exec>
     </target>
     
@@ -109,39 +79,15 @@
         </exec>
     </target>
     
-    <target name="buildPackageDw" depends="setStopRun" unless="stopRun">
-        <echo>Rebuiling the etl database package and body in ${instance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-            <arg value="@${basedir}/create_storet_objects_dw.sql"/>
-        </exec>
-    </target>
-    
-    <target name="runPackageDw" depends="setStopRun" unless="stopRun">
-        <echo>Running the main ETL Package in ${instance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-            <arg value="@${basedir}/runPackage.sql"/>
-            <arg value="${dblink}"/>
-        </exec>
-    </target>
-    
     <target name="finishETL" depends="setStopRun" unless="stopRun">
         <echo>Runs the finishing script at ${storet_host}</echo>
         <sshexec host="${storet_host}"
             trust="true"
             failonerror="true"
             username="storet_user"
-            password="${storet_password}"
-            command="bash -e -x ${work.dir}/storet_finish.sh ${export_type}"
+            password="${storet_user_password}"
+            command="bash -e -x ${work.dir}/storet_finish.sh ${work.dir}"
         />
     </target>
-	
-    <target name="compilePackageEmptyCiDB">
-        <echo>Rebuiling the etl database package and body in ${instance}</echo>
-        <exec executable="sqlplus" failonerror="true">
-            <arg value="${wqp_storet_username}/${wqp_storet_password}@${instance}"/>
-            <arg value="@${basedir}/emptyCiDB.sql"/>
-        </exec>
-    </target>
+    
 </project>
