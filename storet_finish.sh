@@ -18,8 +18,8 @@ function stop_bad() {
 	exit 1
 }
 
-EXPORT_REF="owpubdw_vmwaters1_storetw_Monthly_expdp.ref"
-EXPORT_LOG="owpubdw_vmwaters1_storetw_Monthly_expdp.log"
+EXPORT_REF="owpubdw_vmwaters1_storetw_Weekly_expdp.ref"
+EXPORT_LOG="owpubdw_vmwaters1_storetw_Weekly_expdp.log"
 
 starting_dir=`pwd`
 

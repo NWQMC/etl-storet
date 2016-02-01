@@ -1,6 +1,6 @@
 directory=WQPSTAGE
-dumpfile=owpubdw_vmwaters1_storetw_Monthly_%u.cdmp
-logfile=owpubdw_vmwaters1_storetw_Monthly_impdp.log
+dumpfile=owpubdw_vmwaters1_storetw_Weekly_%u.cdmp
+logfile=owpubdw_vmwaters1_storetw_Weekly_impdp.log
 tables=(
 	DI_ACTIVITY_MATRIX,
 	DI_ACTIVITY_MEDIUM,
