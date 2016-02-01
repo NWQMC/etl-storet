@@ -32,10 +32,10 @@ set -o pipefail
 # if not exactly one parameter, display usage and quit
 [ "$#" -ne 1 ] && usage && stop_bad
 
-EXPORT_REF="owpubdw_vmwaters1_storetw_Monthly_expdp.ref"
-EXPORT_LOG="owpubdw_vmwaters1_storetw_Monthly_expdp.log"
-DUMP_FILE_GREP="owpubdw_vmwaters1_storetw_Monthly_...cdmp"
-CLEAN_UP_GREP=".*_Monthly_...cdmp"
+EXPORT_REF="owpubdw_vmwaters1_storetw_Weekly_expdp.ref"
+EXPORT_LOG="owpubdw_vmwaters1_storetw_Weekly_expdp.log"
+DUMP_FILE_GREP="owpubdw_vmwaters1_storetw_Weekly_...cdmp"
+CLEAN_UP_GREP=".*_Weekly_...cdmp"
 
 cd ${WORK_DIR}
 

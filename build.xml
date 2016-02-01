@@ -1,9 +1,9 @@
-<project name="QwStoretEtl" default="monthlyETL">
+<project name="QwStoretEtl" default="weeklyETL">
     <property name="work.dir" value="/mnt/wqp_data/${instance}" />
     
-    <target name="monthlyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, monthlyImportViaDataPump, grantsOnStoretWTables, runMonthlyPackageStage, finishETL" />
+    <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, weeklyImportViaDataPump, grantsOnStoretWTables, runWeeklyPackageStage, finishETL" />
 
-    <target name="devqaMonthlyETL" depends="monthlyETL">
+    <target name="devqaWeeklyETL" depends="weeklyETL">
         <antcall target="setStopRun" />
     </target>
 
@@ -55,11 +55,11 @@
         </condition>
     </target>
         
-    <target name="monthlyImportViaDataPump" depends="setStopRun" unless="stopRun">
+    <target name="weeklyImportViaDataPump" depends="setStopRun" unless="stopRun">
         <echo>Using impdp to load the storetw schema in ${stagingInstance}</echo>
         <exec executable="/usr/oracle/app/oracle/product/11.2.0/client_1/bin/impdp" failonerror="true">
             <arg value="userid=storetw/${storetw_password}@${stagingInstance}"/>
-            <arg value="parfile=monthly_impdp.par"/>
+            <arg value="parfile=weekly_impdp.par"/>
         </exec>
     </target>
 
@@ -71,11 +71,11 @@
         </exec>
     </target>
     
-    <target name="runMonthlyPackageStage" depends="setStopRun" unless="stopRun">
-        <echo>Running the monthly ETL Package in ${stagingInstance}</echo>
+    <target name="runWeeklyPackageStage" depends="setStopRun" unless="stopRun">
+        <echo>Running the weekly ETL Package in ${stagingInstance}</echo>
         <exec executable="sqlplus" failonerror="true">
             <arg value="${wqp_storet_username}/${wqp_storet_password}@${stagingInstance}"/>
-            <arg value="@${basedir}/runMonthlyPackageStage.sql"/>
+            <arg value="@${basedir}/runWeeklyPackageStage.sql"/>
         </exec>
     </target>
     
