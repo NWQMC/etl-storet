@@ -195,7 +195,7 @@ create or replace package body create_storet_objects as
                                     cast(r.field_procedure_id as varchar2(4000 char)) sample_collect_method_ctx,
                                     cast(r.field_procedure_id as varchar2(4000 char)) sample_collect_method_name,
                                     cast(r.field_gear_id as varchar2(4000 char)) sample_collect_equip_name,
-                                    cast(rownum as varchar2(4000 char)) result_id,
+                                    cast(rownum + 100000000000 as varchar2(4000 char)) result_id,
                                     cast(r.result_value_text as varchar2(4000 char)) result_detection_condition_tx,
                                     cast(r.sample_fraction_type as varchar2(4000 char)) sample_fraction_type,
                                     cast(r.result_value as varchar2(4000 char)) result_measure_value,
@@ -226,7 +226,7 @@ create or replace package body create_storet_objects as
                                     cast(r.myqlunits as varchar2(4000 char)) myqlunits,
                                     cast(r.myqldesc as varchar2(4000 char)) myqldesc,
                                     cast(to_char(r.lab_samp_prp_start_date_time, 'yyyy-mm-dd') as varchar2(4000 char)) analysis_prep_date_tx,
-                                    r.activity_isn
+                                    r.activity_isn + 100000000000
                                from (select /*+ parallel (4) */
                                             storetw.fa_regular_result.pk_isn,
                                             storetw.fa_regular_result.organization_id,
