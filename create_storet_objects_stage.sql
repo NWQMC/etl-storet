@@ -72,8 +72,8 @@ create or replace package body create_storet_objects as
                                       on fk_mad_vmethod = lu_mad_vmethod.pk_isn
                                     left join storetw.lu_mad_vdatum
                                       on fk_mad_vdatum = lu_mad_vdatum.pk_isn
-                              where storetw.fa_station.location_point_type = '*POINT OF RECORD'!
-                                    and storetw.fa_station.organization_id not in(select org_id from wqp_core.storetw_transition);
+                              where storetw.fa_station.location_point_type = '*POINT OF RECORD'
+                                    and storetw.fa_station.organization_id not in(select org_id from wqp_core.storetw_transition)!';
         commit;
     end create_station_no_source;
 
