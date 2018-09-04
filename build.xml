@@ -1,5 +1,7 @@
 <project name="QwStoretEtl" default="weeklyETL">
     <property name="work.dir" value="/mnt/wqp_data/${instance}" />
+
+    <target name="storetwTransition" depends="buildPackageStage, runWeeklyPackageStage" />
     
     <target name="weeklyETL" depends="buildPackageStage, scpScriptStage, dos2unixStage, pullStoretWData, weeklyImportViaDataPump, grantsOnStoretWTables, runWeeklyPackageStage, finishETL" />
 
