@@ -20,7 +20,8 @@ tables=(
 	METRIC_RESULT_PROJECT,
 	DI_PROJECT,
 	DI_ACTIVITY_INTENT,
-	DI_COMMUNITY_SAMPLED
+	DI_COMMUNITY_SAMPLED,
+	FA_BLOB
 	)
 table_exists_action=replace
 EXCLUDE=constraint,index,grant,view
