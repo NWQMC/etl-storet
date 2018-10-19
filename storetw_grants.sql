@@ -19,4 +19,13 @@ grant select on lu_mad_hdatum to wqp_core;
 grant select on lu_mad_vmethod to wqp_core;
 grant select on lu_mad_vdatum to wqp_core;
 
+grant select on regular_result_project to wqp_core;
+grant select on biological_result_project to wqp_core;
+grant select on habitat_result_project to wqp_core;
+grant select on metric_result_project to wqp_core;
+grant select on di_project to wqp_core;
+grant select on di_activity_intent to wqp_core;
+grant select on di_community_sampled to wqp_core;
+grant select on fa_blob to wqp_core;
+
 select 'end time: ' || systimestamp from dual;
