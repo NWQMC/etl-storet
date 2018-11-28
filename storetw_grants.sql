@@ -27,6 +27,5 @@ grant select on di_project to wqp_core;
 grant select on di_activity_intent to wqp_core;
 grant select on di_community_sampled to wqp_core;
 grant select on fa_blob to wqp_core;
-grant select on index_type to wqp_core;
 
 select 'end time: ' || systimestamp from dual;
