@@ -7,8 +7,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
-<!--         <wma.maven.url>https://cida.usgs.gov/artifactory/list</wma.maven.url> -->
-<!--         <wqp-etl-core.version>0.1.4-SNAPSHOT</wqp-etl-core.version> -->
     </properties>
 
     <ciManagement>
@@ -23,19 +21,6 @@
         <tag>HEAD</tag>
     </scm>
 
-<!--     <repositories> -->
-<!--         <repository> -->
-<!--             <id>Central</id> -->
-<!--             <name>Maven Central</name> -->
-<!--             <url>https://repo.maven.apache.org/maven2/</url> -->
-<!--         </repository> -->
-<!--         <repository> -->
-<!--             <id>WMA</id> -->
-<!--             <name>WMA Artifactory</name> -->
-<!--             <url>${wma.maven.url}/wma-maven-centralized/</url> -->
-<!--         </repository> -->
-<!--     </repositories> -->
-
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -48,11 +33,6 @@
             <artifactId>spring-boot-starter-batch</artifactId>
         </dependency>
 
-<!--         <dependency> -->
-<!--             <groupId>org.springframework</groupId> -->
-<!--             <artifactId>spring-oxm</artifactId> -->
-<!--         </dependency> -->
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -62,32 +42,6 @@
             <artifactId>postgis-jdbc</artifactId>
             <version>2.3.0</version>
         </dependency>
-
-<!--         <dependency> -->
-<!--             <groupId>javax.xml.bind</groupId> -->
-<!--             <artifactId>jaxb-api</artifactId> -->
-<!--         </dependency> -->
-<!--         <dependency> -->
-<!--             <groupId>com.sun.xml.bind</groupId> -->
-<!--             <artifactId>jaxb-core</artifactId> -->
-<!--             <version>2.3.0.1</version> -->
-<!--         </dependency> -->
-<!--         <dependency> -->
-<!--             <groupId>com.sun.xml.bind</groupId> -->
-<!--             <artifactId>jaxb-impl</artifactId> -->
-<!--             <version>2.3.2</version> -->
-<!--         </dependency> -->
-
-<!--         <dependency> -->
-<!--             <groupId>org.apache.commons</groupId> -->
-<!--             <artifactId>commons-lang3</artifactId> -->
-<!--         </dependency> -->
-
-<!--         <dependency> -->
-<!--             <groupId>gov.acwi</groupId> -->
-<!--             <artifactId>wqp-etl-core</artifactId> -->
-<!--             <version>${wqp-etl-core.version}</version> -->
-<!--         </dependency> -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -118,14 +72,6 @@
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>gov.acwi</groupId> -->
-<!--             <artifactId>wqp-etl-core</artifactId> -->
-<!--             <classifier>tests</classifier> -->
-<!--             <type>test-jar</type> -->
-<!--             <version>${wqp-etl-core.version}</version> -->
-<!--             <scope>test</scope> -->
-<!--         </dependency> -->
     </dependencies>
 
     <build>
@@ -139,28 +85,14 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <environmentVariables>
-                        <WQP_DATABASE_ADDRESS>127.0.0.1</WQP_DATABASE_ADDRESS>
-                        <WQP_DATABASE_PORT>5437</WQP_DATABASE_PORT>
-                        <WQP_DATABASE_NAME>wqp_db</WQP_DATABASE_NAME>
-                        <WQP_SCHEMA_NAME>wqp</WQP_SCHEMA_NAME>
-                        <WQP_SCHEMA_OWNER_USERNAME>wqp_core</WQP_SCHEMA_OWNER_USERNAME>
-                        <WQP_SCHEMA_OWNER_PASSWORD>changeMe</WQP_SCHEMA_OWNER_PASSWORD>
-<!--                         <ARS_DATABASE_ADDRESS>127.0.0.1</ARS_DATABASE_ADDRESS> -->
-<!--                         <ARS_DATABASE_PORT>5437</ARS_DATABASE_PORT> -->
-<!--                         <ARS_DATABASE_NAME>wqp_db</ARS_DATABASE_NAME> -->
-<!--                         <ARS_SCHEMA_OWNER_USERNAME>ars_owner</ARS_SCHEMA_OWNER_USERNAME> -->
-<!--                         <ARS_SCHEMA_OWNER_PASSWORD>changeMe</ARS_SCHEMA_OWNER_PASSWORD> -->
-<!--                         <NWIS_DATABASE_ADDRESS>127.0.0.1</NWIS_DATABASE_ADDRESS> -->
-<!--                         <NWIS_DATABASE_PORT>5437</NWIS_DATABASE_PORT> -->
-<!--                         <NWIS_DATABASE_NAME>wqp_db</NWIS_DATABASE_NAME> -->
-<!--                         <NWIS_SCHEMA_OWNER_USERNAME>nwis_ws_star</NWIS_SCHEMA_OWNER_USERNAME> -->
-<!--                         <NWIS_SCHEMA_OWNER_PASSWORD>changeMe</NWIS_SCHEMA_OWNER_PASSWORD> -->
-<!--                         <ETL_OWNER_USERNAME>ars_owner</ETL_OWNER_USERNAME> -->
-<!--                         <GEO_SCHEMA_NAME>nwis</GEO_SCHEMA_NAME> -->
-<!--                         <ETL_DATA_SOURCE_ID>1</ETL_DATA_SOURCE_ID> -->
-<!--                         <ETL_DATA_SOURCE>STEWARDS</ETL_DATA_SOURCE> -->
-<!--                         <QWPORTAL_SUMMARY_ETL>false</QWPORTAL_SUMMARY_ETL> -->
-<!--                         <NWIS_OR_EPA></NWIS_OR_EPA> -->
+                        <EPA_DATABASE_ADDRESS>${TESTING_DATABASE_ADDRESS}</EPA_DATABASE_ADDRESS>
+                        <EPA_DATABASE_PORT>${TESTING_DATABASE_PORT}</EPA_DATABASE_PORT>
+                        <EPA_DATABASE_NAME>wqp_db</EPA_DATABASE_NAME>
+                        <EPA_SCHEMA_OWNER_USERNAME>epa_owner</EPA_SCHEMA_OWNER_USERNAME>
+                        <EPA_SCHEMA_OWNER_PASSWORD>changeMe</EPA_SCHEMA_OWNER_PASSWORD>
+                        <STORETW_SCHEMA_NAME>storetw</STORETW_SCHEMA_NAME>
+                        <ETL_DATA_SOURCE_ID>3</ETL_DATA_SOURCE_ID>
+                        <ETL_DATA_SOURCE>STORET</ETL_DATA_SOURCE>
                     </environmentVariables>
                 </configuration>
                 <executions>
@@ -194,10 +126,16 @@
                 </executions>
                 <configuration>
                     <showLogs>true</showLogs>
+                    <containerNamePattern>%a</containerNamePattern>
                     <images>
                         <image>
                             <name>usgswma/wqp_db:etl</name>
+                            <alias>wqpDatabase</alias>
                             <run>
+                                <network>
+                                    <mode>custom</mode>
+                                    <name>${TESTING_DATABASE_NETWORK}</name>
+                                </network>
                                 <ports>
                                     <port>5437:5432</port>
                                 </ports>
