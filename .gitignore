@@ -1,3 +1,9 @@
 /.project
 *~
 *.swp
+/.settings/
+/.attach_pid*
+/target/
+/.classpath
+/application-it.yml
+/.env

@@ -1,0 +1,11 @@
+spring:
+  batch:
+    job:
+      enabled: false
+    initialize-schema: never
+  datasource:
+    url: jdbc:postgresql://${EPA_DATABASE_ADDRESS}:${EPA_DATABASE_PORT}/${EPA_DATABASE_NAME}
+    username: ${EPA_SCHEMA_OWNER_USERNAME}
+    password: ${EPA_SCHEMA_OWNER_PASSWORD}
+    hikari:
+      maximumPoolSize: 10

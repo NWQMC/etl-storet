@@ -1,0 +1,16 @@
+sudo: true
+
+language: java
+
+services:
+  - docker
+
+jdk:
+  - openjdk11
+
+install: true
+
+script:
+  - docker network create etlStoret
+  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$TRAVIS_BUILD_DIR":/usr/src/mymaven -w /usr/src/mymaven --network=etlStoret -e TESTING_DATABASE_PORT=5432 -e TESTING_DATABASE_ADDRESS=wqpDatabase -e TESTING_DATABASE_NETWORK=etlStoret maven:3.6.0-jdk-11 mvn clean verify
+  - docker network rm etlStoret

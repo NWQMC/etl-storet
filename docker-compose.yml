@@ -1,0 +1,24 @@
+
+version: '3.6'
+
+services:
+  etl-storet:
+    build: .
+    image: etl-storet
+    networks:
+      wqp:
+        ipv4_address: ${ETL_STORET_IPV4}
+    environment:
+      - EPA_DATABASE_ADDRESS=${EPA_DATABASE_ADDRESS}
+      - EPA_DATABASE_PORT=${EPA_DATABASE_PORT}
+      - EPA_DATABASE_NAME=${EPA_DATABASE_NAME}
+      - EPA_SCHEMA_OWNER_USERNAME=${EPA_SCHEMA_OWNER_USERNAME}
+      - EPA_SCHEMA_OWNER_PASSWORD=${EPA_SCHEMA_OWNER_PASSWORD}
+      - STORETW_SCHEMA_NAME=${STORETW_SCHEMA_NAME}
+      - ETL_DATA_SOURCE_ID=${ETL_DATA_SOURCE_ID}
+      - ETL_DATA_SOURCE=${ETL_DATA_SOURCE}
+
+networks:
+  wqp:
+    external:
+      name: ${LOCAL_NETWORK_NAME}

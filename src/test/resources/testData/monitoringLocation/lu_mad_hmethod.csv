@@ -1,0 +1,41 @@
+pk_isn,id_code,geopositioning_method
+1,001,Address Matching-House Number
+2,002,Address Matching-Block Face
+3,003,Address Matching-Street Centerline
+4,004,Address Matching-Nearest Intersection
+5,005,Address Matching-Primary Name
+6,006,Address Matching-Digitized
+7,007,Address Matching-Other
+8,008,Census Block-1990-Centroid
+9,009,Census Block/Group-1990-Centroid
+10,010,Census Block/Tract-1990-Centroid
+11,011,Census-Other
+12,012,GPS Carrier Phase Static Relative Position
+13,013,GPS Carrier Phase Kinematic Relative Position
+14,014,GPS Code (Pseudo Range) Differential
+15,015,GPS Code (Pseudo Range) Precise Position
+16,016,GPS Code (Pseudo Range) Standard Position (SA Off)
+17,017,GPS Code (Pseudo Range) Standard Position (SA On)
+18,018,Interpolation-Map
+19,019,Interpolation-Photo
+20,020,Interpolation-Satellite
+21,021,Interpolation-Other
+22,022,Loran C
+23,023,Public Land Survey-Quarter Section
+24,024,Public Land Survey-Section
+25,025,Classical Surveying Techniques
+26,026,Zip Code-Centroid
+27,027,Unknown
+28,028,GPS-Unspecified
+29,029,"GPS, With Canadian Active Control System"
+30,030,Interpolation-Digital Map Source (Tiger)
+31,031,Interpolation-Spot
+32,032,Interpolation-MSS
+33,033,Interpolation-TM
+34,034,Public Land Survey-Eighth Section
+35,035,Public Land Survey-Sixteenth Section
+36,036,Public Land Survey-Footing
+37,037,Zip+4 Centroid
+38,038,Zip+2 Centroid
+39,039,Interpolation - Digital Map Source
+6784,104,GPS with Wide Area Augmentation System

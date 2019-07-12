@@ -1,0 +1,18 @@
+pk_isn,id_code,elevation_method
+1,001,GPS Carrier Phase Static Relative Position
+2,002,GPS Carrier Phase Kinematic Relative Position
+3,003,GPS Code (Pseudo Range) Differential
+4,004,GPS Code (Pseudo Range) Precise Position
+5,005,GPS Code (Pseudo Range) Standard Position (SA Off)
+6,006,GPS Code (Pseudo Range) Standard Position (SA On)
+7,007,Classical Surveying Techniques
+8,008,Other
+9,009,Altimetry
+10,010,Precise Leveling-Bench Mark
+11,011,Leveling-Non Bench Mark Control Points
+12,012,Trigonometric Leveling
+13,013,Photogrammetric
+14,014,Topographic Map Interpolation
+3351,015,UNKNOWN
+5104,016,Light Detection And Ranging (LiDAR)
+7224,080,Digital Elevation Model

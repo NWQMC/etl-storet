@@ -1,0 +1,18 @@
+pk_isn,id_code,elevation_datum
+1,AMSMA,American Samoa Datum
+2,ASTRO,Midway Astro 1961
+3,GUAM,Guam 1963
+4,JHNSN,Johnson Island 1961
+5,NAD27,North American Datum 1927
+6,NAD83,North American Datum 1983
+7,OLDHI,Old Hawaiian Datum
+8,OTHER,Other
+9,PR,Puerto Rico Datum
+10,SGEOR,St. George Island Datum
+11,SLAWR,St. Lawrence Island Datum
+12,SPAUL,St. Paul Island Datum
+13,UNKWN,Unknown
+14,WAKE,Wake-Eniwetok 1960
+15,WGS72,World Geodetic System 1972
+16,WGS84,World Geodetic System 1984
+3671,HARN,High Accuracy Reference Network for NAD83
