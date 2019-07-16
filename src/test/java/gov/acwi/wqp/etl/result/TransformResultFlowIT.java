@@ -42,6 +42,9 @@ public class TransformResultFlowIT extends StoretBaseFlowIT {
 	@DatabaseSetup(
 			value="classpath:/testResult/stationNoSource/csv/"
 			)
+	@DatabaseSetup(
+			value="classpath:/testData/result/"
+			)
 	@ExpectedDatabase(
 			value="classpath:/testResult/resultNoSource/csv/",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED

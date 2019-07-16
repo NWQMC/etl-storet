@@ -18,11 +18,21 @@ public class EtlStoretIT extends StoretBaseFlowIT {
 			value="classpath:/testData/stationNoSource.xml"
 			)
 	@DatabaseSetup(
+			value="classpath:/testData/resultNoSource.xml"
+			)
+	@DatabaseSetup(
 			value="classpath:/testData/monitoringLocation/"
+			)
+	@DatabaseSetup(
+			value="classpath:/testData/result/"
 			)
 
 	@ExpectedDatabase(
 			value="classpath:/testResult/stationNoSource/csv/",
+			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
+			)
+	@ExpectedDatabase(
+			value="classpath:/testResult/resultNoSource/csv/",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
 
