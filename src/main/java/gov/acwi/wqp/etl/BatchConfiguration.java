@@ -23,16 +23,16 @@ public class BatchConfiguration {
 //	@Autowired
 //	@Qualifier("activityFlow")
 //	private Flow activityFlow;
-//
-//	@Autowired
-//	@Qualifier("resultFlow")
-//	private Flow resultFlow;
+
+	@Autowired
+	@Qualifier("resultFlow")
+	private Flow resultFlow;
 
 	@Bean
 	public Job storetEtl() {
 		return jobBuilderFactory.get("WQP_STORET_ETL")
 				.start(monitoringLocationFlow)
-//				.next(resultFlow)
+				.next(resultFlow)
 //				.next(activityFlow)
 				.build()
 				.build();

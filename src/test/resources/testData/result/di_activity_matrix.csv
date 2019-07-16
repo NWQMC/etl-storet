@@ -1,0 +1,110 @@
+"pk_isn","matrix_code","matrix_name","matrix_description"
+1,"AQ","Air QC Matrix","Air Quality Control Matrix"
+2,"AE","Air, Vapor Well Effluent","Air, Vapor Extraction Well Effluent"
+3,"AA","Ambient Air","Ambient Air"
+4,"LA","Aqueous Phase/Sample","Aqueous Phase of a Multiple Phase Liquid or Solid Sample"
+5,"SB","Bentonite","Bentonite"
+6,"SP","Casing (various)","Casing (PVC, Stainless Steel, Cast Iron, Iron Piping, etc.)"
+7,"SC","Cement","Cement"
+8,"CA","Cinder-Ash","Cinder-Ash"
+9,"WM","Disturbed Water","Disturbed Water"
+10,"DG","Dredged Material","Dredged Material"
+11,"DC","Drill Cuttings","Drill Cuttings"
+12,"WA","Drill Cuttings, Aqueous","Drill Cuttings, Aqueous Matrix"
+13,"SD","Drill Cuttings, Solid","Drill Cuttings, Solid Matrix"
+14,"AD","Drilling Air","Drilling Air"
+15,"LD","Drilling Fluid","Drilling Fluid"
+16,"WC","Drilling Water","Drilling Water (Used for Well Construction)"
+17,"WP","Drinking Water","Drinking Water"
+18,"LU","Elutriate","Elutriate extracted from porous material"
+19,"WH","Equipment Wash Water","Equipment Wash Water, i.e., Water used for Washing"
+20,"WE","Estuary","Estuary"
+21,"SF","Filter Sandpack","Filter Sandpack"
+22,"CF","Fly Ash Cinder","Fly Ash Cinder"
+23,"FL","Forest Litter","Forest Litter"
+24,"GE","Gaseous Effluent","Gaseous Effluent (Stack Gas)"
+25,"WG","Ground Water","Ground Water"
+26,"MH","Haz. Multiphase Waste","Hazardous Multiple Phase Waste"
+27,"GL","Headspace, Liquid Sample","Headspace of Liquid Sample"
+28,"WL","Leachate","Leachate"
+29,"LH","Liq Waste<.5% Dry Solids","Free-Flowing, or Liquid Waste Containing Less Than 0.5% Dry Solids"
+30,"LC","Liquid Condensate","Liquid Condensate"
+31,"LE","Liquid Emulsion","Liquid Emulsion"
+32,"LV","Liquid-Vadose Zone","Liquid from Vadose Zone"
+33,"SN","Misc. Solid Materials","Miscellaneous Solid Materials - Building Materials"
+34,"LM","Multiphase Liquid Sample","Multiple Phase Liquid Waste Sample"
+35,"WO","Ocean Water","Ocean Water"
+36,"OIL","Oil_1","Oil_1"
+37,"LO","Organic Liquid","Organic Liquid"
+38,"PL","Plant","Plant"
+39,"LF","Product on GW Table","Floating/Free Product on Groundwater Table"
+40,"RK","Rock/Cobbles/Gravel","Rock/Cobbles/Gravel"
+41,"SS","Scrapings","Scrapings"
+42,"SL","Sludge","Sludge"
+43,"GS","Soil Gas","Soil Gas"
+44,"SQ","Soil/Solid QC Matrix","Soil/Solid Quality Control Matrix"
+45,"SH","Sol Waste>.5% Dry Solids","Solid Waste Containing greater than or equal to 0.5% Dry Solids"
+46,"SM","Solid Filter Material","Water Filter (Solid Material used to filter Water)"
+47,"ST","Solid Waste","Solid Waste"
+48,"WZ","Special Water QC Matrix","Special Water Quality Control Matrix"
+49,"RW","Stormwater","Stormwater, runoff, or collected precipitation"
+50,"SI","Subsurface Soil","Subsurface Soil"
+51,"SO","Surface Soil","Surface Soil"
+52,"WS","Surface Water","Surface Water"
+53,"SE","Surface Water Sediment","Sediment (Associated with Surface Water)"
+54,"SU","Suspended Sediment","Suspended Sediment "
+55,"SW","Swab or Wipe","Swab or Wipe"
+56,"U","Unknown","Unknown"
+57,"WW","Waste Water","Waste Water"
+58,"W","Water","Water"
+59,"SR","Water Filter Residue","Water Filter Residue (Solid that gets filtered out of Water)"
+60,"WG","Water Gas","Water Gas, gas in water"
+61,"WQ","Water QC Matrix","Water Quality Control Matrix"
+62,"WR","Water Undifferentiated","Undifferentiated Water"
+63,"WV","Water-Vadose Zone","Water From Vadose Zone"
+64,"WD","Well Development Water","Well Development Water"
+101,NULL,"Groundwater",NULL
+102,NULL,"Finished Water",NULL
+103,NULL,"Municipal Waste",NULL
+104,NULL,"Industrial Waste",NULL
+105,NULL,"Septic Effluent",NULL
+106,NULL,"Industrial Effluent",NULL
+107,NULL,"Const. Material",NULL
+108,NULL,"Dry Fall Material",NULL
+109,NULL,"Wet Fall Material",NULL
+110,NULL,"Stack Gases",NULL
+111,NULL,"Indoor Air",NULL
+112,NULL,"Oil/Oily Sludge",NULL
+113,NULL,"Filter Residue",NULL
+114,NULL,"Wipe",NULL
+115,NULL,"Subsurface Soil/Sediment",NULL
+116,NULL,"Surface Soil/Sediment",NULL
+117,NULL,"Sieved Sediment",NULL
+118,NULL,"UnSieved Sediment",NULL
+351,NULL,"Lake Sediment",NULL
+484,NULL,"Interstitial Water",NULL
+681,NULL,"Borrow Soil, Waste Rock, and Protore material",NULL
+1231,NULL,"Wastewater Treatment Plant Effluent",NULL
+1232,NULL,"Wastewater Treatment Plant Influent",NULL
+1233,NULL,"Rainwater",NULL
+1234,NULL,"Snowmelt",NULL
+2511,NULL,"Municipal Sewage Effluent",NULL
+2512,NULL,"Mine Tailings Pond",NULL
+3641,NULL,"Bottom material",NULL
+3642,NULL,"Core material",NULL
+3643,NULL,"Solids",NULL
+3644,NULL,"Borehole cuttings",NULL
+3645,NULL,"Air moisture",NULL
+3646,NULL,"Untreated water supply",NULL
+3647,NULL,"Canopy water",NULL
+3648,NULL,"Landfill effluent",NULL
+3649,NULL,"Hyporheic zone",NULL
+3650,NULL,"Soil moisture",NULL
+3651,NULL,"Treated water supply",NULL
+3721,NULL,"Bulk Deposition",NULL
+4341,NULL,"Pore water",NULL
+6654,NULL,"Manure, green",NULL
+6655,NULL,"Manure, solid",NULL
+6656,NULL,"Manure, liquid",NULL
+6894,NULL,"Deionized Water",NULL
+6895,NULL,"USGS Standard Reference Sample",NULL
