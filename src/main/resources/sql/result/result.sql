@@ -3,27 +3,27 @@ with temp_result as (select fa_regular_result.pk_isn + 100000000000 result_id,
                 fa_regular_result.station_id,
                 fa_regular_result.activity_start_date_time,
                 fa_regular_result.act_start_time_zone,
-                trim(fa_regular_result.trip_id) trip_id,
+                nullif(trim(fa_regular_result.trip_id), '') trip_id,
                 di_characteristic.characteristic_group_type,
                 di_characteristic.display_name characteristic_name,
                 fa_regular_result.result_value,
                 case
                   when fa_regular_result.result_value is not null
-                    then trim(fa_regular_result.result_unit)
+                    then nullif(trim(fa_regular_result.result_unit), '')
                 end result_unit,
                 case
                   when fa_regular_result.result_value is null
-                    then fa_regular_result.result_value_text
+                    then nullif(trim(fa_regular_result.result_value_text), '')
                 end result_value_text,
                 fa_regular_result.sample_fraction_type,
-                trim(fa_regular_result.result_value_type) result_value_type,
-                trim(fa_regular_result.statistic_type) statistic_type,
+                nullif(trim(fa_regular_result.result_value_type), '') result_value_type,
+                nullif(trim(fa_regular_result.statistic_type), '') statistic_type,
                 fa_regular_result.result_value_status,
-                trim(fa_regular_result.weight_basis_type) weight_basis_type,
-                trim(fa_regular_result.temperature_basis_level) temperature_basis_level,
-                trim(fa_regular_result.duration_basis) duration_basis,
-                trim(fa_regular_result.analytical_procedure_source) analytical_procedure_source,
-                trim(fa_regular_result.analytical_procedure_id) analytical_procedure_id,
+                nullif(trim(fa_regular_result.weight_basis_type), '') weight_basis_type,
+                nullif(trim(fa_regular_result.temperature_basis_level), '') temperature_basis_level,
+                nullif(trim(fa_regular_result.duration_basis), '') duration_basis,
+                nullif(trim(fa_regular_result.analytical_procedure_source), '') analytical_procedure_source,
+                nullif(trim(fa_regular_result.analytical_procedure_id), '') analytical_procedure_id,
                 fa_regular_result.lab_name,
                 fa_regular_result.analysis_date_time,
                 fa_regular_result.detection_limit,
@@ -41,7 +41,7 @@ with temp_result as (select fa_regular_result.pk_isn + 100000000000 result_id,
                 fa_regular_result.fk_act_matrix,
                 fa_regular_result.fk_char,
                 fa_regular_result.fk_unit_conversion,
-                trim(fa_regular_result.activity_id) activity_id,
+                nullif(trim(fa_regular_result.activity_id), '') activity_id,
                 fa_regular_result.replicate_number,
                 fa_regular_result.activity_type,
                 fa_regular_result.activity_stop_date_time,
@@ -51,13 +51,13 @@ with temp_result as (select fa_regular_result.pk_isn + 100000000000 result_id,
                 fa_regular_result.activity_upper_depth,
                 fa_regular_result.activity_lower_depth,
                 fa_regular_result.upr_lwr_depth_unit,
-                trim(coalesce(fa_regular_result.field_procedure_id, 'USEPA')) field_procedure_id,
-                trim(coalesce(fa_regular_result.field_gear_id, 'Unknown')) field_gear_id,
+                coalesce(nullif(trim(fa_regular_result.field_procedure_id), ''), 'USEPA') field_procedure_id,
+                coalesce(nullif(trim(fa_regular_result.field_gear_id), ''), 'Unknown') field_gear_id,
                 fa_regular_result.result_comment,
                 fa_regular_result.itis_number,
                 fa_regular_result.activity_comment,
                 fa_regular_result.activity_depth_ref_point,
-                coalesce(fa_regular_result.project_id, 'EPA') project_id, --not tested
+                coalesce(nullif(trim(fa_regular_result.project_id), ''), 'EPA') project_id, --not tested
                 fa_regular_result.result_meas_qual_code,
                 fa_regular_result.activity_cond_org_text,
                 fa_regular_result.result_depth_meas_value,
@@ -169,7 +169,7 @@ insert
                          duration_basis,               --not tested
                          temperature_basis_level,      --not tested
                          particle_size,                --not tested
-                         precision,--
+                         precision,                    --not tested
                          result_comment,
                          result_depth_meas_value,      --no values in db/not tested
                          result_depth_meas_unit_code,  --no values in db/not tested
@@ -193,7 +193,7 @@ select 3 data_source_id,
        s.site_id,
        date_trunc('day', r.activity_start_date_time) event_date,
        r.nemi_url analytical_method,
-       concat_ws('-', trim(s.organization), r.activity_id, r.trip_id, r.replicate_number) activity,
+       concat_ws('-', nullif(trim(s.organization), ''), r.activity_id, r.trip_id, r.replicate_number) activity,
        r.characteristic_name,
        r.characteristic_group_type characteristic_type,
        r.activity_medium sample_media,

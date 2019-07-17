@@ -1,3 +1,5 @@
+--FOR TESTING PURPOSES ONLY, WILL NEED TO BE MODIFIED AFTER 'REAL' TABLES ARE CREATED
+
 create table if not exists storetw.di_geo_county
 (pk_isn            integer
 ,fk_geo_state      integer
@@ -433,4 +435,16 @@ create unlogged table if not exists STORETW.result_no_source_test
 ,analysis_prep_date_tx          text
 ,activity_id                    numeric
 )
-with (fillfactor = 100)
+with (fillfactor = 100);
+
+create unlogged table if not exists STORETW.nemi_wqp_to_epa_crosswalk
+(wqp_source                  character varying(6)
+,analytical_procedure_source character varying(256)
+,analytical_procedure_id     character varying(256)
+,source_method_identifier    character varying(30)
+,method_id                   numeric
+,method_source               character varying(20)
+,method_type                 character varying(100)
+,nemi_url                    text
+)
+with (fillfactor = 100);
