@@ -20,9 +20,9 @@ public class BatchConfiguration {
 	@Qualifier("monitoringLocationFlow")
 	private Flow monitoringLocationFlow;
 
-//	@Autowired
-//	@Qualifier("activityFlow")
-//	private Flow activityFlow;
+	@Autowired
+	@Qualifier("activityFlow")
+	private Flow activityFlow;
 
 	@Autowired
 	@Qualifier("resultFlow")
@@ -33,7 +33,7 @@ public class BatchConfiguration {
 		return jobBuilderFactory.get("WQP_STORET_ETL")
 				.start(monitoringLocationFlow)
 				.next(resultFlow)
-//				.next(activityFlow)
+				.next(activityFlow)
 				.build()
 				.build();
 	}

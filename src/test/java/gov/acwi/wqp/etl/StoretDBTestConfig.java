@@ -22,7 +22,6 @@ public class StoretDBTestConfig {
 	public DatabaseConfigBean dbUnitDatabaseConfig() {
 		DatabaseConfigBean dbUnitDbConfig = new DatabaseConfigBean();
 		dbUnitDbConfig.setDatatypeFactory(new PostgresqlDataTypeFactory());
-		dbUnitDbConfig.setTableType(new String[] {"TABLE", "VIEW"});
 		return dbUnitDbConfig;
 	}
 

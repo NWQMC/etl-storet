@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <activity_no_source
+        data_source_id="3"
+        data_source="STORET"
+        station_id="734173"
+        site_id="CSC_WQX-614"
+        event_date="2003-11-28"
+        activity="HANALEI-14-112003-0"
+    />
+    <activity_no_source
+        data_source_id="3"
+        data_source="STORET"
+        station_id="854913"
+        site_id="CALWR_WQX-A0718000"
+        event_date="2003-11-28"
+        activity="HANALEI-14-112003-0"
+    />
+</dataset>
