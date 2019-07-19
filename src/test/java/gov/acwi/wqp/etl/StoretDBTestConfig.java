@@ -34,4 +34,12 @@ public class StoretDBTestConfig {
 		return dbUnitDatabaseConnection;
 	}
 
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean wqx() throws SQLException {
+		DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dbUnitDatabaseConnection.setDatabaseConfig(dbUnitDatabaseConfig());
+		dbUnitDatabaseConnection.setDataSource(dataSource);
+		dbUnitDatabaseConnection.setSchema("wqx");
+		return dbUnitDatabaseConnection;
+	}
 }

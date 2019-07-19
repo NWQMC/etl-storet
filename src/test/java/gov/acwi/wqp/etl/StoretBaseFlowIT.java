@@ -47,13 +47,17 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @AutoConfigureTestDatabase(replace=Replace.NONE)
 @Import({StoretDBTestConfig.class})
 @DbUnitConfiguration(
-		databaseConnection={StoretBaseFlowIT.CONNECTION_STORET},
+		databaseConnection={
+				StoretBaseFlowIT.CONNECTION_STORET,
+				StoretBaseFlowIT.CONNECTION_WQX
+				},
 		dataSetLoader=FileSensingDataSetLoader.class
 )
 @DirtiesContext
 public abstract class StoretBaseFlowIT {
 
 	public static final String CONNECTION_STORET = "storet";
+	public static final String CONNECTION_WQX = "wqx";
 
 	@Autowired
 	protected JdbcTemplate jdbcTemplate;

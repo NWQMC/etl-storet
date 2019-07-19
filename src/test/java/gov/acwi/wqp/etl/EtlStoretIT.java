@@ -29,6 +29,10 @@ public class EtlStoretIT extends StoretBaseFlowIT {
 	@DatabaseSetup(
 			value="classpath:/testData/result/"
 			)
+	@DatabaseSetup(
+			connection=CONNECTION_WQX,
+			value="classpath:/testData/nemi/"
+			)
 
 	@ExpectedDatabase(
 			value="classpath:/testResult/stationNoSource/csv/",
@@ -36,7 +40,8 @@ public class EtlStoretIT extends StoretBaseFlowIT {
 			)
 	@ExpectedDatabase(
 			value="classpath:/testResult/resultNoSource/csv/",
-			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
+			table="result_no_source",
+			query="select * from result_no_source order by result_id"
 			)
 	@ExpectedDatabase(
 			value="classpath:/testResult/activityNoSource/csv/",
