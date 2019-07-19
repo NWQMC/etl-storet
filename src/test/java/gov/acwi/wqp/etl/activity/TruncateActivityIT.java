@@ -1,4 +1,4 @@
-package gov.acwi.wqp.etl.monitoringlocation;
+package gov.acwi.wqp.etl.activity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -13,27 +13,23 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 import gov.acwi.wqp.etl.StoretBaseFlowIT;
 
-public class TransformMonitoringLocationIT extends StoretBaseFlowIT {
+public class TruncateActivityIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
-			value="classpath:/testResult/stationNoSource/empty.xml"
-			)
-	@DatabaseSetup(
-			value="classpath:/testData/monitoringLocation/"
+			value="classpath:/testData/activityNoSource.xml"
 			)
 	@ExpectedDatabase(
-			value="classpath:/testResult/stationNoSource/csv/",
+			value="classpath:/testResult/activityNoSource/empty.xml",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
-	public void transformTest() {
+	public void truncateTest() {
 		try {
-			JobExecution jobExecution = jobLauncherTestUtils.launchStep("transformMonitoringLocationStep", testJobParameters);
+			JobExecution jobExecution = jobLauncherTestUtils.launchStep("truncateActivityStep", testJobParameters);
 			assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getLocalizedMessage());
 		}
 	}
-
 }
