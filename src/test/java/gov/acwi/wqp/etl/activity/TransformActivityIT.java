@@ -13,7 +13,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 import gov.acwi.wqp.etl.StoretBaseFlowIT;
 
-public class TransformActivityIT  extends StoretBaseFlowIT {
+public class TransformActivityIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
