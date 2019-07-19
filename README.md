@@ -1,6 +1,6 @@
 # etl\-storet
 
-[![Build Status](https://travis-ci.org/NWQMC/etl-storet.svg?branch=master)](https://travis-ci.org/NWQMC/etl-storet)
+[![Build Status](https://travis-ci.org/NWQMC/etl-storet.svg?branch=master)](https://travis-ci.org/NWQMC/etl-storet) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a8a8c5e7c3d2440bb7a16e7c33fa614a)](https://www.codacy.com/app/usgs_wma_dev/etl-storet?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NWQMC/etl-storet&amp;utm_campaign=Badge_Grade)
 
 ETL Water Quality Data from the Legacy STORETW System
 
