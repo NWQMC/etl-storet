@@ -1,4 +1,4 @@
-package gov.acwi.wqp.etl;
+package gov.acwi.wqp.etl.result;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -11,45 +11,25 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
-public class EtlStoretIT extends StoretBaseFlowIT {
+import gov.acwi.wqp.etl.StoretBaseFlowIT;
+
+public class TruncateResultIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
-			value="classpath:/testData/stationNoSource.xml"
-			)
-	@DatabaseSetup(
 			value="classpath:/testData/resultNoSource.xml"
 			)
-	@DatabaseSetup(
-			value="classpath:/testData/monitoringLocation/"
-			)
-	@DatabaseSetup(
-			value="classpath:/testData/result/"
-			)
-	@DatabaseSetup(
-			connection=CONNECTION_WQX,
-			value="classpath:/testData/nemi/"
-			)
-
 	@ExpectedDatabase(
-			value="classpath:/testResult/stationNoSource/csv/",
+			value="classpath:/testResult/resultNoSource/empty.xml",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
-	@ExpectedDatabase(
-			value="classpath:/testResult/resultNoSource/csv/",
-			table="result_no_source",
-			query="select * from result_no_source order by result_id"
-			)
-
-	public void endToEndTest() {
+	public void truncateTest() {
 		try {
-			JobExecution jobExecution = jobLauncherTestUtils.launchJob(testJobParameters);
+			JobExecution jobExecution = jobLauncherTestUtils.launchStep("truncateResultStep", testJobParameters);
 			assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-			Thread.sleep(1000);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getLocalizedMessage());
 		}
 	}
-
 }
