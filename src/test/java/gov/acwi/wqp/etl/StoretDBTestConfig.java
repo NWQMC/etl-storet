@@ -22,7 +22,6 @@ public class StoretDBTestConfig {
 	public DatabaseConfigBean dbUnitDatabaseConfig() {
 		DatabaseConfigBean dbUnitDbConfig = new DatabaseConfigBean();
 		dbUnitDbConfig.setDatatypeFactory(new PostgresqlDataTypeFactory());
-		dbUnitDbConfig.setTableType(new String[] {"TABLE", "VIEW"});
 		return dbUnitDbConfig;
 	}
 
@@ -35,4 +34,12 @@ public class StoretDBTestConfig {
 		return dbUnitDatabaseConnection;
 	}
 
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean wqx() throws SQLException {
+		DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dbUnitDatabaseConnection.setDatabaseConfig(dbUnitDatabaseConfig());
+		dbUnitDatabaseConnection.setDataSource(dataSource);
+		dbUnitDatabaseConnection.setSchema("wqx");
+		return dbUnitDatabaseConnection;
+	}
 }
