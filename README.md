@@ -1,5 +1,7 @@
 # etl\-storet
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5bef6e2972b0416f802869662631c1dd)](https://app.codacy.com/app/usgs_wma_dev/etl-storet?utm_source=github.com&utm_medium=referral&utm_content=NWQMC/etl-storet&utm_campaign=Badge_Grade_Dashboard)
+
 ETL Water Quality Data from the Legacy STORETW System
 
 This ETL is unique in that:
