@@ -1,5 +1,7 @@
 # etl\-storet
 
+![Build Status](https://travis-ci.org/NWQMC/etl-storet)
+
 ETL Water Quality Data from the Legacy STORETW System
 
 ## Development
