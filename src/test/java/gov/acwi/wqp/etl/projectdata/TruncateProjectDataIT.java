@@ -1,4 +1,4 @@
-package gov.acwi.wqp.etl.result;
+package gov.acwi.wqp.etl.projectdata;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -13,21 +13,25 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 import gov.acwi.wqp.etl.StoretBaseFlowIT;
 
-public class TruncateResultIT extends StoretBaseFlowIT {
+public class TruncateProjectDataIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
 			connection=CONNECTION_STORETW,
-			value="classpath:/testData/resultNoSource.xml"
+			value="classpath:/testData/storetwTransition/"
+			)
+	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
+			value="classpath:/testData/projectDataNoSource.xml"
 			)
 	@ExpectedDatabase(
 			connection=CONNECTION_STORETW,
-			value="classpath:/testResult/resultNoSource/empty.xml",
+			value="classpath:/testResult/projectDataNoSource/empty.xml",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
 	public void truncateTest() {
 		try {
-			JobExecution jobExecution = jobLauncherTestUtils.launchStep("truncateResultStep", testJobParameters);
+			JobExecution jobExecution = jobLauncherTestUtils.launchStep("truncateProjectDataStep", testJobParameters);
 			assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 		} catch (Exception e) {
 			e.printStackTrace();

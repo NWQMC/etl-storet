@@ -1,4 +1,4 @@
-package gov.acwi.wqp.etl.result;
+package gov.acwi.wqp.etl.orgdata;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -13,25 +13,38 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 import gov.acwi.wqp.etl.StoretBaseFlowIT;
 
-public class TruncateResultIT extends StoretBaseFlowIT {
+public class TransformOrgDataIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
 			connection=CONNECTION_STORETW,
-			value="classpath:/testData/resultNoSource.xml"
+			value="classpath:/testData/storetwTransition/"
+			)
+	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
+			value="classpath:/testResult/orgDataNoSource/empty.xml"
+			)
+	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
+			value="classpath:/testData/storetwTransition/"
+			)
+	@DatabaseSetup(
+			connection=CONNECTION_STORETW_DUMP,
+			value="classpath:/testData/orgData/"
 			)
 	@ExpectedDatabase(
 			connection=CONNECTION_STORETW,
-			value="classpath:/testResult/resultNoSource/empty.xml",
+			value="classpath:/testResult/orgDataNoSource/csv/",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
-	public void truncateTest() {
+	public void transformTest() {
 		try {
-			JobExecution jobExecution = jobLauncherTestUtils.launchStep("truncateResultStep", testJobParameters);
+			JobExecution jobExecution = jobLauncherTestUtils.launchStep("transformOrgDataStep", testJobParameters);
 			assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getLocalizedMessage());
 		}
 	}
+
 }

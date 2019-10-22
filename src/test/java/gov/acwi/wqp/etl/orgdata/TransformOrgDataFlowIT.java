@@ -1,4 +1,4 @@
-package gov.acwi.wqp.etl.monitoringlocation;
+package gov.acwi.wqp.etl.orgdata;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -17,16 +17,16 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 import gov.acwi.wqp.etl.StoretBaseFlowIT;
 
-public class TransformMonitoringLocationFlowIT extends StoretBaseFlowIT {
+public class TransformOrgDataFlowIT extends StoretBaseFlowIT {
 
 	@Autowired
-	@Qualifier("monitoringLocationFlow")
-	private Flow monitoringLocationFlow;
+	@Qualifier("orgDataFlow")
+	private Flow orgDataFlow;
 
 	@Before
 	public void setUp() {
-		testJob = jobBuilderFactory.get("monitoringLocationFlowTest")
-				.start(monitoringLocationFlow)
+		testJob = jobBuilderFactory.get("orgDataFlowTest")
+				.start(orgDataFlow)
 				.build()
 				.build();
 		jobLauncherTestUtils.setJob(testJob);
@@ -35,23 +35,15 @@ public class TransformMonitoringLocationFlowIT extends StoretBaseFlowIT {
 	@Test
 	@DatabaseSetup(
 			connection=CONNECTION_STORETW,
-			value="classpath:/testData/stationNoSource.xml"
+			value="classpath:/testData/orgDataNoSource.xml"
 			)
 	@DatabaseSetup(
 			connection=CONNECTION_STORETW_DUMP,
 			value="classpath:/testData/orgData/"
 			)
-	@DatabaseSetup(
-			connection=CONNECTION_STORETW_DUMP,
-			value="classpath:/testData/monitoringLocation/"
-			)
-	@DatabaseSetup(
-			connection=CONNECTION_STORETW,
-			value="classpath:/testData/storetwTransition/"
-			)
 	@ExpectedDatabase(
 			connection=CONNECTION_STORETW,
-			value="classpath:/testResult/stationNoSource/csv/",
+			value="classpath:/testResult/orgDataNoSource/csv/",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
 	public void flowTest() {

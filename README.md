@@ -21,6 +21,7 @@ EPA_SCHEMA_OWNER_USERNAME: <epa_owner>
 EPA_SCHEMA_OWNER_PASSWORD: <changeMe>
 
 STORETW_SCHEMA_NAME: <storetw>
+STORETW_DUMP_SCHEMA_NAME: <storetw_dump>
 
 ETL_DATA_SOURCE_ID: <3>
 ETL_DATA_SOURCE: <STORET>
@@ -35,6 +36,7 @@ ETL_DATA_SOURCE: <STORET>
 *   **EPA_SCHEMA_OWNER_USERNAME** - Role which owns the **WQX_SCHEMA_NAME** and **STORETW_SCHEMA_NAME** database objects.
 *   **EPA_SCHEMA_OWNER_PASSWORD** - Password for the **EPA_SCHEMA_OWNER_USERNAME** role.
 *   **STORETW_SCHEMA_NAME** - Name of the schema holding STORETW database objects.
+*   **STORETW_DUMP_SCHEMA_NAME** - Name of the schema holding STORETW_DUMP database objects.
 
 ##### Miscellaneous
 *   **ETL_DATA_SOURCE_ID** - Database ID of the data_source (data_source_id from the **WQP_SCHEMA_NAME**.data_source table).

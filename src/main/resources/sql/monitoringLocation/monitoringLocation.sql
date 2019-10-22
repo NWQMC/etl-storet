@@ -7,7 +7,6 @@ insert
                           site_type,
                           huc,
                           governmental_unit_code,
-                          geom,
                           station_name,
                           organization_name,
                           description_text,
@@ -23,49 +22,48 @@ insert
                           station_type_name)
 select 3 data_source_id,
        'STORET' data_source,
-       storetw.fa_station.pk_isn station_id,
-       storetw.fa_station.organization_id || '-' || storetw.fa_station.station_id site_id,
-       storetw.fa_station.organization_id organization,
-       storetw.fa_station.station_group_type site_type,
-       storetw.fa_station.generated_huc huc,
-       di_geo_state.country_code || ':' || rtrim(di_geo_state.fips_state_code) || ':' || di_geo_county.fips_county_code governmental_unit_code,
-       st_transform(storetw.fa_station.geom, 4269) geom,
-       trim(storetw.fa_station.station_name) station_name,
-       di_org.organization_name,
-       trim(storetw.fa_station.description_text) description_text,
-       storetw.fa_station.latitude,
-       storetw.fa_station.longitude,
-       substring(storetw.fa_station.map_scale, '[[:digit:]]+$') map_scale,
-       coalesce(lu_mad_hmethod.geopositioning_method, 'Unknown') geopositioning_method,
-       coalesce(rtrim(lu_mad_hdatum.id_code), 'Unknown') hdatum_id_code,
-       substring(storetw.fa_station.elevation, '^[[:digit:]]+') elevation_value,
+       fa_station."PK_ISN" station_id,
+       fa_station."ORGANIZATION_ID" || '-' || fa_station."STATION_ID" site_id,
+       fa_station."ORGANIZATION_ID" organization,
+       fa_station."STATION_GROUP_TYPE" site_type,
+       fa_station."GENERATED_HUC" huc,
+       di_geo_state."COUNTRY_CODE" || ':' || rtrim(di_geo_state."FIPS_STATE_CODE") || ':' || di_geo_county."FIPS_COUNTY_CODE" governmental_unit_code,
+       trim(fa_station."STATION_NAME") station_name,
+       di_org."ORGANIZATION_NAME",
+       trim(fa_station."DESCRIPTION_TEXT") description_text,
+       fa_station."LATITUDE",
+       fa_station."LONGITUDE",
+       substring(fa_station."MAP_SCALE", '[[:digit:]]+$') map_scale,
+       coalesce(lu_mad_hmethod."GEOPOSITIONING_METHOD", 'Unknown') geopositioning_method,
+       coalesce(rtrim(lu_mad_hdatum."ID_CODE"), 'Unknown') hdatum_id_code,
+       substring(fa_station."ELEVATION", '^[[:digit:]]+') elevation_value,
        case
-         when storetw.fa_station.elevation is not null
-           then coalesce(storetw.fa_station.elevation_unit, 'ft')
+         when fa_station."ELEVATION" is not null
+           then coalesce(fa_station."ELEVATION_UNIT", 'ft')
        end elevation_unit,
        case
-         when storetw.fa_station.elevation is not null
-           then lu_mad_vmethod.elevation_method
+         when fa_station."ELEVATION" is not null
+           then lu_mad_vmethod."ELEVATION_METHOD"
        end elevation_method,
        case
-         when storetw.fa_station.elevation is not null
-           then coalesce(lu_mad_vdatum.id_code, 'Unknown')
+         when fa_station."ELEVATION" is not null
+           then coalesce(lu_mad_vdatum."ID_CODE", 'Unknown')
        end vdatum_id_code,
-       storetw.fa_station.fk_primary_type station_type_name
-  from storetw.fa_station
-       left join storetw.di_org
-         on fk_org = di_org.pk_isn
-       left join storetw.di_geo_state
-         on fk_geo_state = di_geo_state.pk_isn
-       left join storetw.di_geo_county
-         on fk_geo_county = di_geo_county.pk_isn
-       left join storetw.lu_mad_hmethod
-         on fk_mad_hmethod = lu_mad_hmethod.pk_isn
-       left join storetw.lu_mad_hdatum
-         on fk_mad_hdatum = lu_mad_hdatum.pk_isn
-       left join storetw.lu_mad_vmethod
-         on fk_mad_vmethod = lu_mad_vmethod.pk_isn
-       left join storetw.lu_mad_vdatum
-         on fk_mad_vdatum = lu_mad_vdatum.pk_isn
- where storetw.fa_station.location_point_type = '*POINT OF RECORD' and
-       storetw.fa_station.organization_id not in(select org_id from storetw.storetw_transition)
+       fa_station."FK_PRIMARY_TYPE" station_type_name
+  from storetw_dump."FA_STATION" fa_station
+       left join storetw_dump."DI_ORG" di_org
+         on "FK_ORG" = di_org."PK_ISN"
+       left join storetw_dump."DI_GEO_STATE" di_geo_state
+         on "FK_GEO_STATE" = di_geo_state."PK_ISN"
+       left join storetw_dump."DI_GEO_COUNTY" di_geo_county
+         on "FK_GEO_COUNTY" = di_geo_county."PK_ISN"
+       left join storetw_dump."LU_MAD_HMETHOD" lu_mad_hmethod
+         on "FK_MAD_HMETHOD" = lu_mad_hmethod."PK_ISN"
+       left join storetw_dump."LU_MAD_HDATUM" lu_mad_hdatum
+         on "FK_MAD_HDATUM" = lu_mad_hdatum."PK_ISN"
+       left join storetw_dump."LU_MAD_VMETHOD" lu_mad_vmethod
+         on "FK_MAD_VMETHOD" = lu_mad_vmethod."PK_ISN"
+       left join storetw_dump."LU_MAD_VDATUM" lu_mad_vdatum
+         on "FK_MAD_VDATUM" = lu_mad_vdatum."PK_ISN"
+ where fa_station."LOCATION_POINT_TYPE" = '*POINT OF RECORD' and
+       fa_station."ORGANIZATION_ID" not in (select org_id from storetw.storetw_transition)

@@ -1,9 +1,7 @@
-di_org
-di_geo_state
-di_geo_county
-fa_station
-lu_mad_hmethod
-lu_mad_hdatum
-lu_mad_vmethod
-lu_mad_vdatum
-storetw_transition
+DI_GEO_STATE
+DI_GEO_COUNTY
+FA_STATION
+LU_MAD_HMETHOD
+LU_MAD_HDATUM
+LU_MAD_VMETHOD
+LU_MAD_VDATUM

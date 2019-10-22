@@ -1,0 +1,15 @@
+PK_ISN,TSMPROJ_ORG_ID,PROJECT_CD,PROJECT_NAME,FK_ORG,PROJECT_DESCRIPTION,SAMPLING_DESIGN_TYPE_CD,QA_APPROVED,QA_APPROVAL_AGENCY
+3112,21FLBRA,SMON06,"Strategic Monitoring for DEP, 2006",256,null,null,null,null
+3114,21FLBRA,SMON07,"Strategic Monitoring for DEP, 2007",256,null,null,null,null
+2767,HANALEI,HANALEI,Watershed Initiative Program,215,null,null,null,null
+4581,HANNAHWQ,HANSWQM,Hannahville Surface Water Quality Monitoring,258,null,null,null,null
+2759,IL_EPA,ALMP,ALMP,171,null,null,null,null
+2755,IL_EPA,AWQMN,Ambient WQMN,171,null,null,null,null
+1687,INSTOR,1,1998 Fixed Station,223,null,null,null,null
+1693,INSTOR,10,1997 Synoptic,223,null,null,null,null
+1644,INSTOR,101,1999 Macroinvertebrates,223,null,null,null,null
+1366,INTRMTN,33412,33412-INTERMOUNTAIN WASTE OIL REFINERY,205,description,sampling_design_type_code,qapp_approved_indicator,qapp_approval_agency_name
+704,INTRMTN,IWOR8,Intermountain Waste Oil Refinery OU2 Groundwater,205,null,null,null,null
+7504,IOWATER,IOWATER,Iowa Volunteer Monitoring Program,314,null,null,null,null
+30756,ONEIDA,BENTHIC,Benthic Invertebrate,248,Benthic Invertebrate,null,null,null
+30757,ONEIDA,SWQMMORE,More Surface Water Monitoring,248,More and MOre,null,null,null
