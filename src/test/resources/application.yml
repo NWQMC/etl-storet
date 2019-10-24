@@ -12,3 +12,8 @@ spring:
     password: ${EPA_SCHEMA_OWNER_PASSWORD}
     hikari:
       maximumPoolSize: 10
+  liquibase:
+    change-log: db/changelog/epa/changeLog.yml
+    parameters:
+      STORETW_SCHEMA_NAME: ${STORETW_SCHEMA_NAME}
+    liquibase-schema: ${WQX_SCHEMA_NAME}

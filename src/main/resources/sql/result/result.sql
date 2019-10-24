@@ -85,7 +85,7 @@ with temp_result as (select fa_regular_result."PK_ISN" + 100000000000 result_id,
                   when coalesce(fa_regular_result."ACTIVITY_UPPER_DEPTH", fa_regular_result."ACTIVITY_LOWER_DEPTH") is not null
                     then fa_regular_result."ACTIVITY_DEPTH_REF_POINT"
                 end activity_uprlwr_depth_ref_pt,
-                substring(fa_regular_result."DETECTION_LIMIT", '[[:space:]].*') myql,
+                btrim(fa_regular_result."DETECTION_LIMIT", ' ') myql,
                 case
                   when fa_regular_result."DETECTION_LIMIT" is not null
                     then fa_regular_result."DETECTION_LIMIT_UNIT"

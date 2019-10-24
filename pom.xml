@@ -49,6 +49,11 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
         <!-- TEST DEPENDENCIES-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

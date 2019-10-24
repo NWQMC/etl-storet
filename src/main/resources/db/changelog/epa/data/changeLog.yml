@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - preConditions:
+    - dbms:
+        type: postgresql
+
+  - changeSet:
+      id: load.${STORETW_SCHEMA_NAME}.hdatum_to_srid
+      author: drsteini
+      runOnChange: true
+      changes:
+        - delete:
+            schemaName: ${STORETW_SCHEMA_NAME}
+            tableName: hdatum_to_srid
+        - loadData:
+            encoding: UTF-8
+            file: hdatum_to_srid.tsv
+            relativeToChangelogFile: true
+            separator: \t
+            schemaName: ${STORETW_SCHEMA_NAME}
+            tableName: hdatum_to_srid
+        - rollback: select 'no rollback - you must restore previous hdatum_to_srid.tsv and rerun manually'
