@@ -26,11 +26,24 @@ public class StoretDBTestConfig {
 	}
 
 	@Bean
-	public DatabaseDataSourceConnectionFactoryBean storet() throws SQLException {
+	public DatabaseDataSourceConnectionFactoryBean storetw() throws SQLException {
 		DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection = new DatabaseDataSourceConnectionFactoryBean();
 		dbUnitDatabaseConnection.setDatabaseConfig(dbUnitDatabaseConfig());
 		dbUnitDatabaseConnection.setDataSource(dataSource);
 		dbUnitDatabaseConnection.setSchema("storetw");
+		return dbUnitDatabaseConnection;
+	}
+
+	@Bean
+	public DatabaseDataSourceConnectionFactoryBean storetwDump(DatabaseConfigBean dbUnitDatabaseConfig) throws SQLException {
+		//Currently the STORETW tables from EPA are in upper case.
+		dbUnitDatabaseConfig.setCaseSensitiveTableNames(true);
+		//And need to be enclosed in quotes for the delete portion of the database setup.
+		dbUnitDatabaseConfig.setEscapePattern("\"?\"");
+		DatabaseDataSourceConnectionFactoryBean dbUnitDatabaseConnection = new DatabaseDataSourceConnectionFactoryBean();
+		dbUnitDatabaseConnection.setDatabaseConfig(dbUnitDatabaseConfig);
+		dbUnitDatabaseConnection.setDataSource(dataSource);
+		dbUnitDatabaseConnection.setSchema("storetw_dump");
 		return dbUnitDatabaseConnection;
 	}
 

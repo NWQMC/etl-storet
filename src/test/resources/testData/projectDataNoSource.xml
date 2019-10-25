@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <project_data_no_source
+        data_source_id="3"
+        project_id="567891234"
+        data_source="STORET"
+        organization="Old Org"
+        organization_name="Old Org Name"
+        project_identifier="Old Project Identifier"
+        project_name="Old Project Name"
+        description="old project description"
+        sampling_design_type_code="old sampling_design_type_code"
+        qapp_approved_indicator="old qapp_approved_indicator"
+        qapp_approval_agency_name="old qapp_approval_agency_name"
+    />
+</dataset>

@@ -17,9 +17,11 @@ public class TruncateMonitoringLocationIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testData/stationNoSource.xml"
 			)
 	@ExpectedDatabase(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/stationNoSource/empty.xml",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)

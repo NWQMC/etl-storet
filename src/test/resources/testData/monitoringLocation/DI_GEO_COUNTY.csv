@@ -1,4 +1,4 @@
-pk_isn,fk_geo_state,fips_county_code,county_name
+PK_ISN,FK_GEO_STATE,FIPS_COUNTY_CODE,COUNTY_NAME
 824,35,013,BLACK HAWK
 3281,108,009,BROWN
 1328,49,041,DELTA

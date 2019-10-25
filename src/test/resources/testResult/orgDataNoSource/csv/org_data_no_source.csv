@@ -1,0 +1,8 @@
+data_source_id,data_source,organization_id,organization,organization_name,organization_description,organization_type
+3,STORET,10000215,HANALEI,Hanalei Watershed Study (Region 9) - California,Water Quality Monitoring Data,Federal/US Government
+3,STORET,10000258,HANNAHWQ,Hannahville Tribal Community (Michigan),Water Quality Monitoring Data,Tribal
+3,STORET,10000171,IL_EPA,Illinois EPA,Water Quality Monitoring Data,State/US Government
+3,STORET,10000223,INSTOR,Indiana STORET,Water Quality Data,State/US Government
+3,STORET,10000205,INTRMTN,Superfund Intermountain Waste Oil Refinery,Superfund,Federal/US Government
+3,STORET,10000314,IOWATER,Iowa Volunteer Water Monitoring Program,Water Quality Monitoring,Volunteer
+3,STORET,10000256,21FLBRA,Biological Research Associates (Florida),Water Quality Monitoring Data,State/US Government

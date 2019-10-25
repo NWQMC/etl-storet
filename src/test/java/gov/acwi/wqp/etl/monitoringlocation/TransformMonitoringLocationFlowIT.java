@@ -34,16 +34,27 @@ public class TransformMonitoringLocationFlowIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testData/stationNoSource.xml"
 			)
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW_DUMP,
+			value="classpath:/testData/orgData/"
+			)
+	@DatabaseSetup(
+			connection=CONNECTION_STORETW_DUMP,
 			value="classpath:/testData/monitoringLocation/"
 			)
+	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
+			value="classpath:/testData/storetwTransition/"
+			)
 	@ExpectedDatabase(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/stationNoSource/csv/",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)
-	public void truncateTest() {
+	public void flowTest() {
 		try {
 			JobExecution jobExecution = jobLauncherTestUtils.launchJob(testJobParameters);
 			assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());

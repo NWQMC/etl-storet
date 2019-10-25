@@ -1,4 +1,4 @@
-pk_isn,id_code,elevation_method
+PK_ISN,ID_CODE,ELEVATION_METHOD
 1,001,GPS Carrier Phase Static Relative Position
 2,002,GPS Carrier Phase Kinematic Relative Position
 3,003,GPS Code (Pseudo Range) Differential
