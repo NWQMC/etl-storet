@@ -191,7 +191,7 @@
                                     <STORETW_DUMP_SCHEMA_NAME>storetw_dump</STORETW_DUMP_SCHEMA_NAME>
                                 </env>
                                 <wait>
-                                    <time>100000</time>
+                                    <time>150000</time>
                                     <log>(?s)PostgreSQL init process complete; ready for start up.*database system is ready to accept connections</log>
                                 </wait>
                             </run>
