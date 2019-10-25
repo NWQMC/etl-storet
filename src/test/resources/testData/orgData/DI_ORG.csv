@@ -1,4 +1,4 @@
-pk_isn,organization_id,organization_name,organization_is_number,organization_type,organization_description,parent_org,last_change_date,source_system,tribal_code,fk_eparegion
+PK_ISN,ORGANIZATION_ID,ORGANIZATION_NAME,ORGANIZATION_IS_NUMBER,ORGANIZATION_TYPE,ORGANIZATION_DESCRIPTION,PARENT_ORG,LAST_CHANGE_DATE,SOURCE_SYSTEM,TRIBAL_CODE,FK_EPAREGION
 215,HANALEI,Hanalei Watershed Study (Region 9) - California,490,Federal/US Government,Water Quality Monitoring Data,"California,HAWAII",2008-09-30,null,null,9
 258,HANNAHWQ,Hannahville Tribal Community (Michigan),586,Tribal,Water Quality Monitoring Data,"Michigan,",2008-09-30,null,null,5
 171,IL_EPA,Illinois EPA,87,State/US Government,Water Quality Monitoring Data,"Illinois,INDIANA,MISSOURI,WISCONSIN",2008-09-30,null,null,5

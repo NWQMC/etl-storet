@@ -17,9 +17,11 @@ public class TruncateActivityIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testData/activityNoSource.xml"
 			)
 	@ExpectedDatabase(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/activityNoSource/empty.xml",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)

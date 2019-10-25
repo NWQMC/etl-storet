@@ -1,4 +1,4 @@
-pk_isn,fips_state_code,state_postal_code,state_name,country_code,country_name,epa_region_code,epa_region_name
+PK_ISN,FIPS_STATE_CODE,STATE_POSTAL_CODE,STATE_NAME,COUNTRY_CODE,COUNTRY_NAME,EPA_REGION_CODE,EPA_REGION_NAME
 1,1,01,AGUASCALIENTES,MX,MEXICO,null,null
 2,01,AL,ALABAMA,US,UNITED STATES,4,"Region 4 (AL, FL, GA, KY, MS, NC, SC, TN)"
 3,02,AK,ALASKA,US,UNITED STATES,10,"Region 10 (AK, ID, OR, WA)"

@@ -33,22 +33,23 @@ public class TransformResultFlowIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testData/resultNoSource.xml"
 			)
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW_DUMP,
 			value="classpath:/testData/result/"
 			)
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/stationNoSource/csv/"
-			)
-	@DatabaseSetup(
-			value="classpath:/testData/result/"
 			)
 	@DatabaseSetup(
 			connection=CONNECTION_WQX,
 			value="classpath:/testData/nemi/"
 			)
 	@ExpectedDatabase(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/resultNoSource/csv/",
 			table="result_no_source",
 			query="select * from result_no_source order by result_id"

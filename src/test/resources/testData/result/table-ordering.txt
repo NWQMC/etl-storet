@@ -1,4 +1,4 @@
-di_activity_matrix
-di_activity_medium
-di_characteristic
-fa_regular_result
+DI_ACTIVITY_MATRIX
+DI_ACTIVITY_MEDIUM
+DI_CHARACTERISTIC
+FA_REGULAR_RESULT

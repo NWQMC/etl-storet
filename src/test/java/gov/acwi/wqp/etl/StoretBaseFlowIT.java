@@ -48,7 +48,8 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @Import({StoretDBTestConfig.class})
 @DbUnitConfiguration(
 		databaseConnection={
-				StoretBaseFlowIT.CONNECTION_STORET,
+				StoretBaseFlowIT.CONNECTION_STORETW,
+				StoretBaseFlowIT.CONNECTION_STORETW_DUMP,
 				StoretBaseFlowIT.CONNECTION_WQX
 				},
 		dataSetLoader=FileSensingDataSetLoader.class
@@ -56,7 +57,8 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @DirtiesContext
 public abstract class StoretBaseFlowIT {
 
-	public static final String CONNECTION_STORET = "storet";
+	public static final String CONNECTION_STORETW = "storetw";
+	public static final String CONNECTION_STORETW_DUMP = "storetwDump";
 	public static final String CONNECTION_WQX = "wqx";
 
 	@Autowired

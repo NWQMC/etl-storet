@@ -34,12 +34,15 @@ public class TransformActivityFlowIT extends StoretBaseFlowIT {
 
 	@Test
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testData/activityNoSource.xml"
 			)
 	@DatabaseSetup(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/resultNoSource/csv/"
 			)
 	@ExpectedDatabase(
+			connection=CONNECTION_STORETW,
 			value="classpath:/testResult/activityNoSource/csv/",
 			assertionMode=DatabaseAssertionMode.NON_STRICT_UNORDERED
 			)

@@ -17,6 +17,14 @@ public class BatchConfiguration {
 	private JobBuilderFactory jobBuilderFactory;
 
 	@Autowired
+	@Qualifier("orgDataFlow")
+	private Flow orgDataFlow;
+
+	@Autowired
+	@Qualifier("projectDataFlow")
+	private Flow projectDataFlow;
+
+	@Autowired
 	@Qualifier("monitoringLocationFlow")
 	private Flow monitoringLocationFlow;
 
@@ -31,7 +39,9 @@ public class BatchConfiguration {
 	@Bean
 	public Job storetEtl() {
 		return jobBuilderFactory.get("WQP_STORET_ETL")
-				.start(monitoringLocationFlow)
+				.start(orgDataFlow)
+				.next(projectDataFlow)
+				.next(monitoringLocationFlow)
 				.next(resultFlow)
 				.next(activityFlow)
 				.build()

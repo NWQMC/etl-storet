@@ -1,4 +1,4 @@
-"pk_isn","search_name","display_name","characteristic_group_type","type_code","registry_name","srs_id","cas_number","itis_number","chartype","last_change_date","description","wqx_chr_uid","fk_chargrptype","fk_chartype","itis_parent","kingdom_name","rank_name","rank_number"
+"PK_ISN","SEARCH_NAME","DISPLAY_NAME","CHARACTERISTIC_GROUP_TYPE","TYPE_CODE","REGISTRY_NAME","SRS_ID","CAS_NUMBER","ITIS_NUMBER","CHARTYPE","LAST_CHANGE_DATE","DESCRIPTION","WQX_CHR_UID","FK_CHARGRPTYPE","FK_CHARTYPE","ITIS_PARENT","KINGDOM_NAME","RANK_NAME","RANK_NUMBER"
 1,"PH ","pH","Physical","P","PH",1644285,null,null,"Physical","2010-09-07 12:15:32",null,1648,13,10,null,null,null,null
 9,"ALACHLOR","Alachlor","Organics, Pesticide","P","Alachlor",202549,"15972-60-8",null,"Pesticide","2010-09-07 12:15:32",null,525,12,9,null,null,null,null
 16,"ALKALINITY, BICARBONATE AS CACO3","Alkalinity, Bicarbonate as CaCO3","Physical","O","Alkalinity",1640226,null,null,"Physical","2010-09-07 12:15:32",null,null,13,10,null,null,null,null

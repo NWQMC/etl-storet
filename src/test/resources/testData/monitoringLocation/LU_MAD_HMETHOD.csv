@@ -1,4 +1,4 @@
-pk_isn,id_code,geopositioning_method
+PK_ISN,ID_CODE,GEOPOSITIONING_METHOD
 1,001,Address Matching-House Number
 2,002,Address Matching-Block Face
 3,003,Address Matching-Street Centerline
