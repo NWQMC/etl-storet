@@ -98,6 +98,7 @@
                         <STORETW_SCHEMA_NAME>storetw</STORETW_SCHEMA_NAME>
                         <ETL_DATA_SOURCE_ID>3</ETL_DATA_SOURCE_ID>
                         <ETL_DATA_SOURCE>STORET</ETL_DATA_SOURCE>
+                        <WQX_SCHEMA_NAME>wqx</WQX_SCHEMA_NAME>
                     </environmentVariables>
                 </configuration>
                 <executions>
