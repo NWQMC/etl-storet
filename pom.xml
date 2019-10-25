@@ -130,7 +130,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <showLogs>true</showLogs>
+                    <!-- Uncomment the next line to see logs during container startup -->
+<!--                     <showLogs>true</showLogs> -->
                     <containerNamePattern>%a</containerNamePattern>
                     <images>
                         <image>
@@ -184,10 +185,13 @@
                                     <EPA_SCHEMA_OWNER_USERNAME>epa_owner</EPA_SCHEMA_OWNER_USERNAME>
                                     <EPA_SCHEMA_OWNER_PASSWORD>changeMe</EPA_SCHEMA_OWNER_PASSWORD>
                                     <WQX_SCHEMA_NAME>wqx</WQX_SCHEMA_NAME>
+                                    <WQX_DUMP_SCHEMA_NAME>wqx_dump</WQX_DUMP_SCHEMA_NAME>
                                     <STORETW_SCHEMA_NAME>storetw</STORETW_SCHEMA_NAME>
+                                    <STORETW_DUMP_SCHEMA_NAME>storetw_dump</STORETW_DUMP_SCHEMA_NAME>
                                 </env>
                                 <wait>
                                     <time>100000</time>
+                                    <log>(?s)PostgreSQL init process complete; ready for start up.*database system is ready to accept connections</log>
                                 </wait>
                             </run>
                         </image>
