@@ -73,4 +73,5 @@ select 3 data_source_id,
        left join storetw_dump."LU_MAD_VDATUM" lu_mad_vdatum
          on "FK_MAD_VDATUM" = lu_mad_vdatum."PK_ISN"
  where fa_station."LOCATION_POINT_TYPE" = '*POINT OF RECORD' and
+       fa_station."SOURCE_SYSTEM" is null and
        fa_station."ORGANIZATION_ID" not in (select org_id from storetw.storetw_transition)
