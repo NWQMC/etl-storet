@@ -24,11 +24,11 @@ insert
 select 3 data_source_id,
        'STORET' data_source,
        fa_station."PK_ISN" station_id,
-       fa_station."ORGANIZATION_ID" || '-' || fa_station."STATION_ID" site_id,
+       coalesce(fa_station."ORGANIZATION_ID", '') || '-' || coalesce(fa_station."STATION_ID", '') site_id,
        fa_station."ORGANIZATION_ID" organization,
        fa_station."STATION_GROUP_TYPE" site_type,
        fa_station."GENERATED_HUC" huc,
-       di_geo_state."COUNTRY_CODE" || ':' || rtrim(di_geo_state."FIPS_STATE_CODE") || ':' || di_geo_county."FIPS_COUNTY_CODE" governmental_unit_code,
+       coalesce(di_geo_state."COUNTRY_CODE", '') || ':' || coalesce(lpad(rtrim(di_geo_state."FIPS_STATE_CODE"), 2, '0'), '') || ':' || coalesce(di_geo_county."FIPS_COUNTY_CODE", '') governmental_unit_code,
        case
          when fa_station."LONGITUDE" is not null and fa_station."LATITUDE" is not null
            then st_transform(st_SetSrid(st_MakePoint(fa_station."LONGITUDE", fa_station."LATITUDE"), coalesce(hdatum_to_srid.srid, 4269)),  4269)
@@ -73,4 +73,5 @@ select 3 data_source_id,
        left join storetw_dump."LU_MAD_VDATUM" lu_mad_vdatum
          on "FK_MAD_VDATUM" = lu_mad_vdatum."PK_ISN"
  where fa_station."LOCATION_POINT_TYPE" = '*POINT OF RECORD' and
+       fa_station."SOURCE_SYSTEM" is null and
        fa_station."ORGANIZATION_ID" not in (select org_id from storetw.storetw_transition)
