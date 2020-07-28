@@ -1,0 +1,5 @@
+artifactoryPath: "wqp"
+dockerImageName: "etl-storet"
+gitlabPath: "wma/docker/wqp"
+gitRepoUrl: "https://github.com/NWQMC/etl-storet.git"
+gitRepoCredentialsId: "Jenkins-GitHub-Read-Write-Token"

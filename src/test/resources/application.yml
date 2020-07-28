@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active:
+    - it
+  batch:
+    job:
+      enabled: false
+    initialize-schema: always
+  datasource:
+    url: jdbc:postgresql://${EPA_DATABASE_ADDRESS}:${EPA_DATABASE_PORT}/${EPA_DATABASE_NAME}
+    username: ${EPA_SCHEMA_OWNER_USERNAME}
+    password: ${EPA_SCHEMA_OWNER_PASSWORD}
+    hikari:
+      maximumPoolSize: 10
+  liquibase:
+    change-log: db/changelog/epa/changeLog.yml
+    parameters:
+      STORETW_SCHEMA_NAME: ${STORETW_SCHEMA_NAME}
+    liquibase-schema: ${WQX_SCHEMA_NAME}

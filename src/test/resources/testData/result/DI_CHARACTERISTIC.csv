@@ -1,0 +1,67 @@
+"PK_ISN","SEARCH_NAME","DISPLAY_NAME","CHARACTERISTIC_GROUP_TYPE","TYPE_CODE","REGISTRY_NAME","SRS_ID","CAS_NUMBER","ITIS_NUMBER","CHARTYPE","LAST_CHANGE_DATE","DESCRIPTION","WQX_CHR_UID","FK_CHARGRPTYPE","FK_CHARTYPE","ITIS_PARENT","KINGDOM_NAME","RANK_NAME","RANK_NUMBER"
+1,"PH ","pH","Physical","P","PH",1644285,null,null,"Physical","2010-09-07 12:15:32",null,1648,13,10,null,null,null,null
+9,"ALACHLOR","Alachlor","Organics, Pesticide","P","Alachlor",202549,"15972-60-8",null,"Pesticide","2010-09-07 12:15:32",null,525,12,9,null,null,null,null
+16,"ALKALINITY, BICARBONATE AS CACO3","Alkalinity, Bicarbonate as CaCO3","Physical","O","Alkalinity",1640226,null,null,"Physical","2010-09-07 12:15:32",null,null,13,10,null,null,null,null
+17,"ALKALINITY, CARBONATE AS CACO3","Alkalinity, Carbonate as CaCO3","Physical","O","Alkalinity",1640242,null,null,"Physical","2010-09-07 12:15:32",null,null,13,10,null,null,null,null
+32,"ATRAZINE","Atrazine","Organics, Pesticide","P","Atrazine",94128,"1912-24-9",null,"Pesticide","2010-09-07 12:15:32",null,600,12,9,null,null,null,null
+65,"BUTYLATE","Butylate","Organics, Pesticide","P","Butylate",95398,"2008-41-5",null,"Pesticide","2010-09-07 12:15:32",null,717,12,9,null,null,null,null
+75,"CALCIUM","Calcium","Inorganics, Major, Metals","P","Calcium",150268,"7440-70-2",null,"Metal","2010-09-07 12:15:32",null,727,3,3,null,null,null,null
+89,"TOTAL ORGANIC CARBON (TOC) TOC ","Organic carbon","Organics, Other","O","Organic carbon",701250,null,null,"Other","2012-09-07 12:15:32",null,2174,10,7,null,null,null,null
+107,"CHLORIDE","Chloride","Inorganics, Major, Non-metals","P","Chloride",205955,"16887-00-6",null,"Other","2010-09-07 12:15:32",null,773,4,7,null,null,null,null
+137,"FECAL COLIFORMS","Fecal Coliform","Microbiological","P","Fecal Coliforms",761692,null,null,"Microbiological, Contaminants","2010-09-07 12:15:32",null,1048,7,16,null,null,null,null
+139,"SPECIFIC CONDUCTANCE","Specific conductance","Physical","P","Specific conductance",1646694,null,null,"Physical","2010-09-07 12:15:32",null,1815,13,10,null,null,null,null
+140,"COPPER","Copper","Inorganics, Minor, Metals","P","Copper",150086,"7440-50-8",null,"Metal","2010-09-07 12:15:32",null,832,5,3,null,null,null,null
+145,"CYANAZINE","Cyanazine","Organics, Pesticide","P","Cyanazine",220400,"21725-46-2",null,"Pesticide","2010-09-07 12:15:32",null,840,12,9,null,null,null,null
+146,"CYANIDE","Cyanide","Organics, Other","P","Cyanide",2444,"57-12-5",null,"Other","2010-09-07 12:15:32",null,842,8,7,null,null,null,null
+201,"DISSOLVED OXYGEN (DO)","Dissolved oxygen (DO)","Physical","P","Dissolved oxygen (DO)",1642198,null,null,"Physical","2010-09-07 12:15:32",null,985,13,10,null,null,null,null
+202,"DISSOLVED OXYGEN SATURATION","Dissolved oxygen saturation","Physical","P","Dissolved oxygen (DO)",1642198,null,null,"Physical","2010-09-07 12:15:32",null,986,13,10,null,null,null,null
+234,"S-ETHYL DIPROPYLTHIOCARBAMATE","S-Ethyl dipropylthiocarbamate","Organics, Pesticide","O","S-Ethyl dipropylthiocarbamate (EPTC)",69252,"759-94-4",null,"Pesticide","2010-09-07 12:15:32",null,1786,12,9,null,null,null,null
+249,"FLUORIDE","Fluoride","Inorganics, Major, Non-metals","O","Fluoride",206706,"16984-48-8",null,"Other","2010-09-07 12:15:32",null,1067,4,7,null,null,null,null
+261,"HARDNESS, CA, MG","Hardness, Ca, Mg","Physical","O","Hardness",1640416,null,null,"Physical","2013-01-07 12:15:32",null,1097,13,10,null,null,null,null
+279,"IRON","Iron","Inorganics, Minor, Metals","P","Iron",149559,"7439-89-6",null,"Metal","2010-09-07 12:15:32",null,1185,5,3,null,null,null,null
+285,"LEAD","Lead","Inorganics, Minor, Metals","P","Lead",149583,"7439-92-1",null,"Metal","2010-09-07 12:15:32",null,1215,5,3,null,null,null,null
+298,"MAGNESIUM","Magnesium","Inorganics, Major, Metals","P","Magnesium",149617,"7439-95-4",null,"Metal","2010-09-07 12:15:32",null,1244,3,3,null,null,null,null
+313,"METOLACHLOR","Metolachlor","Organics, Pesticide","P","Metolachlor",291013,"51218-45-2",null,"Pesticide","2010-09-07 12:15:32",null,1340,12,9,null,null,null,null
+314,"METRIBUZIN","Metribuzin","Organics, Pesticide","P","Metribuzin",219204,"21087-64-9",null,"Pesticide","2010-09-07 12:15:32",null,1341,12,9,null,null,null,null
+327,"NITROGEN ION","Nitrogen ion","Nutrient","O","Nitrogen",209544,"17778-88-0",null,"Nutrient","2013-01-07 12:15:32",null,3127,9,6,null,null,null,null
+330,"AMMONIA AS NH3","Ammonia as NH3","Nutrient","P","Ammonia as NH3",152390,"7664-41-8",null,"Nutrient","2010-09-07 12:15:32","+",null,9,6,null,"Protozoa",null,null
+333,"KJELDAHL NITROGEN","Kjeldahl nitrogen","Nutrient","O","Total Kjeldahl nitrogen (Organic N & NH3) as N",17148461,null,null,"Nutrient","2010-09-07 12:15:32",null,1416,9,6,null,null,null,null
+335,"NITRITE","Nitrite","Nutrient","O","Nitrite",197194,"14797-65-0",null,"Nutrient","2010-09-07 12:15:32",null,1402,9,6,null,null,null,null
+336,"INORGANIC NITROGEN (NITRATE AND NITRITE) AS N","Inorganic nitrogen (nitrate and nitrite) as N","Nutrient","P","Inorganic nitrogen (nitrate and nitrite)",701177,null,null,"Nutrient","2010-09-07 12:15:32","+",1415,9,6,null,null,null,null
+352,"OXIDATION REDUCTION POTENTIAL (ORP) ORP ","Oxidation reduction potential (ORP)","Physical","P","Oxidation reduction potential (ORP)",1644251,null,null,"Physical","2010-09-07 12:15:32",null,1503,13,10,null,null,null,null
+362,"PENDIMETHALIN","Pendimethalin","Organics, Pesticide","P","Pendimethalin",281436,"40487-42-1",null,"Pesticide","2010-09-07 12:15:32",null,1625,12,9,null,null,null,null
+379,"ORTHOPHOSPHATE AS PO4","Orthophosphate as PO4","Nutrient","P","Orthophosphate",null,null,null,"Nutrient","2010-09-07 12:15:32","+",null,9,6,null,null,null,null
+392,"POTASSIUM","Potassium","Inorganics, Major, Metals","P","Potassium",149740,"7440-09-7",null,"Metal","2010-09-07 12:15:32",null,1709,3,3,null,null,null,null
+399,"PROMETON","Prometon","Organics, Pesticide","O","Prometon",89474,"1610-18-0",null,"Pesticide","2010-09-07 12:15:32",null,1716,12,9,null,null,null,null
+403,"PROPAZINE","Propazine","Organics, Pesticide","P","Propazine",37416,"139-40-2",null,"Pesticide","2010-09-07 12:15:32",null,1725,12,9,null,null,null,null
+434,"SALINITY","Salinity","Physical","P","Salinity",1646165,null,null,"Physical","2010-09-07 12:15:32",null,1775,13,10,null,null,null,null
+443,"SILICATE","Silicate","Inorganics, Major, Non-metals","P","Silicate",962233,"12627-13-3",null,"Other","2010-09-07 12:15:32",null,1790,8,7,null,null,null,null
+448,"SIMAZINE","Simazine","Organics, Pesticide","P","Simazine",32219,"122-34-9",null,"Pesticide","2010-09-07 12:15:32",null,1797,12,9,null,null,null,null
+451,"SODIUM","Sodium","Inorganics, Major, Metals","P","Sodium",149856,"7440-23-5",null,"Metal","2010-09-07 12:15:32",null,1802,3,3,null,null,null,null
+456,"TOTAL SUSPENDED SOLIDS","Total suspended solids","Physical","E","Total suspended solids",1642818,null,null,"Physical","2010-09-07 12:15:32",null,1911,13,10,null,null,null,null
+472,"SULFATE AS SO4","Sulfate as SO4","Inorganics, Major, Non-metals","O","Sulfate",197301,"14808-79-8",null,"Other","2010-09-07 12:15:32","+",1827,4,7,null,null,null,null
+481,"TEMPERATURE, WATER","Temperature, water","Physical","P","Temperature",1645597,null,null,"Physical","2010-09-07 12:15:32",null,2849,13,10,null,null,null,null
+497,"TRIFLURALIN","Trifluralin","Organics, Pesticide","P","Trifluralin",89060,"1582-09-8",null,"Pesticide","2010-09-07 12:15:32",null,1961,12,9,null,null,null,null
+514,"TURBIDITY","Turbidity","Physical","P","Turbidity",1640507,null,null,"Physical","2010-09-07 12:15:32",null,1977,13,10,null,null,null,null
+520,"VELOCITY - STREAM","RBP Stream Velocity","Physical","P","RBP Stream Velocity",1645530,null,null,"Physical","2010-09-07 12:15:32",null,2909,13,10,null,null,null,null
+532,"WEATHER COMMENTS (TEXT)","Weather comments (text)","Physical","P","Weather condition",1648278,null,null,"Physical","2010-09-07 12:15:32",null,2923,13,10,null,null,null,null
+545,"ZINC","Zinc","Inorganics, Minor, Metals","P","Zinc",150235,"7440-66-6",null,"Metal","2010-09-07 12:15:32",null,2005,5,3,null,null,null,null
+625,"ACETOCHLOR","Acetochlor","Organics, Pesticide","P","Acetochlor",266114,"34256-82-1",null,"Pesticide","2010-09-07 12:15:32",null,507,12,9,null,null,null,null
+652,"2-CHORO-6-ETHYLAMINO-4-AMINO-S-TRIAZINE","2-Choro-6-ethylamino-4-amino-s-triazine","Organics, Pesticide","O","Choro-6-ethylamino-4-amino-s-triazine, 2-",775775,"1007-28-9",null,"Pesticide","2010-09-07 12:15:32",null,360,12,9,null,null,null,null
+653,"2-CHLORO-4-ISOPROPYLAMINO-6-AMINO-S-TRIAZINE","2-Chloro-4-isopropylamino-6-amino-s-triazine","Organics, Pesticide","O","Chloro-4-isopropylamino-6-amino-s-triazine, 2-",775908,"6190-65-4",null,"Pesticide","2010-09-07 12:15:32",null,877,12,9,null,null,null,null
+794,"CHLORPYRIFOS-METHYL","Chlorpyrifos-methyl","Organics, Pesticide","P","Chlorpyrifos",133991,"5598-13-0",null,"Pesticide","2010-09-07 12:15:32",null,804,12,9,null,null,null,null
+1274,"NITROGEN, AMMONIUM (NH4) AS NH4","Ammonium as NH4","Nutrient","O","Ammonium as NH4",197202,"14798-03-9",null,"Nutrient","2010-09-07 12:15:32","+",2944,9,6,null,null,null,null
+1473,"PHOSPHATE-PHOSPHORUS AS P","Phosphate-phosphorus as P","Nutrient","P","Phosphate-phosphorus",17294695,null,null,"Nutrient","2010-09-07 12:15:32","+",1673,9,6,null,null,null,null
+9780,"ESCHERICHIA COLI","Escherichia coli","Microbiological","P","Escherichia coli",457804,"68583-22-2","285","Microbiological, Contaminants","2010-09-07 12:15:32",null,2287,7,16,null,"Bacteria",null,null
+11739,"ENTEROCOCCI","Enterococcus","Microbiological","O","Enterococcus",763854,null,null,"Microbiological, Contaminants","2013-01-07 12:15:32",null,1007,7,16,null,null,null,null
+11744,"TEMPERATURE, SAMPLE","Temperature, sample","Physical","P","Temperature",1645704,null,null,"Physical","2010-09-07 12:15:32",null,2845,13,10,null,null,null,null
+11797,"TOTAL DISSOLVED SOLIDS","Total dissolved solids","Physical","E","Total dissolved solids",1642222,null,null,"Physical","2010-09-07 12:15:32",null,988,13,10,null,null,null,null
+11798,"TOTAL VOLATILE SOLIDS","Total volatile solids","Physical","E","Total volatile solids",1642867,null,null,"Physical","2010-09-07 12:15:32",null,1995,13,10,null,null,null,null
+14483,"TRANSPARENCY, TUBE WITH DISK","Transparency, tube with disk","Physical","P","Water transparency",1646157,null,null,"Physical","2010-09-07 12:15:32",null,2888,13,10,null,null,null,null
+15840,"ALKALINITY, TOTAL","Alkalinity, total","Physical","E","Alkalinity",1640192,null,null,"Physical","2010-09-07 12:15:32","+",544,13,10,null,null,null,null
+16068,"WATER APPEARANCE (TEXT)","Water appearance (text)","Physical","P","Water properties",52457306,null,null,"Physical","2010-09-07 12:15:32",null,2913,13,10,null,null,null,null
+16260,"DIMETHENAMID","Dimethenamid","Organics, Pesticide","P","Dimethenamid",600437,"87674-68-8",null,"Pesticide","2010-09-07 12:15:32",null,951,12,9,null,null,null,null
+16329,"NUTRIENT-NITROGEN","Nutrient-nitrogen","Nutrient","O","Total Nitrogen, mixed forms as N",17294679,null,null,"Nutrient","2010-09-07 12:15:32",null,2959,9,6,null,null,null,null
+17116,"NITRATE AS N","Nitrate as N","Nutrient","P","Nitrate",197186,"14797-55-8",null,"Nutrient","2010-09-07 12:15:32","+",1400,9,6,null,null,null,null
+17118,"AMMONIA-NITROGEN AS N","Ammonia-nitrogen as N","Nutrient","P","Ammonia as N",17294687,null,null,"Nutrient","2010-09-07 12:15:32","+",2942,9,6,null,null,null,null
+17130,"PHOSPHATE-PHOSPHORUS AS P","Phosphate-phosphorus as P","Nutrient","O","Total Phosphorus, mixed forms as P",17294695,null,null,"Nutrient","2010-09-07 12:15:32","+",2962,9,6,null,null,null,null
