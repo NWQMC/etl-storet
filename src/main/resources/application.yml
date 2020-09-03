@@ -2,7 +2,6 @@ spring:
   batch:
     job:
       enabled: false
-    tablePrefix: storetw.batch_
     initialize-schema: always
   datasource:
     url: jdbc:postgresql://${EPA_DATABASE_ADDRESS}:${EPA_DATABASE_PORT}/${EPA_DATABASE_NAME}
